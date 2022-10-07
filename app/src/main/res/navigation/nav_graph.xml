@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/speechFragment"
+        android:name="com.SmartWatchVoice.bestapp.SpeechFragment"
+        android:label="@string/speech_fragment_label"
+        tools:layout="@layout/fragment_speech"/>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.SmartWatchVoice.bestapp.LoginFragment"
+        android:label="@string/login_fragment_label"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_aboutFragment"
+            app:destination="@id/aboutFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.SmartWatchVoice.bestapp.AboutFragment"
+        android:label="fragment_about"
+        tools:layout="@layout/fragment_about" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.SmartWatchVoice.bestapp.HomeFragment"
+        android:label="@string/home_fragment_label"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_speechFragment"
+            app:destination="@id/speechFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_alertsFragment"
+            app:destination="@id/alertsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_settingTimeZoneFragment"
+            app:destination="@id/settingTimeZoneFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_settingLocaleFragment"
+            app:destination="@id/settingLocaleFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/alertsFragment"
+        android:name="com.SmartWatchVoice.bestapp.SettingAlertFragment"
+        android:label="@string/fragment_alerts_label"
+        tools:layout="@layout/fragment_setting_alert" />
+    <fragment
+        android:id="@+id/settingTimeZoneFragment"
+        android:label="@string/fragment_setting_time_zone_label"
+        android:name="com.SmartWatchVoice.bestapp.SettingTimeZoneFragment"
+        tools:layout="@layout/fragment_setting_time_zone" >
+        <action
+            android:id="@+id/action_settingTimeZoneFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingLocaleFragment"
+        android:name="com.SmartWatchVoice.bestapp.SettingLocaleFragment"
+        android:label="fragment_setting_locale"
+        tools:layout="@layout/fragment_setting_locale" >
+        <action
+            android:id="@+id/action_settingLocaleFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+</navigation>

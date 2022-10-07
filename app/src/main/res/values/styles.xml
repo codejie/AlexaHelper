@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="HomeItemMargin">
+        <item name="android:layout_marginTop">12dp</item>
+    </style>
+    <style name="HomeTextItemFont" parent="HomeItemMargin">
+        <item name="android:fontWeight">700</item>
+    </style>
+    <style name="SettingTextItem">
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontWeight">700</item>
+        <item name="android:textSize">16dp</item>
+    </style>
+</resources>
