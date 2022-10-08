@@ -11,7 +11,7 @@ open class Header constructor(val namespace: String, val name: String, val messa
 
 open class Payload {}
 
-open class Protocol (val type: String, namespace: String, name: String, messageId: String? = makeMessageId()) {
+open class Protocol (val type: String, namespace: String, name: String, messageId: String?) {
     val header: Header = Header(namespace, name, messageId)
     var payload: Payload? = null
     var context: Any? = null
@@ -21,10 +21,10 @@ open class Protocol (val type: String, namespace: String, name: String, messageI
     }
 }
 
-open class Event (namespace: String, name: String, messageId: String? = makeMessageId()):
-    Protocol("Event", namespace, name, messageId) {
-}
-
-open class Directive (namespace: String, name: String, messageId: String? = makeMessageId()):
-    Protocol("Directive", namespace, name, messageId) {
-}
+//open class Event (namespace: String, name: String, messageId: String? = makeMessageId()):
+//    Protocol("Event", namespace, name, messageId) {
+//}
+//
+//open class Directive (namespace: String, name: String, messageId: String? = makeMessageId()):
+//    Protocol("Directive", namespace, name, messageId) {
+//}

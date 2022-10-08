@@ -27,16 +27,16 @@ import com.SmartWatchVoice.bestapp.system.SettingInfo;
 import com.SmartWatchVoice.bestapp.system.channel.HttpChannel;
 import com.SmartWatchVoice.bestapp.utils.Logger;
 
+import jie.android.alexahelper.AppDeviceCallback;
 import jie.android.alexahelper.Device;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 
 public class MainActivity extends AppCompatActivity {
 
-    @FunctionalInterface
-    interface AppDeviceCallback {
-        void onResult(int what, Object result);
-    }
+//    interface AppDeviceCallback {
+//        void onMessage(int what, Object result);
+//    }
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
@@ -49,14 +49,19 @@ public class MainActivity extends AppCompatActivity {
 
 //    private RequestContext requestContext;
 
-//    private AppDeviceCallback callback = (what, result) -> { };
-    private Function2<? super Integer, Object, Unit> callback = (what, result) -> {
-        switch (what) {
-            case 1:
-                Logger.v("get 1");
-                break;
+//    private Function2<? super Integer, Object, Unit> callback = (what, result) -> {
+//        switch (what) {
+//            case 1:
+//                Logger.v("get 1");
+//                break;
+//        }
+//        return Unit.INSTANCE;
+//    };
+    private AppDeviceCallback callback = new AppDeviceCallback() {
+        @Override
+        public void onMessage(int what, Object result) {
+
         }
-        return Unit.INSTANCE;
     };
 
     @Override

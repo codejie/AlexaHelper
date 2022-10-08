@@ -12,10 +12,12 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-internal typealias CreateDownChannelCallback = (result: Boolean, reason: String?) -> Unit
-internal typealias FetchAuthorizeTokenCallback = (result: Boolean, reason: String?) -> Unit
+//internal typealias CreateDownChannelCallback = (result: Boolean, reason: String?) -> Unit
+//internal typealias FetchAuthorizeTokenCallback = (result: Boolean, reason: String?) -> Unit
+internal typealias ChannelPostCallback = (success: Boolean, reason: String?, response: Response?) -> Unit
 
 class HttpChannel (callback: InnerDeviceCallback) {
+
     private var avsBaseUrl: String = "https://alexa.na.gateway.devices.a2z.com"
     private val avsAuthorizeUrl: String = "https://api.amazon.com/auth/o2/token"
     private val avsVersion: String = "/v20160207"
@@ -32,7 +34,7 @@ class HttpChannel (callback: InnerDeviceCallback) {
         .pingInterval(280, TimeUnit.SECONDS)
         .build()
 
-    internal fun postEvents(bodies: Map<String, RequestBody>, callback: Callback): Unit {
+    internal fun postEvents(bodies: Map<String, RequestBody>, callback: ChannelPostCallback): Unit {
         val boundary: String = makePartBoundary()
         val builder: MultipartBody.Builder = MultipartBody.Builder()
         with (builder) {
@@ -49,7 +51,25 @@ class HttpChannel (callback: InnerDeviceCallback) {
             .post(builder.build())
             .build()
 
-        client.newCall(request).enqueue(callback)
+        client.newCall(request).enqueue(object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                callback(false, e.message, null)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.close()
+                callback(true, null, response)
+            }
+
+        })
+    }
+
+    internal fun postEvents(json: JsonObject, callback: ChannelPostCallback): Unit {
+        val body: RequestBody = json.toString().toRequestBody(
+            "application/json;charset=utf-8".toMediaType())
+
+        val bodies: Map<String, RequestBody> = mutableMapOf(Pair<String, RequestBody>("metadata", body))
+        postEvents(bodies, callback)
     }
 //
 //    internal fun postAuthorize(body: RequestBody, callback: Callback): Unit {
@@ -66,7 +86,7 @@ class HttpChannel (callback: InnerDeviceCallback) {
 //        postAuthorize(body, callback)
 //    }
 
-    internal fun postAuthorize(callback: FetchAuthorizeTokenCallback) {
+    internal fun postAuthorize(callback: ChannelPostCallback) {
         val body: JsonObject = buildJsonObject {
             put("grant_type", "authorization_code")
             put("code", RuntimeInfo.authorizeCode)
@@ -81,7 +101,7 @@ class HttpChannel (callback: InnerDeviceCallback) {
             .build()
         client.newCall(request).enqueue(object: Callback {
             override fun onFailure(call: Call, e: IOException) {
-                callback(false, e.message)
+                callback(false, e.message, null)
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -93,29 +113,29 @@ class HttpChannel (callback: InnerDeviceCallback) {
                     RuntimeInfo.refreshToken = result["refresh_token"].toString()
 
                     response.close()
-                    callback(true, null)
+                    callback(true, null, null)
                 } else {
                     response.close()
-                    callback(false, "response code - ${response.code}")
+                    callback(false, "response code - ${response.code}", null)
                 }
             }
         })
 
     }
 
-    internal fun getDownChannel(callback: CreateDownChannelCallback): Unit {
+    internal fun getDownChannel(callback: ChannelPostCallback): Unit {
         val request: Request = Request.Builder()
             .url("$avsBaseUrl$avsVersion/directives")
             .addHeader("authorization", "Bearer ${RuntimeInfo.accessToken}")
             .build()
         client.newCall(request).enqueue(object: Callback {
             override fun onFailure(call: Call, e: IOException) {
-                callback(false, e.message)
+                callback(false, e.message, null)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 downChannel = DownChannel(response, deviceCallback)
-                callback(true, null)
+                callback(true, null, null)
             }
         })
     }

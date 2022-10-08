@@ -4,6 +4,8 @@ import android.content.Context
 import com.amazon.identity.auth.device.AuthError
 import com.amazon.identity.auth.device.api.authorization.*
 import com.amazon.identity.auth.device.api.workflow.RequestContext
+import jie.android.alexahelper.api.event.system.SynchronizeStateEvent
+import jie.android.alexahelper.channel.ChannelPostCallback
 import jie.android.alexahelper.channel.HttpChannel
 import jie.android.alexahelper.device.ProductInfo
 import jie.android.alexahelper.device.RuntimeInfo
@@ -16,7 +18,7 @@ import kotlinx.serialization.json.putJsonObject
 import org.json.JSONObject
 import java.util.*
 
-typealias OnDownChannelCreated = (result: Boolean) -> Unit
+//typealias OnDownChannelCreated = (result: Boolean) -> Unit
 
 class Device private constructor() {
 
@@ -31,15 +33,17 @@ class Device private constructor() {
             return instance!!
         }
     }
-//    internal lateinit var productInfo: ProductInfo
-//    internal lateinit var settingInfo: Settinginfo
 
     private lateinit var requestContext: RequestContext
-
-//    internal lateinit var runtimeInfo: RuntimeInfo
-
-    internal lateinit var deviceCallback: InnerDeviceCallback // = { integer: Integer, any: Any, function: AppDeviceCallback -> };
     private lateinit var httpChannel: HttpChannel
+
+    private lateinit var appDeviceCallback: AppDeviceCallback;
+    internal val deviceCallback: InnerDeviceCallback  = { what: Message, result: Any? ->
+        synchronized(this) {
+
+        }
+    };
+
 
     fun setProductInfo(id: String, clientId: String, serial: String): Unit {
         ProductInfo.id = id
@@ -48,16 +52,7 @@ class Device private constructor() {
     }
 
     fun attach(context: Context, appDeviceCallback: AppDeviceCallback): Unit {
-        deviceCallback  = { what: Message, result: Any? ->
-            synchronized(this) {
-                when (what) {
-                    Message.LOGIN -> {
-                        appDeviceCallback(Message.LOGIN.value, result)
-                    }
-                    else -> {}
-                }
-            }
-        }
+        this.appDeviceCallback = appDeviceCallback
         // RuntimeInfo
 //        runtimeInfo = RuntimeInfo(context)
         RuntimeInfo.load(context)
@@ -121,30 +116,36 @@ class Device private constructor() {
     }
 
     private fun fetchAuthorizeToken() {
-        httpChannel.postAuthorize { result, reason ->
-            if (result) {
+        httpChannel.postAuthorize { success, reason, _ ->
+            if (success) {
                 // create down channel
-                createDownChannel { result -> deviceCallback(Message.LOGIN, result) }
-                // synchronize state
-//                postSynchronizeStateAction()
+                createDownChannel()
             } else {
                 Logger.w("authorize token failed - $reason")
             }
         }
     }
 
-    private fun createDownChannel(callback: OnDownChannelCreated): Unit {
-        httpChannel.getDownChannel { result, response ->
-            if (result) {
-                // DownChannel
-
+    private fun createDownChannel(): Unit {
+        httpChannel.getDownChannel { success, reason, response ->
+            if (success) {
+                // synchronize state
+                postSynchronizeStateAction()
                 // callback
-                callback(true)
+//                deviceCallback()
             } else {
                 Logger.w("create down channel failed.")
-                callback(false)
+//                callback(false)
             }
         }
     }
 
+    private fun postSynchronizeStateAction() {
+        val event: JsonObject = SynchronizeStateEvent().apply {
+            set("", "")
+        }.create()
+        httpChannel.postEvents(event) { success, reason, response ->
+
+        }
+    }
 }
