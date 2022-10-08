@@ -1,12 +1,8 @@
 package jie.android.alexahelper.utils
 
-import jie.android.alexahelper.Device
-import jie.android.alexahelper.device.RuntimeInfo
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.*
-
-fun getRuntimeInfo(): RuntimeInfo = Device.getInstance().runtimeInfo
 
 fun makePartBoundary(): String = UUID.randomUUID().toString()
 

@@ -1,7 +1,8 @@
 package jie.android.alexahelper.channel
 
-import jie.android.alexahelper.Device
-import jie.android.alexahelper.utils.getRuntimeInfo
+import jie.android.alexahelper.InnerDeviceCallback
+import jie.android.alexahelper.device.ProductInfo
+import jie.android.alexahelper.device.RuntimeInfo
 import jie.android.alexahelper.utils.makePartBoundary
 import kotlinx.serialization.json.*
 import okhttp3.*
@@ -11,15 +12,17 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-internal typealias CreateDownChannelCallback = (result: Boolean, response: Response?) -> Unit
+internal typealias CreateDownChannelCallback = (result: Boolean, reason: String?) -> Unit
 internal typealias FetchAuthorizeTokenCallback = (result: Boolean, reason: String?) -> Unit
 
-class HttpChannel (deviceInfo: Device) {
+class HttpChannel (callback: InnerDeviceCallback) {
     private var avsBaseUrl: String = "https://alexa.na.gateway.devices.a2z.com"
     private val avsAuthorizeUrl: String = "https://api.amazon.com/auth/o2/token"
     private val avsVersion: String = "/v20160207"
 
-    private val deviceInfo: Device = deviceInfo
+    private val deviceCallback: InnerDeviceCallback = callback
+
+    private var downChannel: DownChannel? = null;
 
     private var client: OkHttpClient = OkHttpClient.Builder()
         .protocols(listOf(Protocol.HTTP_2, Protocol.HTTP_1_1))
@@ -41,7 +44,7 @@ class HttpChannel (deviceInfo: Device) {
 
         val request: Request = Request.Builder()
             .url("$avsBaseUrl$avsVersion/events")
-            .addHeader("authorization", "Bearer ${getRuntimeInfo().accessToken}")
+            .addHeader("authorization", "Bearer ${RuntimeInfo.accessToken}")
             .addHeader("content_type", "multipart/form-data;boundary=$boundary")
             .post(builder.build())
             .build()
@@ -66,10 +69,10 @@ class HttpChannel (deviceInfo: Device) {
     internal fun postAuthorize(callback: FetchAuthorizeTokenCallback) {
         val body: JsonObject = buildJsonObject {
             put("grant_type", "authorization_code")
-            put("code", deviceInfo.runtimeInfo.authorizeCode)
-            put("redirect_uri", deviceInfo.runtimeInfo.redirectUri)
-            put("client_id", deviceInfo.productInfo.clientId)
-            put("code_verifier", deviceInfo.runtimeInfo.verifierCode)
+            put("code", RuntimeInfo.authorizeCode)
+            put("redirect_uri", RuntimeInfo.redirectUri)
+            put("client_id", ProductInfo.clientId)
+            put("code_verifier", RuntimeInfo.verifierCode)
         }
 
         val request: Request = Request.Builder()
@@ -86,8 +89,8 @@ class HttpChannel (deviceInfo: Device) {
                     val result: JsonObject =
                         Json.parseToJsonElement(response.body!!.string()).jsonObject
 
-                    deviceInfo.runtimeInfo.accessToken = result["access_token"].toString()
-                    deviceInfo.runtimeInfo.refreshToken = result["refresh_token"].toString()
+                    RuntimeInfo.accessToken = result["access_token"].toString()
+                    RuntimeInfo.refreshToken = result["refresh_token"].toString()
 
                     response.close()
                     callback(true, null)
@@ -103,15 +106,16 @@ class HttpChannel (deviceInfo: Device) {
     internal fun getDownChannel(callback: CreateDownChannelCallback): Unit {
         val request: Request = Request.Builder()
             .url("$avsBaseUrl$avsVersion/directives")
-            .addHeader("authorization", "Bearer ${deviceInfo.runtimeInfo.accessToken}")
+            .addHeader("authorization", "Bearer ${RuntimeInfo.accessToken}")
             .build()
         client.newCall(request).enqueue(object: Callback {
             override fun onFailure(call: Call, e: IOException) {
-                callback(false, null)
+                callback(false, e.message)
             }
 
             override fun onResponse(call: Call, response: Response) {
-                callback(true, response)
+                downChannel = DownChannel(response, deviceCallback)
+                callback(true, null)
             }
         })
     }

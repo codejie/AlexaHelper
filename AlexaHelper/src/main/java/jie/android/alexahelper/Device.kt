@@ -8,64 +8,83 @@ import jie.android.alexahelper.channel.HttpChannel
 import jie.android.alexahelper.device.ProductInfo
 import jie.android.alexahelper.device.RuntimeInfo
 import jie.android.alexahelper.utils.Logger
-import jie.android.alexahelper.utils.Singleton
 import jie.android.alexahelper.utils.makeCodeChallenge
-import kotlinx.serialization.json.*
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonObject
 import org.json.JSONObject
-import java.io.IOException
 import java.util.*
-
-interface DeviceAuthorizeCallback {
-    fun onSuccess(): Unit
-    fun onError(error: String):Unit
-}
 
 typealias OnDownChannelCreated = (result: Boolean) -> Unit
 
 class Device private constructor() {
 
-    companion object: Singleton<Device>(::Device)
+    companion object {
+        private var instance: Device? = null
+        fun create(): Device {
+            synchronized(this) {
+                if (instance === null) {
+                    instance = Device()
+                }
+            }
+            return instance!!
+        }
+    }
+//    internal lateinit var productInfo: ProductInfo
+//    internal lateinit var settingInfo: Settinginfo
 
     private lateinit var requestContext: RequestContext
 
-    internal lateinit var productInfo: ProductInfo
-    internal lateinit var runtimeInfo: RuntimeInfo
+//    internal lateinit var runtimeInfo: RuntimeInfo
 
-    internal lateinit var httpChannel: HttpChannel
+    internal lateinit var deviceCallback: InnerDeviceCallback // = { integer: Integer, any: Any, function: AppDeviceCallback -> };
+    private lateinit var httpChannel: HttpChannel
 
-    fun attach(context: Context, productInfo: ProductInfo): Unit {
-        // product
-        this.productInfo = productInfo
+    fun setProductInfo(id: String, clientId: String, serial: String): Unit {
+        ProductInfo.id = id
+        ProductInfo.clientId = clientId
+        ProductInfo.serialNumber = serial
+    }
+
+    fun attach(context: Context, appDeviceCallback: AppDeviceCallback): Unit {
+        deviceCallback  = { what: Message, result: Any? ->
+            synchronized(this) {
+                when (what) {
+                    Message.LOGIN -> {
+                        appDeviceCallback(Message.LOGIN.value, result)
+                    }
+                    else -> {}
+                }
+            }
+        }
         // RuntimeInfo
-        runtimeInfo = RuntimeInfo(context)
+//        runtimeInfo = RuntimeInfo(context)
+        RuntimeInfo.load(context)
         // authorize request
         requestContext = RequestContext.create(context)
-
         // http channel
-        httpChannel = HttpChannel(this)
+        httpChannel = HttpChannel(deviceCallback)
     }
 
     fun detach(context: Context): Unit {
-
+        RuntimeInfo.flush(context)
     }
 
-    fun onResume(): Unit {
+    fun onResume(context: Context): Unit {
         requestContext.onResume()
     }
 
     fun login(): Unit {
+        deviceCallback(Message.LOGIN, null)
         authorize()
     }
 
     private fun authorize(): Unit {
         requestContext.registerListener(object: AuthorizeListener() {
-            override fun onSuccess(p0: AuthorizeResult?) {
+            override fun onSuccess(result: AuthorizeResult?) {
                 Logger.d("auth success")
-                TODO("Not yet implemented")
-
+                onAuthorizeSuccess(result!!)
             }
 
             override fun onError(p0: AuthError?) {
@@ -77,14 +96,14 @@ class Device private constructor() {
             }
         })
 
-        runtimeInfo.verifierCode = UUID.randomUUID().toString()
-        val challengeCode: String = makeCodeChallenge(runtimeInfo.verifierCode!!)
+        RuntimeInfo.verifierCode = UUID.randomUUID().toString()
+        val challengeCode: String = makeCodeChallenge(RuntimeInfo.verifierCode!!)
 
         val scopeData: JsonObject = buildJsonObject {
             putJsonObject("productInstanceAttributes") {
-                put("deviceSerialNumber", productInfo.serialNumber)
+                put("deviceSerialNumber", ProductInfo.serialNumber)
             }
-            put("productID", productInfo.productId)
+            put("productID", ProductInfo.id)
         }
 
         AuthorizationManager.authorize(AuthorizeRequest.Builder(requestContext)
@@ -95,8 +114,8 @@ class Device private constructor() {
     }
 
     private fun onAuthorizeSuccess(result: AuthorizeResult): Unit {
-        runtimeInfo.authorizeCode = result.authorizationCode
-        runtimeInfo.redirectUri = result.redirectURI
+        RuntimeInfo.authorizeCode = result.authorizationCode
+        RuntimeInfo.redirectUri = result.redirectURI
 
         fetchAuthorizeToken()
     }
@@ -105,6 +124,9 @@ class Device private constructor() {
         httpChannel.postAuthorize { result, reason ->
             if (result) {
                 // create down channel
+                createDownChannel { result -> deviceCallback(Message.LOGIN, result) }
+                // synchronize state
+//                postSynchronizeStateAction()
             } else {
                 Logger.w("authorize token failed - $reason")
             }
@@ -115,6 +137,7 @@ class Device private constructor() {
         httpChannel.getDownChannel { result, response ->
             if (result) {
                 // DownChannel
+
                 // callback
                 callback(true)
             } else {
@@ -123,7 +146,5 @@ class Device private constructor() {
             }
         }
     }
-
-
 
 }

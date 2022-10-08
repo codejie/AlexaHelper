@@ -4,7 +4,7 @@ import android.content.Context
 import jie.android.alexahelper.Device
 import jie.android.alexahelper.utils.Singleton
 
-class RuntimeInfo constructor(context: Context) {
+internal object RuntimeInfo {
     var verifierCode: String? = null
 
     var authorizeCode: String? = null
@@ -13,14 +13,11 @@ class RuntimeInfo constructor(context: Context) {
     var accessToken: String? = null
     var refreshToken: String? = null
 
-    init {
-        load(context)
-    }
-
-    private fun load(context: Context):Unit {
+    internal fun load(context: Context):Unit {
 
     }
-    public fun flush(context: Context): Unit {
+
+    internal fun flush(context: Context): Unit {
 
     }
 }

@@ -1,45 +1,42 @@
 package com.SmartWatchVoice.bestapp;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import com.SmartWatchVoice.bestapp.handler.HandlerConst;
-import com.SmartWatchVoice.bestapp.handler.DirectiveCallback;
-import com.SmartWatchVoice.bestapp.system.DeviceInfo;
-import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
-import com.SmartWatchVoice.bestapp.system.SettingInfo;
-import com.SmartWatchVoice.bestapp.system.ThingInfo;
-import com.SmartWatchVoice.bestapp.utils.Logger;
-import com.amazon.identity.auth.device.AuthError;
-import com.amazon.identity.auth.device.api.authorization.AuthCancellation;
-import com.amazon.identity.auth.device.api.authorization.AuthorizeListener;
-import com.amazon.identity.auth.device.api.authorization.AuthorizeResult;
-import com.amazon.identity.auth.device.api.workflow.RequestContext;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.SmartWatchVoice.bestapp.system.channel.HttpChannel;
 import com.SmartWatchVoice.bestapp.databinding.ActivityMainBinding;
-
-import android.view.Menu;
-import android.view.MenuItem;
+import com.SmartWatchVoice.bestapp.handler.DirectiveCallback;
+import com.SmartWatchVoice.bestapp.handler.HandlerConst;
+import com.SmartWatchVoice.bestapp.system.DeviceInfo;
+import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
+import com.SmartWatchVoice.bestapp.system.SettingInfo;
+import com.SmartWatchVoice.bestapp.system.channel.HttpChannel;
+import com.SmartWatchVoice.bestapp.utils.Logger;
 
 import jie.android.alexahelper.Device;
-import jie.android.alexahelper.device.ProductInfo;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 
 public class MainActivity extends AppCompatActivity {
+
+    @FunctionalInterface
+    interface AppDeviceCallback {
+        void onResult(int what, Object result);
+    }
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
@@ -48,7 +45,19 @@ public class MainActivity extends AppCompatActivity {
     private HandlerThread directiveThread = null;
     private Handler directiveHandler = null;
 
+    private Device device = null;
+
 //    private RequestContext requestContext;
+
+//    private AppDeviceCallback callback = (what, result) -> { };
+    private Function2<? super Integer, Object, Unit> callback = (what, result) -> {
+        switch (what) {
+            case 1:
+                Logger.v("get 1");
+                break;
+        }
+        return Unit.INSTANCE;
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +75,9 @@ public class MainActivity extends AppCompatActivity {
 
 //        initRequestContext();
         DeviceInfo.ProductSerialNumber = "1234";
-        Device.Companion.getInstance().attach(this, new ProductInfo(DeviceInfo.ClientId, DeviceInfo.ProductId, DeviceInfo.ProductSerialNumber));
+        device = Device.Companion.create(); //new ProductInfo(DeviceInfo.ClientId, DeviceInfo.ProductId, DeviceInfo.ProductSerialNumber));
+        device.attach((Context) this, callback);
+//        Device.Companion.getInstance().attach(this, new ProductInfo(DeviceInfo.ClientId, DeviceInfo.ProductId, DeviceInfo.ProductSerialNumber));
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -119,7 +130,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 //        requestContext.onResume();
-        Device.Companion.getInstance().onResume();
+//        Device.Companion.getInstance().onResume();
+        device.onResume(this);
     }
 
     @Override
@@ -130,6 +142,8 @@ public class MainActivity extends AppCompatActivity {
 
         SettingInfo.getInstance().flush();
         RuntimeInfo.getInstance().stop();
+
+        device.detach(this);
 
         super.onDestroy();
     }
@@ -195,7 +209,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void fetchProductAccessToken() {
 //        HttpChannel.getInstance().authorize(requestContext);
-        Device.Companion.getInstance().login();
+//        Device.Companion.getInstance().login();
+        device.login();
     }
 
     private void scheduleTokenRefresh() {
