@@ -4,17 +4,15 @@ import android.content.Context
 import com.amazon.identity.auth.device.AuthError
 import com.amazon.identity.auth.device.api.authorization.*
 import com.amazon.identity.auth.device.api.workflow.RequestContext
+import jie.android.alexahelper.api.event.alexaApiGateway.VerifyGatewayEvent
+import jie.android.alexahelper.api.event.alexaDiscovery.AddOrUpdateReportEvent
 import jie.android.alexahelper.api.event.system.SynchronizeStateEvent
-import jie.android.alexahelper.channel.ChannelPostCallback
 import jie.android.alexahelper.channel.HttpChannel
 import jie.android.alexahelper.device.ProductInfo
 import jie.android.alexahelper.device.RuntimeInfo
 import jie.android.alexahelper.utils.Logger
 import jie.android.alexahelper.utils.makeCodeChallenge
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
-import kotlinx.serialization.json.putJsonObject
+import kotlinx.serialization.json.*
 import org.json.JSONObject
 import java.util.*
 
@@ -141,11 +139,38 @@ class Device private constructor() {
     }
 
     private fun postSynchronizeStateAction() {
-        val event: JsonObject = SynchronizeStateEvent().apply {
-            set("", "")
+        val event: JsonObject = SynchronizeStateEvent().create()
+        httpChannel.postEvents(event) { success, reason, response ->
+            if (success) {
+                postVerifyGateway()
+            } else {
+
+            }
+        }
+    }
+
+    private fun postVerifyGateway() {
+        val event: JsonObject = VerifyGatewayEvent().create()
+        httpChannel.postEvents(event) { success, reason, response ->
+            if (success) {
+                postAlexaDiscovery()
+            } else {
+
+            }
+        }
+    }
+
+    private fun postAlexaDiscovery() {
+        val event: JsonObject = AddOrUpdateReportEvent().apply {
+            val endpoints: JsonArray = buildJsonArray {  }
+            setPayload("endpoints", endpoints)
         }.create()
         httpChannel.postEvents(event) { success, reason, response ->
+            if (success) {
 
+            } else {
+
+            }
         }
     }
 }

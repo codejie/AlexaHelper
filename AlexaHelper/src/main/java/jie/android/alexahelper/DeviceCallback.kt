@@ -9,5 +9,4 @@ interface AppDeviceCallback {
     fun onMessage(what: Int, message: Any?): Unit
 }
 
-//typealias AppDeviceCallback = (what: Int, result: Any?) -> Unit
 typealias InnerDeviceCallback = (what: Message, result: Any?) -> Unit
