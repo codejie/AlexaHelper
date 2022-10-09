@@ -3,12 +3,15 @@ package jie.android.alexahelper.channel
 import jie.android.alexahelper.InnerDeviceCallback
 import jie.android.alexahelper.device.ProductInfo
 import jie.android.alexahelper.device.RuntimeInfo
+import jie.android.alexahelper.utils.Logger
+import jie.android.alexahelper.utils.MyLoggingInterceptor
 import jie.android.alexahelper.utils.makePartBoundary
 import kotlinx.serialization.json.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -24,7 +27,9 @@ class HttpChannel (callback: InnerDeviceCallback) {
 
     private val deviceCallback: InnerDeviceCallback = callback
 
-    private var downChannel: DownChannel? = null;
+    private var downChannel: DownChannel = DownChannel()
+
+    private val interceptor: HttpLoggingInterceptor = HttpLoggingInterceptor().apply { setLevel(HttpLoggingInterceptor.Level.BODY) }
 
     private var client: OkHttpClient = OkHttpClient.Builder()
         .protocols(listOf(Protocol.HTTP_2, Protocol.HTTP_1_1))
@@ -32,6 +37,8 @@ class HttpChannel (callback: InnerDeviceCallback) {
         .writeTimeout(60, TimeUnit.MINUTES)
         .connectTimeout(10000, TimeUnit.MILLISECONDS)
         .pingInterval(280, TimeUnit.SECONDS)
+//        .addInterceptor(interceptor)
+        .addInterceptor(MyLoggingInterceptor().apply { level = MyLoggingInterceptor.Level.BODY })
         .build()
 
     internal fun postEvents(bodies: Map<String, RequestBody>, callback: ChannelPostCallback): Unit {
@@ -107,16 +114,16 @@ class HttpChannel (callback: InnerDeviceCallback) {
             override fun onResponse(call: Call, response: Response) {
                 if (response.code in 200..204) {
                     val result: JsonObject =
-                        Json.parseToJsonElement(response.body!!.string()).jsonObject
+                        Json.parseToJsonElement(response.body!!.string()) as JsonObject
 
-                    RuntimeInfo.accessToken = result["access_token"].toString()
-                    RuntimeInfo.refreshToken = result["refresh_token"].toString()
+                    RuntimeInfo.accessToken = result["access_token"]?.jsonPrimitive?.content
+                    RuntimeInfo.refreshToken = result["refresh_token"]?.jsonPrimitive?.content
 
                     response.close()
-                    callback(true, null, null)
+                    callback(true, null, response)
                 } else {
                     response.close()
-                    callback(false, "response code - ${response.code}", null)
+                    callback(false, "response code - ${response.code}", response)
                 }
             }
         })
@@ -134,8 +141,8 @@ class HttpChannel (callback: InnerDeviceCallback) {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                downChannel = DownChannel(response, deviceCallback)
-                callback(true, null, null)
+                downChannel.create(response, deviceCallback)
+                callback(true, null, response)
             }
         })
     }

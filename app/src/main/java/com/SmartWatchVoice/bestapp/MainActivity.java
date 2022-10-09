@@ -29,6 +29,7 @@ import com.SmartWatchVoice.bestapp.utils.Logger;
 
 import jie.android.alexahelper.AppDeviceCallback;
 import jie.android.alexahelper.Device;
+import jie.android.alexahelper.device.ProductInfo;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 
@@ -79,8 +80,9 @@ public class MainActivity extends AppCompatActivity {
         initHandlers();
 
 //        initRequestContext();
-        DeviceInfo.ProductSerialNumber = "1234";
-        device = Device.Companion.create(); //new ProductInfo(DeviceInfo.ClientId, DeviceInfo.ProductId, DeviceInfo.ProductSerialNumber));
+        DeviceInfo.ProductSerialNumber = "VWRK4_1234";
+        device = Device.Companion.create();
+        device.setProductInfo(DeviceInfo.ProductId, DeviceInfo.ClientId, DeviceInfo.ProductSerialNumber);
         device.attach((Context) this, callback);
 //        Device.Companion.getInstance().attach(this, new ProductInfo(DeviceInfo.ClientId, DeviceInfo.ProductId, DeviceInfo.ProductSerialNumber));
 

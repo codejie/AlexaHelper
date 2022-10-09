@@ -47,6 +47,13 @@ class Device private constructor() {
         ProductInfo.id = id
         ProductInfo.clientId = clientId
         ProductInfo.serialNumber = serial
+
+//        val json: JsonObject = Json.parseToJsonElement("""
+//            {"a": "b"}
+//        """.trimIndent()) as JsonObject
+//        val m: String? = json["a"]?.jsonPrimitive?.content
+//
+//        Logger.v("$m")
     }
 
     fun attach(context: Context, appDeviceCallback: AppDeviceCallback): Unit {
@@ -69,7 +76,7 @@ class Device private constructor() {
     }
 
     fun login(): Unit {
-        deviceCallback(Message.LOGIN, null)
+//        deviceCallback(Message.LOGIN, null)
         authorize()
     }
 
@@ -114,9 +121,10 @@ class Device private constructor() {
     }
 
     private fun fetchAuthorizeToken() {
-        httpChannel.postAuthorize { success, reason, _ ->
+        httpChannel.postAuthorize { success, reason, response ->
             if (success) {
                 // create down channel
+                Logger.d("fetchAuthorizeToken success - ${response!!.code}")
                 createDownChannel()
             } else {
                 Logger.w("authorize token failed - $reason")
@@ -128,11 +136,12 @@ class Device private constructor() {
         httpChannel.getDownChannel { success, reason, response ->
             if (success) {
                 // synchronize state
+                Logger.d("createDownChannel success")
                 postSynchronizeStateAction()
                 // callback
 //                deviceCallback()
             } else {
-                Logger.w("create down channel failed.")
+                Logger.w("create down channel failed - $reason")
 //                callback(false)
             }
         }
@@ -142,9 +151,10 @@ class Device private constructor() {
         val event: JsonObject = SynchronizeStateEvent().create()
         httpChannel.postEvents(event) { success, reason, response ->
             if (success) {
+                Logger.d("postSynchronizeStateAction success - ${response!!.code}")
                 postVerifyGateway()
             } else {
-
+                Logger.w("postSynchronizeStateAction failed - $reason")
             }
         }
     }
@@ -153,9 +163,10 @@ class Device private constructor() {
         val event: JsonObject = VerifyGatewayEvent().create()
         httpChannel.postEvents(event) { success, reason, response ->
             if (success) {
+                Logger.d("postVerifyGateway success - ${response!!.code}")
                 postAlexaDiscovery()
             } else {
-
+                Logger.w("postVerifyGateway failed - $reason")
             }
         }
     }
@@ -167,9 +178,9 @@ class Device private constructor() {
         }.create()
         httpChannel.postEvents(event) { success, reason, response ->
             if (success) {
-
+                Logger.d("postAlexaDiscovery success - ${response!!.code}")
             } else {
-
+                Logger.w("postAlexaDiscovery failed - $reason")
             }
         }
     }

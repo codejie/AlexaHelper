@@ -88,9 +88,9 @@ open class Protocol (protected val type: String, protected val namespace: String
 }
 
 open class Event (namespace: String, name: String, messageId: String? = makeMessageId()):
-    Protocol("Event", namespace, name, messageId) {
+    Protocol("event", namespace, name, messageId) {
 }
 
 open class Directive (namespace: String, name: String, messageId: String? = makeMessageId()):
-    Protocol("Directive", namespace, name, messageId) {
+    Protocol("directive", namespace, name, messageId) {
 }
