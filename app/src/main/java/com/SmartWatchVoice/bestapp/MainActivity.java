@@ -26,6 +26,7 @@ import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.system.SettingInfo;
 import com.SmartWatchVoice.bestapp.system.channel.HttpChannel;
 import com.SmartWatchVoice.bestapp.utils.Logger;
+import com.SmartWatchVoice.bestapp.utils.Utils;
 
 import jie.android.alexahelper.AppDeviceCallback;
 import jie.android.alexahelper.Device;
@@ -61,7 +62,12 @@ public class MainActivity extends AppCompatActivity {
     private AppDeviceCallback callback = new AppDeviceCallback() {
         @Override
         public void onMessage(int what, Object result) {
-
+            switch (what) {
+                case HandlerConst.MSG_LOGIN_SUCCESS:
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_SUCCESS);
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().mainHandler, HandlerConst.MSG_LOGIN_SUCCESS);
+                    break;
+            }
         }
     };
 
@@ -76,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
 
-//        RuntimeInfo.getInstance().start(this);
+        RuntimeInfo.getInstance().start(this);
         initHandlers();
 
 //        initRequestContext();

@@ -1,4 +1,4 @@
-package jie.android.alexahelper.api.event.alexaApiGateway
+package jie.android.alexahelper.device.event.alexaApiGateway
 
 import jie.android.alexahelper.api.API
 import jie.android.alexahelper.api.Event

@@ -7,11 +7,6 @@ internal fun makeMessageId(): String {
     return UUID.randomUUID().toString()
 }
 
-open class Header constructor(val namespace: String, val name: String, val messageId: String? = makeMessageId()) {
-}
-
-open class Payload {}
-
 internal class Builder {
     private val content: MutableMap<String, JsonElement> = linkedMapOf()
 
@@ -85,7 +80,7 @@ open class Protocol (protected val type: String, protected val namespace: String
 //    var context: Any? = null
 
     override fun toString(): String {
-        return "$type { namespace = ${namespace} | name = ${name}"
+        return "$type { namespace = $namespace | name = $name }"
     }
 }
 

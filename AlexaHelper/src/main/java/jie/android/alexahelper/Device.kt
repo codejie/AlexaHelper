@@ -4,10 +4,11 @@ import android.content.Context
 import com.amazon.identity.auth.device.AuthError
 import com.amazon.identity.auth.device.api.authorization.*
 import com.amazon.identity.auth.device.api.workflow.RequestContext
-import jie.android.alexahelper.api.event.alexaApiGateway.VerifyGatewayEvent
-import jie.android.alexahelper.api.event.alexaDiscovery.AddOrUpdateReportEvent
-import jie.android.alexahelper.api.event.system.SynchronizeStateEvent
+import jie.android.alexahelper.device.event.alexaApiGateway.VerifyGatewayEvent
+import jie.android.alexahelper.device.event.alexaDiscovery.AddOrUpdateReportEvent
+import jie.android.alexahelper.device.event.system.SynchronizeStateEvent
 import jie.android.alexahelper.channel.HttpChannel
+import jie.android.alexahelper.device.EndpointInfo
 import jie.android.alexahelper.device.ProductInfo
 import jie.android.alexahelper.device.RuntimeInfo
 import jie.android.alexahelper.utils.Logger
@@ -38,7 +39,12 @@ class Device private constructor() {
     private lateinit var appDeviceCallback: AppDeviceCallback;
     internal val deviceCallback: InnerDeviceCallback  = { what: Message, result: Any? ->
         synchronized(this) {
-
+            when (what) {
+                Message.MSG_LOGIN_SUCCESS -> {
+                    appDeviceCallback.onMessage(what.value, result)
+                }
+                else -> {}
+            }
         }
     };
 
@@ -47,19 +53,15 @@ class Device private constructor() {
         ProductInfo.id = id
         ProductInfo.clientId = clientId
         ProductInfo.serialNumber = serial
+    }
 
-//        val json: JsonObject = Json.parseToJsonElement("""
-//            {"a": "b"}
-//        """.trimIndent()) as JsonObject
-//        val m: String? = json["a"]?.jsonPrimitive?.content
-//
-//        Logger.v("$m")
+    fun addEndpoint(id: String, json: String): Unit {
+        EndpointInfo.add(id, json)
     }
 
     fun attach(context: Context, appDeviceCallback: AppDeviceCallback): Unit {
         this.appDeviceCallback = appDeviceCallback
         // RuntimeInfo
-//        runtimeInfo = RuntimeInfo(context)
         RuntimeInfo.load(context)
         // authorize request
         requestContext = RequestContext.create(context)
@@ -172,13 +174,11 @@ class Device private constructor() {
     }
 
     private fun postAlexaDiscovery() {
-        val event: JsonObject = AddOrUpdateReportEvent().apply {
-            val endpoints: JsonArray = buildJsonArray {  }
-            setPayload("endpoints", endpoints)
-        }.create()
+        val event: JsonObject = AddOrUpdateReportEvent().apply {}.create()
         httpChannel.postEvents(event) { success, reason, response ->
             if (success) {
                 Logger.d("postAlexaDiscovery success - ${response!!.code}")
+                deviceCallback(Message.MSG_LOGIN_SUCCESS, null)
             } else {
                 Logger.w("postAlexaDiscovery failed - $reason")
             }
