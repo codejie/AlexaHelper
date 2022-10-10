@@ -69,13 +69,15 @@ open class Protocol (protected val type: String, protected val namespace: String
 
     fun create(): JsonObject =
         buildJsonObject {
-            put(type, headerBuilder.build())
-            if (payloadBuilder != null) {
-                put("payload", payloadBuilder!!.build())
-            }
-            if (contextBuilder != null) {
-                put("context", contextBuilder!!.build())
-            }
+            put(type, buildJsonObject {
+                put("header", headerBuilder.build())
+                if (payloadBuilder != null) {
+                    put("payload", payloadBuilder!!.build())
+                }
+                if (contextBuilder != null) {
+                    put("context", contextBuilder!!.build())
+                }
+            })
         }
 
 //    val header: Header = Header(namespace, name, messageId)
