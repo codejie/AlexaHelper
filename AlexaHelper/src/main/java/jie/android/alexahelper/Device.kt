@@ -12,6 +12,7 @@ import jie.android.alexahelper.device.EndpointInfo
 import jie.android.alexahelper.device.ProductInfo
 import jie.android.alexahelper.device.RuntimeInfo
 import jie.android.alexahelper.utils.Logger
+import jie.android.alexahelper.utils.ScheduleTimer
 import jie.android.alexahelper.utils.makeCodeChallenge
 import kotlinx.serialization.json.*
 import org.json.JSONObject
@@ -70,9 +71,27 @@ class Device private constructor() {
         requestContext = RequestContext.create(context)
         // http channel
         httpChannel = HttpChannel(deviceCallback)
+
+        ScheduleTimer.start()
+
+        ScheduleTimer.addTimer(ScheduleTimer.Timer(5000L, true, "1 timer") {
+            Logger.v((it ?: "null") as String)
+        })
+
+        val id = ScheduleTimer.addTimer(ScheduleTimer.Timer(3000L, true, "2 timer") {
+            Logger.v((it ?: "null") as String)
+        })
+
+        ScheduleTimer.addTimer(ScheduleTimer.Timer(8000L, false, "3 timer") {
+            ScheduleTimer.removeTimer(id)
+            Logger.v((it ?: "null") as String)
+        })
+
+
     }
 
     fun detach(context: Context): Unit {
+        ScheduleTimer.stop()
         RuntimeInfo.flush(context)
     }
 
