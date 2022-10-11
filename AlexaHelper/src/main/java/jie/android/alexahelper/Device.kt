@@ -17,8 +17,6 @@ import kotlinx.serialization.json.*
 import org.json.JSONObject
 import java.util.*
 
-//typealias OnDownChannelCreated = (result: Boolean) -> Unit
-
 class Device private constructor() {
 
     companion object {
@@ -43,7 +41,12 @@ class Device private constructor() {
                 Message.MSG_LOGIN_SUCCESS -> {
                     appDeviceCallback.onMessage(what.value, result)
                 }
-                else -> {}
+                Message.MSG_LOGIN_FAIL -> {
+                    appDeviceCallback.onMessage(what.value, result)
+                }
+                else -> {
+                    Logger.w("unknown message ${what.name}")
+                }
             }
         }
     };
@@ -79,7 +82,22 @@ class Device private constructor() {
 
     fun login(): Unit {
 //        deviceCallback(Message.LOGIN, null)
-        authorize()
+        if (RuntimeInfo.refreshToken != null) {
+            authorizeWithToken()
+        } else {
+            authorize()
+        }
+    }
+
+    private fun authorizeWithToken() {
+        httpChannel.postRefreshAccessToken { success, reason, response ->
+            if (success) {
+                createDownChannel()
+            } else {
+                // failed
+                deviceCallback(Message.MSG_LOGIN_FAIL, reason)
+            }
+        }
     }
 
     private fun authorize(): Unit {
@@ -89,12 +107,13 @@ class Device private constructor() {
                 onAuthorizeSuccess(result!!)
             }
 
-            override fun onError(p0: AuthError?) {
+            override fun onError(e: AuthError?) {
                 Logger.e("auth failed")
+                deviceCallback(Message.MSG_LOGIN_FAIL, e?.message?: "login failed")
             }
 
-            override fun onCancel(p0: AuthCancellation?) {
-                TODO("Not yet implemented")
+            override fun onCancel(e: AuthCancellation?) {
+                deviceCallback(Message.MSG_LOGIN_FAIL, e?.description)
             }
         })
 

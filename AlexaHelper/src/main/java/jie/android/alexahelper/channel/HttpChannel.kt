@@ -3,7 +3,6 @@ package jie.android.alexahelper.channel
 import jie.android.alexahelper.InnerDeviceCallback
 import jie.android.alexahelper.device.ProductInfo
 import jie.android.alexahelper.device.RuntimeInfo
-import jie.android.alexahelper.utils.Logger
 import jie.android.alexahelper.utils.MyLoggingInterceptor
 import jie.android.alexahelper.utils.makePartBoundary
 import kotlinx.serialization.json.*
@@ -11,12 +10,9 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-//internal typealias CreateDownChannelCallback = (result: Boolean, reason: String?) -> Unit
-//internal typealias FetchAuthorizeTokenCallback = (result: Boolean, reason: String?) -> Unit
 internal typealias ChannelPostCallback = (success: Boolean, reason: String?, response: Response?) -> Unit
 
 class HttpChannel (callback: InnerDeviceCallback) {
@@ -28,8 +24,6 @@ class HttpChannel (callback: InnerDeviceCallback) {
     private val deviceCallback: InnerDeviceCallback = callback
 
     private var downChannel: DownChannel = DownChannel()
-
-    private val interceptor: HttpLoggingInterceptor = HttpLoggingInterceptor().apply { setLevel(HttpLoggingInterceptor.Level.BODY) }
 
     private var client: OkHttpClient = OkHttpClient.Builder()
         .protocols(listOf(Protocol.HTTP_2, Protocol.HTTP_1_1))
@@ -127,7 +121,6 @@ class HttpChannel (callback: InnerDeviceCallback) {
                 }
             }
         })
-
     }
 
     internal fun getDownChannel(callback: ChannelPostCallback): Unit {
@@ -143,6 +136,40 @@ class HttpChannel (callback: InnerDeviceCallback) {
             override fun onResponse(call: Call, response: Response) {
                 downChannel.create(response, deviceCallback)
                 callback(true, null, response)
+            }
+        })
+    }
+
+    fun postRefreshAccessToken(callback: ChannelPostCallback) {
+        val body: JsonObject = buildJsonObject {
+            put("grant_type", "refresh_token")
+            put("refresh_token", RuntimeInfo.refreshToken)
+            put("client_id", ProductInfo.clientId)
+        }
+        val request: Request = Request.Builder()
+            .url(avsAuthorizeUrl)
+            .post(body.toString().toRequestBody( "application/json;charset=utf-8".toMediaType()))
+            .build()
+
+        client.newCall(request).enqueue(object: Callback{
+            override fun onFailure(call: Call, e: IOException) {
+                callback(false, e.message, null)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.code in 200..204) {
+                    val result: JsonObject =
+                        Json.parseToJsonElement(response.body!!.string()) as JsonObject
+
+                    RuntimeInfo.accessToken = result["access_token"]?.jsonPrimitive?.content
+                    RuntimeInfo.refreshToken = result["refresh_token"]?.jsonPrimitive?.content
+
+                    response.close()
+                    callback(true, null, response)
+                } else {
+                    response.close()
+                    callback(false, "response code - ${response.code}", response)
+                }
             }
         })
     }

@@ -67,6 +67,11 @@ public class MainActivity extends AppCompatActivity {
                     Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_SUCCESS);
                     Utils.sendToHandlerMessage(RuntimeInfo.getInstance().mainHandler, HandlerConst.MSG_LOGIN_SUCCESS);
                     break;
+                case HandlerConst.MSG_LOGIN_FAIL:
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_FAIL);
+                    break;
+                default:
+                    Logger.w("unknown message - " + what);
             }
         }
     };
@@ -150,8 +155,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Logger.e("onDestroy()");
-
         directiveThread.quit();
+
+        device.detach(this);
 
         SettingInfo.getInstance().flush();
         RuntimeInfo.getInstance().stop();
