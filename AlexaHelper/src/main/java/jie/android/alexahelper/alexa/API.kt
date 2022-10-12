@@ -1,4 +1,4 @@
-package jie.android.alexahelper.api
+package jie.android.alexahelper.alexa
 
 object API {
     const val NS_SYSTEM = "System"

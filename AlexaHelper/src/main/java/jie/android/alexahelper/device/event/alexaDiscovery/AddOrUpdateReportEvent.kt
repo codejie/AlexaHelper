@@ -1,8 +1,8 @@
 package jie.android.alexahelper.device.event.alexaDiscovery
 
-import jie.android.alexahelper.api.API
-import jie.android.alexahelper.api.Event
-import jie.android.alexahelper.api.makeMessageId
+import jie.android.alexahelper.alexa.API
+import jie.android.alexahelper.alexa.Event
+import jie.android.alexahelper.alexa.makeMessageId
 import jie.android.alexahelper.device.EndpointInfo
 import jie.android.alexahelper.device.RuntimeInfo
 import kotlinx.serialization.json.*

@@ -1,4 +1,4 @@
-package jie.android.alexahelper.api
+package jie.android.alexahelper.alexa
 
 import kotlinx.serialization.json.*
 import java.util.*
