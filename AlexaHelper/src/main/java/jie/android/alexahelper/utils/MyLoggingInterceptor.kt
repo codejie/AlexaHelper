@@ -98,12 +98,12 @@ class MyLoggingInterceptor(var level: Level = Level.BODY): Interceptor {
                             log(responseBody.string())
                             log("<-- END (json) body")
                         }
-                        else -> log("<-- END (${type?.subtype} body")
+                        else -> log("<-- END (${type?.subtype}） body")
                     }
                 } else {
                     val buffer: Buffer = response.peekBody(responseBody!!.contentLength()).source().buffer
                     log(buffer.readString(StandardCharsets.UTF_8))
-                    log("<-- END (${responseBody.contentLength()} byte body")
+                    log("<-- END (${responseBody.contentLength()}） byte body")
                 }
             } else {
                 log("<-- END HTTP")

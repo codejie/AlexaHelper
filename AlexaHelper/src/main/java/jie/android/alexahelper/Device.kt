@@ -40,6 +40,7 @@ class Device private constructor() {
         synchronized(this) {
             when (what) {
                 Message.MSG_LOGIN_SUCCESS -> {
+                    onLoginSuccess()
                     appDeviceCallback.onMessage(what.value, result)
                 }
                 Message.MSG_LOGIN_FAIL -> {
@@ -51,7 +52,6 @@ class Device private constructor() {
             }
         }
     };
-
 
     fun setProductInfo(id: String, clientId: String, serial: String): Unit {
         ProductInfo.id = id
@@ -73,21 +73,6 @@ class Device private constructor() {
         httpChannel = HttpChannel(deviceCallback)
 
         ScheduleTimer.start()
-
-        ScheduleTimer.addTimer(ScheduleTimer.Timer(5000L, true, "1 timer") {
-            Logger.v((it ?: "null") as String)
-        })
-
-        val id = ScheduleTimer.addTimer(ScheduleTimer.Timer(3000L, true, "2 timer") {
-            Logger.v((it ?: "null") as String)
-        })
-
-        ScheduleTimer.addTimer(ScheduleTimer.Timer(8000L, false, "3 timer") {
-            ScheduleTimer.removeTimer(id)
-            Logger.v((it ?: "null") as String)
-        })
-
-
     }
 
     fun detach(context: Context): Unit {
@@ -222,4 +207,38 @@ class Device private constructor() {
             }
         }
     }
+
+
+    private fun onLoginSuccess() {
+        Logger.d("login success")
+        ScheduleTimer.addTimer(ScheduleTimer.Timer(55 * 60 * 1000, true, null) {
+            onRefreshTokenTimeout()
+        })
+
+        ScheduleTimer.addTimer(ScheduleTimer.Timer(280 * 1000, true, null) {
+            onPingDownChannelTimeout()
+        })
+    }
+
+    private fun onRefreshTokenTimeout() {
+        httpChannel.postRefreshAccessToken { success, reason, response ->
+            if (success) {
+                Logger.d("token be updated.")
+            } else {
+                // logout
+                Logger.w("token update failed - $reason")
+            }
+        }
+    }
+
+    private fun onPingDownChannelTimeout() {
+        httpChannel.getDownChannel { success, reason, response ->
+            if (success) {
+                Logger.d("Down Channel re-establish.")
+            } else {
+                Logger.w("Down channel re-establish fail - $reason")
+            }
+        }
+    }
+
 }

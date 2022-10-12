@@ -12,16 +12,16 @@ object ScheduleTimer {
 
     private const val delayMillis: Long = 1000L
     private var timerId: Int = 0;
-    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private val timers: MutableList<Timer> = mutableListOf()
 
     fun addTimer(timer: Timer): Int {
 //        scope.launch (Dispatchers.IO) {
-            timer.id = (++ ScheduleTimer.timerId)
+            timer.id = (++ timerId)
             timers.add(timer)
 //        }
-        return ScheduleTimer.timerId
+        return timerId
     }
 
     fun removeTimer(id: Int) {
@@ -32,6 +32,10 @@ object ScheduleTimer {
 //        }
     }
 
+    fun removeAllTimers() {
+        timers.clear()
+    }
+
     private fun startCoroutineTimer(action: () -> Unit) = scope.launch(Dispatchers.IO) {
         do {
             action()
@@ -39,11 +43,11 @@ object ScheduleTimer {
         } while (true)
     }
 
-    private lateinit var job: Job;
+    private lateinit var job: Job
 
     fun start() {
         job = startCoroutineTimer() {
-            Logger.d("ScheduledTimer - tick")
+//            Logger.d("ScheduledTimer - tick")
             for (timer in timers) {
                 timer.counter -= delayMillis
                 if (timer.counter <= 0L) {
@@ -61,6 +65,7 @@ object ScheduleTimer {
     }
 
     fun stop() {
+        removeAllTimers()
         job.cancel()
     }
 }

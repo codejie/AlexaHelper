@@ -134,7 +134,7 @@ class HttpChannel (callback: InnerDeviceCallback) {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                downChannel.create(response, deviceCallback)
+                downChannel.start(response, deviceCallback)
                 callback(true, null, response)
             }
         })
