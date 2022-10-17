@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
@@ -31,6 +32,9 @@ import com.SmartWatchVoice.bestapp.utils.Utils;
 import jie.android.alexahelper.AppDeviceCallback;
 import jie.android.alexahelper.Device;
 import jie.android.alexahelper.device.ProductInfo;
+import jie.android.alexahelper.smartwatchsdk.OnActionListener;
+import jie.android.alexahelper.smartwatchsdk.OnResultCallback;
+import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 
@@ -86,6 +90,22 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
+
+        SmartWatchSDK sdk = new SmartWatchSDK();
+        sdk.attach(this, new OnActionListener() {
+            @Override
+            public void onAction(@NonNull String data, @Nullable Object extra, @NonNull OnResultCallback callback) {
+                Logger.d("onAction - " + data);
+                callback.onResult(data, null);
+            }
+        });
+        sdk.action("HELLO", null, new OnResultCallback() {
+            @Override
+            public void onResult(@NonNull String data, @Nullable Object extra) {
+                Logger.d("onResult - " + data);
+            }
+        });
+
 
         RuntimeInfo.getInstance().start(this);
         initHandlers();
