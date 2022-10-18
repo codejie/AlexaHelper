@@ -11,18 +11,18 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-typealias DownChannelCallback = () -> Unit
+typealias DownChannelActionCallback = () -> Unit
 internal typealias ChannelPostCallback = (success: Boolean, reason: String?, response: Response?) -> Unit
 
-class HttpChannel (callback: DownChannelCallback) {
+object HttpChannel {
 
-    private var avsBaseUrl: String = "https://alexa.na.gateway.devices.a2z.com"
-    private val avsAuthorizeUrl: String = "https://api.amazon.com/auth/o2/token"
-    private val avsVersion: String = "/v20160207"
+    var avsBaseUrl: String = "https://alexa.na.gateway.devices.a2z.com"
+    private const val avsAuthorizeUrl: String = "https://api.amazon.com/auth/o2/token"
+    private const val avsVersion: String = "/v20160207"
 
-    private val deviceCallback: DownChannelCallback = callback
+    private val downChannel: DownChannel = DownChannel()
 
-    private var downChannel: DownChannel = DownChannel()
+    lateinit var downChannelCallback: DownChannelActionCallback
 
     private var client: OkHttpClient = OkHttpClient.Builder()
         .protocols(listOf(Protocol.HTTP_2, Protocol.HTTP_1_1))
@@ -30,11 +30,10 @@ class HttpChannel (callback: DownChannelCallback) {
         .writeTimeout(60, TimeUnit.MINUTES)
         .connectTimeout(10000, TimeUnit.MILLISECONDS)
         .pingInterval(280, TimeUnit.SECONDS)
-//        .addInterceptor(interceptor)
         .addInterceptor(MyLoggingInterceptor().apply { level = MyLoggingInterceptor.Level.BODY })
         .build()
 
-    internal fun postEvents(bodies: Map<String, RequestBody>, callback: ChannelPostCallback): Unit {
+    fun postEvents(bodies: Map<String, RequestBody>, callback: ChannelPostCallback): Unit {
         val boundary: String = makePartBoundary()
         val builder: MultipartBody.Builder = MultipartBody.Builder()
         with (builder) {
@@ -64,27 +63,13 @@ class HttpChannel (callback: DownChannelCallback) {
         })
     }
 
-    internal fun postEvents(json: JsonObject, callback: ChannelPostCallback): Unit {
+    fun postEvents(json: JsonObject, callback: ChannelPostCallback): Unit {
         val body: RequestBody = json.toString().toRequestBody(
             "application/json;charset=utf-8".toMediaType())
 
         val bodies: Map<String, RequestBody> = mutableMapOf(Pair<String, RequestBody>("metadata", body))
         postEvents(bodies, callback)
     }
-//
-//    internal fun postAuthorize(body: RequestBody, callback: Callback): Unit {
-//        val request: Request = Request.Builder()
-//            .url(avsAuthorizeUrl)
-//            .post(body)
-//            .build()
-//        client.newCall(request).enqueue(callback)
-//    }
-//
-//    internal fun postAuthorize(json: JsonObject, callback: Callback): Unit {
-//        val body: RequestBody = json.toString().toRequestBody(
-//            "application/json;charset=utf-8".toMediaType())
-//        postAuthorize(body, callback)
-//    }
 
     internal fun postAuthorize(callback: ChannelPostCallback) {
         val body: JsonObject = buildJsonObject {
@@ -133,7 +118,7 @@ class HttpChannel (callback: DownChannelCallback) {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                downChannel.start(response, deviceCallback)
+                downChannel.start(response, downChannelCallback)
                 callback(true, null, response)
             }
         })

@@ -1,6 +1,6 @@
 package jie.android.alexahelper.smartwatchsdk
 
-object RuntimeInfo {
+internal object RuntimeInfo {
     var verifierCode: String? = null
 
     var authorizeCode: String? = null

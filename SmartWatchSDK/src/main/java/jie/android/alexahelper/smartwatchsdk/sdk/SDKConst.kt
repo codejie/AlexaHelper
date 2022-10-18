@@ -13,6 +13,7 @@ object SDKConst {
     const val RESULT_CODE_INVALID_FORMAT = -1
     const val RESULT_CODE_MISSING_FIELD = -2
     const val RESULT_CODE_MISSING_PARAMETERS = -3
+    const val RESULT_CODE_ACTION_FAILED = -4
 
     const val RESULT_CODE_LOGIN_FAIL = -100
 

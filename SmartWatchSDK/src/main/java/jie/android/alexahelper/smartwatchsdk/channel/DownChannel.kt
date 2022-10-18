@@ -10,7 +10,7 @@ class DownChannel () {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var job: Job? = null
 
-    fun start(response: Response, callback: DownChannelCallback): Unit {
+    fun start(response: Response, callback: DownChannelActionCallback): Unit {
         stop()
 
         val source: BufferedSource = response.body!!.source()
@@ -34,5 +34,4 @@ class DownChannel () {
     fun stop(): Unit {
         job?.cancel()
     }
-
 }

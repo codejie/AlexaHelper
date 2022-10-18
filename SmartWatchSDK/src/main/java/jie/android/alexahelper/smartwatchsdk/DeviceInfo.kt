@@ -1,6 +1,6 @@
 package jie.android.alexahelper.smartwatchsdk
 
-object DeviceInfo {
+internal object DeviceInfo {
     object Product {
         var id: String? = null
         var clientId: String? = null
