@@ -31,12 +31,9 @@ import com.SmartWatchVoice.bestapp.utils.Utils;
 
 import jie.android.alexahelper.AppDeviceCallback;
 import jie.android.alexahelper.Device;
-import jie.android.alexahelper.device.ProductInfo;
-import jie.android.alexahelper.smartwatchsdk.OnActionListener;
-import jie.android.alexahelper.smartwatchsdk.OnResultCallback;
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function2;
+import jie.android.alexahelper.smartwatchsdk.sdk.OnActionListener;
+import jie.android.alexahelper.smartwatchsdk.sdk.OnResultCallback;
 
 public class MainActivity extends AppCompatActivity {
 
