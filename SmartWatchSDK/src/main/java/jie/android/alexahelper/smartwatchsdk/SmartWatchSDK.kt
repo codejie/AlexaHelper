@@ -4,14 +4,25 @@ import android.content.Context
 import com.amazon.identity.auth.device.api.workflow.RequestContext
 import jie.android.alexahelper.smartwatchsdk.action.alexa.AlexaAction
 import jie.android.alexahelper.smartwatchsdk.action.device.DeviceAction
+import jie.android.alexahelper.smartwatchsdk.action.sdk.SDKAction
 import jie.android.alexahelper.smartwatchsdk.sdk.*
 import kotlinx.serialization.SerializationException
 
+enum class SDKMessage {
+    LOGIN_SUCCESS
+}
+typealias SDKCallback = (what: SDKMessage, extra: Any?) -> Unit
 
 class SmartWatchSDK constructor() {
-    private lateinit var requestContext: RequestContext
+    internal lateinit var requestContext: RequestContext
+    internal lateinit var onActionListener: OnActionListener;
 
-    private lateinit var onActionListener: OnActionListener;
+    internal val sdkCallback: SDKCallback = { what: SDKMessage, extra: Any? ->
+        when (what) {
+
+            else -> {}
+        }
+    }
 
     fun attach(context: Context, actionListener: OnActionListener) {
         requestContext = RequestContext.create(context)
@@ -36,8 +47,10 @@ class SmartWatchSDK constructor() {
         try {
             val action: ActionWrapper = ActionWrapper.parse(data, extra, callback)
             when (action.name) {
-                SDKConst.ACTION_DEVICE_SET_INFO -> DeviceAction.setInfo(action)
-                SDKConst.ACTION_ALEXA_LOGIN -> AlexaAction.login(requestContext, action) // onActionLogin(action)
+                SDKConst.ACTION_SDK_TEST -> SDKAction.test(this, action)
+                SDKConst.ACTION_DEVICE_SET_INFO -> DeviceAction.setInfo(this, action)
+                SDKConst.ACTION_ALEXA_LOGIN -> AlexaAction.login(this, action) // onActionLogin(action)
+                SDKConst.ACTION_ALEXA_LOGIN_WITH_TOKEN -> AlexaAction.loginWithToken(this, action)
                 else -> throw SDKException(
                     SDKConst.RESULT_CODE_INVALID_FORMAT,
                     SDKConst.RESULT_MESSAGE_INVALID_FORMAT

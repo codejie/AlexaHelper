@@ -5,8 +5,10 @@ open class SDKException constructor(val code: Int, message: String? = null): Exc
 
 object SDKConst {
     const val ACTION_SDK_EXCEPTION = "sdk.exception"
+    const val ACTION_SDK_TEST = "sdk.test"
     const val ACTION_DEVICE_SET_INFO = "device.setInfo"
     const val ACTION_ALEXA_LOGIN = "alexa.login"
+    const val ACTION_ALEXA_LOGIN_WITH_TOKEN = "alexa.loginWithToken"
 
 
     const val RESULT_CODE_SUCCESS = 0

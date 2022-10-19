@@ -124,10 +124,10 @@ object HttpChannel {
         })
     }
 
-    fun postRefreshAccessToken(callback: ChannelPostCallback) {
+    fun postRefreshAccessToken(refreshToken: String, callback: ChannelPostCallback) {
         val body: JsonObject = buildJsonObject {
             put("grant_type", "refresh_token")
-            put("refresh_token", RuntimeInfo.refreshToken)
+            put("refresh_token", refreshToken)
             put("client_id", DeviceInfo.Product.clientId)
         }
         val request: Request = Request.Builder()

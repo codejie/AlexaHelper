@@ -1,10 +1,11 @@
 package jie.android.alexahelper.smartwatchsdk.action.device
 
 import jie.android.alexahelper.smartwatchsdk.DeviceInfo
+import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.sdk.*
 import kotlinx.serialization.json.JsonObject
 
-fun setInfoAction(action: ActionWrapper) {
+fun setInfoAction(sdk: SmartWatchSDK, action: ActionWrapper) {
     val payload: JsonObject = action.getPayload()!!
 
     val product = payload.getJsonObject("payload")!!
