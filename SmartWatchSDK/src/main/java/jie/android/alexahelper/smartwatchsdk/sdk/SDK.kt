@@ -23,17 +23,15 @@ class Builder {
     fun build(): JsonObject = JsonObject(content)
 }
 
-open class SDK constructor(var type: String, var name: String?, var version: Int) {
+open class SDK constructor(var type: String?, var name: String?, var version: Int?) {
     protected val dataBuilder: Builder = Builder()
     var data: JsonObject? = null
     var extra: Any? = null
 
     init {
-        dataBuilder.put("type", type)
-        if (name != null) {
-            dataBuilder.put("name", name!!)
-        }
-        dataBuilder.put("version", version)
+        type?.let { dataBuilder.put("type", it) }
+        name?.let { dataBuilder.put("name", it) }
+        version?.let { dataBuilder.put("version", it) }
     }
 
     fun setPayload(payload: JsonObject) {
@@ -60,9 +58,9 @@ class ActionWrapper(name: String?, version: Int = 1) : SDK("action", name, versi
                 val ret: ActionWrapper = ActionWrapper()
                 ret.data = Json.parseToJsonElement(data) as JsonObject
 
-                ret.type = ret.data?.get("type").toString()
-                ret.name = ret.data?.get("name").toString()
-                ret.version = ret.data?.get("version").toString().toInt()
+                ret.type = ret.data?.get("type")?.jsonPrimitive?.content
+                ret.name = ret.data?.get("name")?.jsonPrimitive?.content
+                ret.version = ret.data?.get("version")?.jsonPrimitive?.content?.toInt()
 
                 if (ret.name == null) {
                     throw SDKException(SDKConst.RESULT_CODE_INVALID_FORMAT, SDKConst.RESULT_MESSAGE_INVALID_FORMAT)
@@ -89,9 +87,9 @@ class ResultWrapper(name: String?, var code: Int, var message: String? = null, v
                 val ret: ResultWrapper = ResultWrapper()
                 ret.data = Json.parseToJsonElement(data) as JsonObject
 
-                ret.type = ret.data?.get("type").toString()
-                ret.name = ret.data?.get("name").toString()
-                ret.version = ret.data?.get("version").toString().toInt()
+                ret.type = ret.data?.get("type")?.jsonPrimitive?.content
+                ret.name = ret.data?.get("name")?.jsonPrimitive?.content
+                ret.version = ret.data?.get("version")?.jsonPrimitive?.content?.toInt()
 
                 if (ret.name == null) {
                     throw SDKException(SDKConst.RESULT_CODE_INVALID_FORMAT, SDKConst.RESULT_MESSAGE_INVALID_FORMAT)
@@ -117,7 +115,7 @@ class ResultWrapper(name: String?, var code: Int, var message: String? = null, v
 }
 
 fun JsonObject.getString(key: String, checked: Boolean = true): String? {
-    val ret = this[key]?.toString()
+    val ret = this[key]?.jsonPrimitive?.content
     if (ret == null && checked)
         throw SDKException(
             SDKConst.RESULT_CODE_MISSING_FIELD,
@@ -126,7 +124,7 @@ fun JsonObject.getString(key: String, checked: Boolean = true): String? {
 }
 
 fun JsonObject.getInt(key: String, checked: Boolean = true): Int? {
-    val ret = this[key]?.toString()?.toInt()
+    val ret = this[key]?.jsonPrimitive?.content?.toInt()
     if (ret == null && checked)
         throw SDKException(
             SDKConst.RESULT_CODE_MISSING_FIELD,
@@ -136,7 +134,7 @@ fun JsonObject.getInt(key: String, checked: Boolean = true): Int? {
 }
 
 fun JsonObject.getBoolean(key: String, checked: Boolean = true): Boolean? {
-    val ret = this[key]?.toString()?.toBoolean()
+    val ret = this[key]?.jsonPrimitive?.content?.toBoolean()
     if (ret == null && checked)
         throw SDKException(
             SDKConst.RESULT_CODE_MISSING_FIELD,

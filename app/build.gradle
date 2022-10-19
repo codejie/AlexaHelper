@@ -50,8 +50,6 @@ dependencies {
     implementation 'androidx.preference:preference:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation project(path: ':AlexaHelper')
-    implementation files('libs\\login-with-amazon-sdk.jar')
     implementation project(path: ':SmartWatchSDK')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

@@ -22,7 +22,9 @@ object HttpChannel {
 
     private val downChannel: DownChannel = DownChannel()
 
-    lateinit var downChannelCallback: DownChannelActionCallback
+    var downChannelCallback: DownChannelActionCallback = {
+
+    }
 
     private var client: OkHttpClient = OkHttpClient.Builder()
         .protocols(listOf(Protocol.HTTP_2, Protocol.HTTP_1_1))

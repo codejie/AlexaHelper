@@ -17,7 +17,6 @@ import com.SmartWatchVoice.bestapp.system.DeviceInfo;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.utils.Utils;
 
-import jie.android.alexahelper.Device;
 
 public class LoginFragment extends Fragment {
 
