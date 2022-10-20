@@ -24,6 +24,7 @@ import com.SmartWatchVoice.bestapp.handler.HandlerConst;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.utils.Logger;
+import com.SmartWatchVoice.bestapp.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -254,9 +255,15 @@ public class MainActivity extends AppCompatActivity {
                 Logger.d("login - " + data);
                 try {
                     JSONObject result = new JSONObject(data);
-                    RuntimeInfo.getInstance().authInfo.refreshToken =  result.getString("refreshToken");
+                    JSONObject payload = result.getJSONObject("payload");
+                    String token = payload.getString("refreshToken");
+                    RuntimeInfo.getInstance().updateAuthInfo(token);
+
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_SUCCESS);
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().mainHandler, HandlerConst.MSG_LOGIN_SUCCESS);
+
                 } catch (JSONException e) {
-                    Logger.d("login result parse failed - " + e.getMessage());
+                    Logger.w("login result parse failed - " + e.getMessage());
                 }
             }
         });
@@ -283,7 +290,10 @@ public class MainActivity extends AppCompatActivity {
                 Logger.d("login with Token - " + data);
                 try {
                     JSONObject result = new JSONObject(data);
-                    RuntimeInfo.getInstance().authInfo.refreshToken =  result.getString("refreshToken");
+                    RuntimeInfo.getInstance().updateAuthInfo(result.getJSONObject("payload").getString("refreshToken"));
+
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_SUCCESS);
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().mainHandler, HandlerConst.MSG_LOGIN_SUCCESS);
                 } catch (JSONException e) {
                     Logger.d("login with Token result parse failed - " + e.getMessage());
                 }

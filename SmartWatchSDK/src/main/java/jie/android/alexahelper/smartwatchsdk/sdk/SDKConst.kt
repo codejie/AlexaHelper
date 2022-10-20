@@ -9,6 +9,7 @@ object SDKConst {
     const val ACTION_DEVICE_SET_INFO = "device.setInfo"
     const val ACTION_ALEXA_LOGIN = "alexa.login"
     const val ACTION_ALEXA_LOGIN_WITH_TOKEN = "alexa.loginWithToken"
+    const val ACTION_SET_DND = "alexa.setDND"
 
 
     const val RESULT_CODE_SUCCESS = 0
