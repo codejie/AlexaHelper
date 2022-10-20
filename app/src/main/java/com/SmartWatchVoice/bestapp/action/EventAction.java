@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.SmartWatchVoice.bestapp.alexa.api.Event;
 import com.SmartWatchVoice.bestapp.alexa.api.Payload;
-import com.SmartWatchVoice.bestapp.system.channel.HttpChannel;
 import com.SmartWatchVoice.bestapp.utils.Logger;
 import com.google.gson.Gson;
 
@@ -94,7 +93,7 @@ public abstract class EventAction {
             bodies.put(attachment.name, attachment.body);
         });
 
-        HttpChannel.getInstance().postRequests(bodies, callback);
+//        HttpChannel.getInstance().postRequests(bodies, callback);
     }
 
     protected String makeMessageId() {

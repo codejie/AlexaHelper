@@ -23,7 +23,6 @@ import com.SmartWatchVoice.bestapp.handler.DirectiveCallback;
 import com.SmartWatchVoice.bestapp.handler.HandlerConst;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
-import com.SmartWatchVoice.bestapp.system.channel.HttpChannel;
 import com.SmartWatchVoice.bestapp.utils.Logger;
 
 import org.json.JSONException;
@@ -75,8 +74,6 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
 
-        DeviceInfo.ProductSerialNumber = "VWRK4_1234";
-
         smartWatchSDK.attach(this, onActionListener);
         JSONObject json = new JSONObject();
         try {
@@ -94,49 +91,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        JSONObject product = new JSONObject();
-        try {
-            product.put("id", DeviceInfo.ProductId);
-            product.put("clientId", DeviceInfo.ClientId);
-            product.put("serialNumber", DeviceInfo.ProductSerialNumber);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JSONObject payload = new JSONObject();
-        try {
-            payload.put("product", product);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JSONObject info = new JSONObject();
-        try {
-            info.put("type", "action");
-            info.put("name", "device.setInfo");
-            info.put("version", 1);
-            info.put("payload", payload);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        smartWatchSDK.action(info.toString(), null, new OnResultCallback() {
-            @Override
-            public void onResult(@NonNull String data, @Nullable Object extra) {
-                Logger.d("setInfo result - " + data);
-            }
-        });
-
-//
+        DeviceInfo.init(this);
         RuntimeInfo.getInstance().start(this);
+
         initHandlers();
-//
-////        initRequestContext();
-//        DeviceInfo.ProductSerialNumber = "VWRK4_1234";
-//        device = Device.Companion.create();
-//        device.setProductInfo(DeviceInfo.ProductId, DeviceInfo.ClientId, DeviceInfo.ProductSerialNumber);
-//        device.attach((Context) this, callback);
-////        Device.Companion.getInstance().attach(this, new ProductInfo(DeviceInfo.ClientId, DeviceInfo.ProductId, DeviceInfo.ProductSerialNumber));
+//        initRequestContext();
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -215,7 +174,17 @@ public class MainActivity extends AppCompatActivity {
                 Logger.v("MainHandler - " + message);
                 switch (message.what) {
                     case HandlerConst.MSG_FETCH_TOKEN:
-                        fetchProductAccessToken();
+                        setDeviceInfo(new OnResultCallback() {
+                            @Override
+                            public void onResult(@NonNull String data, @Nullable Object extra) {
+                                Logger.d("setInfo result - " + data);
+                                if (RuntimeInfo.getInstance().authInfo == null ||  RuntimeInfo.getInstance().authInfo.refreshToken == null) {
+                                    fetchProductAccessToken();
+                                } else {
+                                    loginWithToken();
+                                }
+                            }
+                        });
                         break;
                     case HandlerConst.MSG_LOGIN_SUCCESS:
                     case HandlerConst.MSG_REFRESH_TOKEN_SUCCESS:
@@ -270,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
     public void fetchProductAccessToken() {
 //        HttpChannel.getInstance().authorize(requestContext);
 //        Device.Companion.getInstance().login();
+
         JSONObject json = new JSONObject();
         try {
             json.put("type", "action");
@@ -282,6 +252,41 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResult(@NonNull String data, @Nullable Object extra) {
                 Logger.d("login - " + data);
+                try {
+                    JSONObject result = new JSONObject(data);
+                    RuntimeInfo.getInstance().authInfo.refreshToken =  result.getString("refreshToken");
+                } catch (JSONException e) {
+                    Logger.d("login result parse failed - " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    private void loginWithToken() {
+        JSONObject payload = new JSONObject();
+
+        JSONObject json = new JSONObject();
+        try {
+            payload.put("refreshToken", RuntimeInfo.getInstance().authInfo.refreshToken);
+
+            json.put("type", "action");
+            json.put("name", "alexa.loginWithToken");
+            json.put("version", 1);
+
+            json.put("payload", payload);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        smartWatchSDK.action(json.toString(), null, new OnResultCallback() {
+            @Override
+            public void onResult(@NonNull String data, @Nullable Object extra) {
+                Logger.d("login with Token - " + data);
+                try {
+                    JSONObject result = new JSONObject(data);
+                    RuntimeInfo.getInstance().authInfo.refreshToken =  result.getString("refreshToken");
+                } catch (JSONException e) {
+                    Logger.d("login with Token result parse failed - " + e.getMessage());
+                }
             }
         });
     }
@@ -301,16 +306,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshAuthorizationToken() {
-        HttpChannel.getInstance().refreshAccessToken();
+//        HttpChannel.getInstance().refreshAccessToken();
     }
 
     private void pingDownChannel() {
-        HttpChannel.getInstance().ping();
+//        HttpChannel.getInstance().ping();
     }
 
     private void onDownChannelClosed() {
         RuntimeInfo.getInstance().mainHandler.removeMessages(HandlerConst.MSG_PING_CHANNEL);
-        HttpChannel.getInstance().recreateDownChannel();
+//        HttpChannel.getInstance().recreateDownChannel();
     }
 
+    private void setDeviceInfo(OnResultCallback callback) {
+        JSONObject product = new JSONObject();
+        try {
+            product.put("id", DeviceInfo.ProductId);
+            product.put("clientId", DeviceInfo.ClientId);
+            product.put("serialNumber", DeviceInfo.ProductSerialNumber);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject payload = new JSONObject();
+        try {
+            payload.put("product", product);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject info = new JSONObject();
+        try {
+            info.put("type", "action");
+            info.put("name", "device.setInfo");
+            info.put("version", 1);
+            info.put("payload", payload);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        smartWatchSDK.action(info.toString(), null, callback);
+    }
 }

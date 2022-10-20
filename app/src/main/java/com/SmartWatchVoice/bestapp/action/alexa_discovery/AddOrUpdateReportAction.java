@@ -4,9 +4,8 @@ import com.SmartWatchVoice.bestapp.action.EventAction;
 import com.SmartWatchVoice.bestapp.alexa.api.ApiConst;
 import com.SmartWatchVoice.bestapp.alexa.api.Event;
 import com.SmartWatchVoice.bestapp.alexa.api.Payload;
-import com.SmartWatchVoice.bestapp.system.thing.Thing;
 import com.SmartWatchVoice.bestapp.system.ThingInfo;
-import com.SmartWatchVoice.bestapp.system.channel.HttpChannel;
+import com.SmartWatchVoice.bestapp.system.thing.Thing;
 
 import java.util.ArrayList;
 
@@ -16,7 +15,7 @@ public class AddOrUpdateReportAction extends EventAction {
     public EventAction create() {
         Payload.Scope scope = new Payload.Scope();
         scope.type = "BearerToken";
-        scope.token = HttpChannel.getInstance().getAccessToken();;
+//        scope.token = HttpChannel.getInstance().getAccessToken();;
 
 //        Payload.Endpoint endpoint = new Payload.Endpoint();
 //        endpoint.endpointId = DeviceInfo.ClientId + "::" // HttpChannel.getInstance().getAuthClientId() + ":"

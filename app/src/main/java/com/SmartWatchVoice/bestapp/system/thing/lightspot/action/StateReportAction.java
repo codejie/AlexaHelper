@@ -5,8 +5,6 @@ import com.SmartWatchVoice.bestapp.alexa.api.ApiConst;
 import com.SmartWatchVoice.bestapp.alexa.api.Directive;
 import com.SmartWatchVoice.bestapp.alexa.api.Endpoint;
 import com.SmartWatchVoice.bestapp.alexa.api.Event;
-import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
-import com.SmartWatchVoice.bestapp.system.channel.HttpChannel;
 import com.SmartWatchVoice.bestapp.system.thing.Thing;
 import com.SmartWatchVoice.bestapp.system.thing.ThingEventAction;
 import com.SmartWatchVoice.bestapp.system.thing.api.Context;
@@ -28,7 +26,7 @@ public class StateReportAction extends ThingEventAction {
         endpoint.endpointId = thing.getId();
         endpoint.scope = new Endpoint.Scope();
         endpoint.scope.type = "BearerToken";
-        endpoint.scope.token = HttpChannel.getInstance().getAccessToken();
+//        endpoint.scope.token = HttpChannel.getInstance().getAccessToken();
 
         Context.Property<String> property = new Context.Property.Builder<>()
                 .setNamespace(ApiConst.NS_ALEXA_POWER_CONTROLLER)

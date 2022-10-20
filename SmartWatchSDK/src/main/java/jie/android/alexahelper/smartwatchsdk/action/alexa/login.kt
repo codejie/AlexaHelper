@@ -173,7 +173,7 @@ private fun postAlexaDiscovery(sdk: SmartWatchSDK, action: ActionWrapper) {
                     put("refreshToken", RuntimeInfo.refreshToken)
                 }
                 setPayload(payload)
-            }
+            }.build()
 
             action.callback?.onResult(result.toString())
             sdk.sdkCallback(SDKMessage.LOGIN_SUCCESS, null)
