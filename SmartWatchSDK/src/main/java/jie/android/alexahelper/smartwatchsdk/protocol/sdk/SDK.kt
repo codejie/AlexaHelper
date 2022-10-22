@@ -1,4 +1,4 @@
-package jie.android.alexahelper.smartwatchsdk.sdk
+package jie.android.alexahelper.smartwatchsdk.protocol.sdk
 
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.*

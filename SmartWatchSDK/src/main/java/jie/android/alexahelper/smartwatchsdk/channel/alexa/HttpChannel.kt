@@ -1,8 +1,8 @@
-package jie.android.alexahelper.smartwatchsdk.channel
+package jie.android.alexahelper.smartwatchsdk.channel.alexa
 
 import jie.android.alexahelper.smartwatchsdk.DeviceInfo
 import jie.android.alexahelper.smartwatchsdk.RuntimeInfo
-import jie.android.alexahelper.smartwatchsdk.utils.makePartBoundary
+import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import kotlinx.serialization.json.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -14,17 +14,13 @@ import java.util.concurrent.TimeUnit
 typealias DownChannelActionCallback = () -> Unit
 internal typealias ChannelPostCallback = (success: Boolean, reason: String?, response: Response?) -> Unit
 
-object HttpChannel {
+class HttpChannel constructor(val sdk: SmartWatchSDK) {
 
     var avsBaseUrl: String = "https://alexa.na.gateway.devices.a2z.com"
-    private const val avsAuthorizeUrl: String = "https://api.amazon.com/auth/o2/token"
-    private const val avsVersion: String = "/v20160207"
+    private val avsAuthorizeUrl: String = "https://api.amazon.com/auth/o2/token"
+    private val avsVersion: String = "/v20160207"
 
-    private val downChannel: DownChannel = DownChannel()
-
-    var downChannelCallback: DownChannelActionCallback = {
-
-    }
+    private val downChannel: DownChannel = DownChannel(sdk)
 
     private var client: OkHttpClient = OkHttpClient.Builder()
         .protocols(listOf(Protocol.HTTP_2, Protocol.HTTP_1_1))
@@ -120,7 +116,7 @@ object HttpChannel {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                downChannel.start(response, downChannelCallback)
+                downChannel.start(response)
                 callback(true, null, response)
             }
         })

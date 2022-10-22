@@ -1,4 +1,4 @@
-package jie.android.alexahelper.smartwatchsdk.utils
+package jie.android.alexahelper.smartwatchsdk.channel.alexa
 
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest

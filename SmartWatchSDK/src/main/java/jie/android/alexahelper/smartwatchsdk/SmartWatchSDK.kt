@@ -2,34 +2,56 @@ package jie.android.alexahelper.smartwatchsdk
 
 import android.content.Context
 import com.amazon.identity.auth.device.api.workflow.RequestContext
-import jie.android.alexahelper.smartwatchsdk.action.alexa.AlexaAction
-import jie.android.alexahelper.smartwatchsdk.action.device.DeviceAction
-import jie.android.alexahelper.smartwatchsdk.action.sdk.SDKAction
-import jie.android.alexahelper.smartwatchsdk.sdk.*
+import jie.android.alexahelper.smartwatchsdk.action.sdk.alexa.AlexaAction
+import jie.android.alexahelper.smartwatchsdk.action.sdk.device.DeviceAction
+import jie.android.alexahelper.smartwatchsdk.action.sdk.sdk.SDKAction
+import jie.android.alexahelper.smartwatchsdk.channel.alexa.HttpChannel
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
+import jie.android.alexahelper.smartwatchsdk.utils.Logger
+import jie.android.alexahelper.smartwatchsdk.channel.sdk.SDKChannel
+import jie.android.alexahelper.smartwatchsdk.utils.SDKScheduler
 import kotlinx.serialization.SerializationException
 
 enum class SDKMessage {
     LOGIN_SUCCESS
 }
-typealias SDKCallback = (what: SDKMessage, extra: Any?) -> Unit
+
+typealias ResultCallbackHook = (action: ActionWrapper, result: ResultWrapper) -> Unit
 
 class SmartWatchSDK constructor() {
     internal lateinit var requestContext: RequestContext
     internal lateinit var onActionListener: OnActionListener;
 
-    internal val sdkCallback: SDKCallback = { what: SDKMessage, extra: Any? ->
-        when (what) {
+    internal val httpChannel: HttpChannel = HttpChannel(this)
 
-            else -> {}
+    internal val sdkChannel: SDKChannel = SDKChannel(this)
+    internal val sdkScheduler: SDKScheduler = SDKScheduler(this)
+
+    internal val resultCallbackHook: ResultCallbackHook = { action, result ->
+        when (result.name) {
+            SDKConst.ACTION_ALEXA_LOGIN,
+            SDKConst.ACTION_ALEXA_LOGIN_WITH_TOKEN -> resultLogin(action, result)
+            else -> {
+                Logger.d("Not been hooked action - ${action.name}")
+                action.callback?.onResult(result.build().toString(), result.extra)
+            }
         }
     }
 
     fun attach(context: Context, actionListener: OnActionListener) {
         requestContext = RequestContext.create(context)
         onActionListener = actionListener
+
+        sdkChannel.start()
+        sdkScheduler.start()
+
+//        sdkScheduler.addTimer(SDKScheduler.Timer(2000, true, "timer1"))
+//        sdkScheduler.addTimer(SDKScheduler.Timer(4000, false, "timer2"))
     }
 
     fun detach(context: Context) {
+        sdkScheduler.stop()
+        sdkChannel.stop()
     }
 
     fun resume(context: Context) {
@@ -56,5 +78,11 @@ class SmartWatchSDK constructor() {
             callback.onResult(ResultWrapper(SDKConst.ACTION_SDK_EXCEPTION, SDKConst.RESULT_CODE_SUCCESS).build().toString())
         }
     }
+
+    private fun resultLogin(action: ActionWrapper, result: ResultWrapper) {
+        Logger.d("login action result - ${result.code}")
+        action.callback?.onResult(result.build().toString(), result.extra)
+    }
+
 
 }

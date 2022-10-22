@@ -1,8 +1,7 @@
-package jie.android.alexahelper.smartwatchsdk.alexa
+package jie.android.alexahelper.smartwatchsdk.protocol.alexa
 
-import jie.android.alexahelper.smartwatchsdk.alexa.Utils.makeMessageId
+import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Utils.makeMessageId
 import kotlinx.serialization.json.*
-import java.util.*
 
 internal class Builder {
     private val content: MutableMap<String, JsonElement> = linkedMapOf()
@@ -15,7 +14,7 @@ internal class Builder {
     fun build(): JsonObject = JsonObject(content)
 }
 
-open class Protocol (protected val type: String, protected val namespace: String, protected val name: String, messageId: String?) {
+open class ProtocolBuilder (protected val type: String, protected val namespace: String, protected val name: String, messageId: String?) {
     private val headerBuilder: Builder = Builder()
     private var payloadBuilder: Builder? = null
     private var contextBuilder: Builder? = null
@@ -82,10 +81,10 @@ open class Protocol (protected val type: String, protected val namespace: String
 }
 
 
-open class Event (namespace: String, name: String, messageId: String? = makeMessageId()):
-    Protocol("event", namespace, name, messageId) {
+open class EventBuilder (namespace: String, name: String, messageId: String? = makeMessageId()):
+    ProtocolBuilder("event", namespace, name, messageId) {
 }
 
-open class Directive (namespace: String, name: String, messageId: String? = makeMessageId()):
-    Protocol("directive", namespace, name, messageId) {
+open class DirectiveBuilder (namespace: String, name: String, messageId: String? = makeMessageId()):
+    ProtocolBuilder("directive", namespace, name, messageId) {
 }

@@ -1,9 +1,8 @@
-package jie.android.alexahelper.smartwatchsdk.action.sdk
+package jie.android.alexahelper.smartwatchsdk.action.sdk.sdk
 
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
-import jie.android.alexahelper.smartwatchsdk.sdk.ActionWrapper
-import jie.android.alexahelper.smartwatchsdk.sdk.OnActionListener
-import jie.android.alexahelper.smartwatchsdk.sdk.OnResultCallback
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.ActionWrapper
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 
 fun testAction(sdk: SmartWatchSDK, action: ActionWrapper) {

@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 
 typealias TimerAction = (param: Any?) -> Unit
 
+@Deprecated("uses SDKScheduler")
 object ScheduleTimer {
     data class Timer(val delayMillis: Long, val repeat: Boolean = false, val param: Any? = null, val action: TimerAction) {
         var id: Int = -1
@@ -12,7 +13,7 @@ object ScheduleTimer {
 
     private const val delayMillis: Long = 1000L
     private var timerId: Int = 0;
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     private val timers: MutableList<Timer> = mutableListOf()
 

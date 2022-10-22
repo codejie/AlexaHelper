@@ -1,13 +1,10 @@
-package jie.android.alexahelper.smartwatchsdk.channel
+package jie.android.alexahelper.smartwatchsdk.channel.alexa
 
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import okio.BufferedSource
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.util.*
 
 open class DirectiveParser {
@@ -58,7 +55,7 @@ open class DirectiveParser {
     }
 
     protected open fun buildDirectivePart(headers: Map<String, String>, content: String): DirectivePart? {
-       Logger.v("directive content - \n$content")
+       Logger.v("parse directive content - \n$content")
         try {
             val directive: JsonObject = Json.parseToJsonElement(content) as JsonObject
             return DirectivePart(headers, directive)

@@ -1,8 +1,8 @@
-package jie.android.alexahelper.smartwatchsdk.action.device
+package jie.android.alexahelper.smartwatchsdk.action.sdk.device
 
 import jie.android.alexahelper.smartwatchsdk.DeviceInfo
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
-import jie.android.alexahelper.smartwatchsdk.sdk.*
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import kotlinx.serialization.json.JsonObject
 
 fun setInfoAction(sdk: SmartWatchSDK, action: ActionWrapper) {

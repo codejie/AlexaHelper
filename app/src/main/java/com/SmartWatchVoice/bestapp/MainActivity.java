@@ -30,8 +30,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK;
-import jie.android.alexahelper.smartwatchsdk.sdk.OnActionListener;
-import jie.android.alexahelper.smartwatchsdk.sdk.OnResultCallback;
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnActionListener;
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,22 +48,24 @@ public class MainActivity extends AppCompatActivity {
 
     private SmartWatchSDK smartWatchSDK = new SmartWatchSDK();
 
-//    private RequestContext requestContext;
-
-//    private Function2<? super Integer, Object, Unit> callback = (what, result) -> {
-//        switch (what) {
-//            case 1:
-//                Logger.v("get 1");
-//                break;
-//        }
-//        return Unit.INSTANCE;
-//    };
-
     private OnActionListener onActionListener = new OnActionListener() {
         @Override
         public void onAction(@NonNull String data, @Nullable Object extra, @NonNull OnResultCallback callback) {
             Logger.d("onAction - " + data);
-            callback.onResult(data, null);
+
+            try {
+                JSONObject action = new JSONObject(data);
+
+                JSONObject result = new JSONObject();
+                result.put("type", "result");
+                result.put("name", action.getString("name"));
+                result.put("version", 1);
+
+                callback.onResult(result.toString(), null);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
     };
 
@@ -217,29 +219,7 @@ public class MainActivity extends AppCompatActivity {
         RuntimeInfo.getInstance().directiveHandler = directiveHandler;
     }
 
-//    private void initRequestContext() {
-//        requestContext = RequestContext.create(this.getApplicationContext());
-//        requestContext.registerListener(new AuthorizeListener() {
-//            @Override
-//            public void onSuccess(AuthorizeResult authorizeResult) {
-//                HttpChannel.getInstance().onAuthorizeSuccess(authorizeResult);
-//            }
-//
-//            @Override
-//            public void onError(AuthError authError) {
-//                Logger.e("Authorization error - " + authError.getMessage());
-//            }
-//
-//            @Override
-//            public void onCancel(AuthCancellation authCancellation) {
-//                Logger.w("Authorization canceled.");
-//            }
-//        });
-//    }
-
     public void fetchProductAccessToken() {
-//        HttpChannel.getInstance().authorize(requestContext);
-//        Device.Companion.getInstance().login();
 
         JSONObject json = new JSONObject();
         try {
@@ -264,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
 
                 } catch (JSONException e) {
                     Logger.w("login result parse failed - " + e.getMessage());
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_FAIL);
                 }
             }
         });
@@ -296,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
                     Utils.sendToHandlerMessage(RuntimeInfo.getInstance().mainHandler, HandlerConst.MSG_LOGIN_SUCCESS);
                 } catch (JSONException e) {
                     Logger.d("login with Token result parse failed - " + e.getMessage());
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_FAIL);
                 }
             }
         });

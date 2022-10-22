@@ -1,4 +1,4 @@
-package jie.android.alexahelper.smartwatchsdk.channel
+package jie.android.alexahelper.smartwatchsdk.channel.alexa
 
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import okhttp3.*

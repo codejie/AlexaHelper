@@ -1,4 +1,4 @@
-package jie.android.alexahelper.smartwatchsdk.alexa
+package jie.android.alexahelper.smartwatchsdk.protocol.alexa
 
 import java.util.*
 

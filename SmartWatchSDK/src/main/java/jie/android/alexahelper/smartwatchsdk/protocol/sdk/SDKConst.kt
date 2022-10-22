@@ -1,4 +1,4 @@
-package jie.android.alexahelper.smartwatchsdk.sdk
+package jie.android.alexahelper.smartwatchsdk.protocol.sdk
 
 open class SDKException constructor(val code: Int, message: String? = null): Exception(message) {
 }
@@ -10,6 +10,7 @@ object SDKConst {
     const val ACTION_ALEXA_LOGIN = "alexa.login"
     const val ACTION_ALEXA_LOGIN_WITH_TOKEN = "alexa.loginWithToken"
     const val ACTION_SET_DND = "alexa.setDND"
+    const val ACTION_ALEXA_CLEAR_INDICATOR = "alexa.clearIndicator"
 
 
     const val RESULT_CODE_SUCCESS = 0

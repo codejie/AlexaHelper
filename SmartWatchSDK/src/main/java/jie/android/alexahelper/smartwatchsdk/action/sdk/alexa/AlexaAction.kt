@@ -1,8 +1,7 @@
-package jie.android.alexahelper.smartwatchsdk.action.alexa
+package jie.android.alexahelper.smartwatchsdk.action.sdk.alexa
 
-import com.amazon.identity.auth.device.api.workflow.RequestContext
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
-import jie.android.alexahelper.smartwatchsdk.sdk.ActionWrapper
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.ActionWrapper
 
 object AlexaAction {
     fun login(sdk: SmartWatchSDK, action: ActionWrapper) = loginAction(sdk, false, action)
