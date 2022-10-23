@@ -11,12 +11,14 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.SmartWatchVoice.bestapp.action.EventAction;
 import com.SmartWatchVoice.bestapp.action.speech_recognizer.ExpectSpeechTimeOutAction;
 import com.SmartWatchVoice.bestapp.action.speech_recognizer.RecognizeAction;
 import com.SmartWatchVoice.bestapp.alexa.api.Payload;
+import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.system.channel.DirectiveParser;
 import com.SmartWatchVoice.bestapp.system.channel.ResponseStreamDirectiveParser;
 import com.SmartWatchVoice.bestapp.databinding.FragmentSpeechBinding;
@@ -25,7 +27,12 @@ import com.SmartWatchVoice.bestapp.handler.HandlerConst;
 import com.SmartWatchVoice.bestapp.system.player.MPEGPlayer;
 import com.SmartWatchVoice.bestapp.system.player.PCMRecorder;
 import com.SmartWatchVoice.bestapp.system.player.PCMTracker;
+import com.SmartWatchVoice.bestapp.utils.Logger;
 import com.SmartWatchVoice.bestapp.utils.Utils;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +41,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback;
 import okhttp3.Response;
 import okio.BufferedSource;
 
@@ -45,6 +53,7 @@ public class SpeechFragment extends Fragment {
     private String pcmFilename = null;
     private List<String> mp3Filenames = new ArrayList<>();
 
+    private String dialogId = null;
 
     private final Runnable expectSpeechTimeoutRunnable = new Runnable() {
         @Override
@@ -171,6 +180,23 @@ public class SpeechFragment extends Fragment {
         Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_RESET_VIEW);
         MPEGPlayer.getInstance().stop();
 
+        SDKAction.speechStart(new OnResultCallback() {
+            @Override
+            public void onResult(@NonNull String data, @Nullable Object extra) {
+                JsonObject result = JsonParser.parseString(data).getAsJsonObject();
+                Integer code = result.get("code").getAsInt();
+                if (code == 0){
+                    JsonObject payload = result.get("payload").getAsJsonObject();
+                    dialogId = payload.get("dialogId").getAsString();
+
+                    Logger.w("speechStart dialogId - " + dialogId);
+                } else {
+                    Logger.w("speechStart failed - " + result.get("message").getAsString());
+                }
+            }
+        });
+
+
         PCMRecorder.getInstance().start();
     }
 
@@ -180,28 +206,38 @@ public class SpeechFragment extends Fragment {
         RuntimeInfo.getInstance().setPcmFilename(pcmFilename);
 
         File file = RuntimeInfo.getInstance().makeSpeechPCMFile(pcmFilename);
-        new RecognizeAction()
-                .create()
-                .addAttachment("audio", file, "application/octet-stream")
-                .post(new EventAction.OnChannelResponse() {
-                    @Override
-                    public void OnResponse(@NonNull Response response) {
-                        ResponseStreamDirectiveParser directiveParser = new ResponseStreamDirectiveParser();
-                        BufferedSource source = response.body().source();
 
-                        try {
-                            List<DirectiveParser.Part> parts = directiveParser.parseParts(source);
-                            if (parts.size() > 0) {
-//                                Message.obtain(RuntimeInfo.getInstance().directiveHandler, HandlerConst.MSG_STREAM_DIRECTIVE_PARTS, parts).sendToTarget();
-                                Utils.sendToHandlerMessage(RuntimeInfo.getInstance().directiveHandler, HandlerConst.MSG_STREAM_DIRECTIVE_PARTS, parts);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
 
-                        response.close();
-                    }
-                });
+        SDKAction.speechRecognize(dialogId, file, new OnResultCallback() {
+            @Override
+            public void onResult(@NonNull String data, @Nullable Object extra) {
+                Logger.d("speechRecognize result - " + data);
+            }
+        });
+//
+//
+//        new RecognizeAction()
+//                .create()
+//                .addAttachment("audio", file, "application/octet-stream")
+//                .post(new EventAction.OnChannelResponse() {
+//                    @Override
+//                    public void OnResponse(@NonNull Response response) {
+//                        ResponseStreamDirectiveParser directiveParser = new ResponseStreamDirectiveParser();
+//                        BufferedSource source = response.body().source();
+//
+//                        try {
+//                            List<DirectiveParser.Part> parts = directiveParser.parseParts(source);
+//                            if (parts.size() > 0) {
+////                                Message.obtain(RuntimeInfo.getInstance().directiveHandler, HandlerConst.MSG_STREAM_DIRECTIVE_PARTS, parts).sendToTarget();
+//                                Utils.sendToHandlerMessage(RuntimeInfo.getInstance().directiveHandler, HandlerConst.MSG_STREAM_DIRECTIVE_PARTS, parts);
+//                            }
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                        response.close();
+//                    }
+//                });
 
 //        binding.buttonSpeechPcmPlay.setVisibility(View.VISIBLE);
     }

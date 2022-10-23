@@ -21,6 +21,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.SmartWatchVoice.bestapp.databinding.ActivityMainBinding;
 import com.SmartWatchVoice.bestapp.handler.DirectiveCallback;
 import com.SmartWatchVoice.bestapp.handler.HandlerConst;
+import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.utils.Logger;
@@ -78,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         smartWatchSDK.attach(this, onActionListener);
+
+        SDKAction.sdk = smartWatchSDK;
+
         JSONObject json = new JSONObject();
         try {
             json.put("type", "action");

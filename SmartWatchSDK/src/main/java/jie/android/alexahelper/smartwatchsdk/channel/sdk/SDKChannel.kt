@@ -1,5 +1,6 @@
 package jie.android.alexahelper.smartwatchsdk.channel.sdk
 
+import jie.android.alexahelper.smartwatchsdk.SDKNotification
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.action.alexa.alexa.onAlexaDirective
 import jie.android.alexahelper.smartwatchsdk.action.alexa.onNotificationsDirective
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 data class ChannelData (val type: DataType, val data: Any? = null) {
     enum class DataType {
         DirectiveParts,
-        Timer
+        Timer,
+        Notification
     }
 }
 
@@ -34,6 +36,7 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
                 when (data.type) {
                     ChannelData.DataType.Timer -> onTimer(data.data as SDKScheduler.Timer)
                     ChannelData.DataType.DirectiveParts -> onDirectiveParts(data.data as List<DirectiveParser.DirectivePart>)
+                    ChannelData.DataType.Notification -> onNotification(data.data as SDKNotification)
                     else -> Logger.w("receive unknown type - ${data.type}")
                 }
             } while (true)
@@ -49,8 +52,12 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
         job?.cancel()
     }
 
-    private fun onTimer(timer: SDKScheduler.Timer) {
+    private fun onNotification(notification: SDKNotification) {
+        sdk.onNotification(notification)
+    }
 
+    private fun onTimer(timer: SDKScheduler.Timer) {
+        sdk.onTimer(timer)
     }
 
     private fun onDirectiveParts(directiveParts: List<DirectiveParser.DirectivePart>) {

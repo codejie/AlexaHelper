@@ -18,4 +18,7 @@ object AlexaConst {
 
     const val NS_ALEXA_DO_NOT_DISTURB = "Alexa.DoNotDisturb"
     const val NAME_DO_NOT_DISTURB_CHANGED = "DoNotDisturbChanged"
+
+    const val NS_SPEECH_RECOGNIZER = "SpeechRecognizer"
+    const val NAME_RECOGNIZE = "Recognize"
 }

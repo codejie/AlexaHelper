@@ -26,27 +26,27 @@ open class ProtocolBuilder (protected val type: String, protected val namespace:
             headerBuilder.put("messageId", messageId)
     }
 
-    fun setHeader(key: String, element: JsonElement): JsonElement ? = headerBuilder.put(key, element)
-    fun setHeader(key: String, element: String): JsonElement ? = headerBuilder.put(key, element)
-    fun setHeader(key: String, element: Number): JsonElement ? = headerBuilder.put(key, element)
-    fun setHeader(key: String, element: Boolean): JsonElement ? = headerBuilder.put(key, element)
+    fun addHeader(key: String, element: JsonElement): JsonElement ? = headerBuilder.put(key, element)
+    fun addHeader(key: String, element: String): JsonElement ? = headerBuilder.put(key, element)
+    fun addHeader(key: String, element: Number): JsonElement ? = headerBuilder.put(key, element)
+    fun addHeader(key: String, element: Boolean): JsonElement ? = headerBuilder.put(key, element)
 
-    fun setPayload(key: String, element: JsonElement): JsonElement? {
+    fun addPayload(key: String, element: JsonElement): JsonElement? {
         if (payloadBuilder == null)
             payloadBuilder = Builder()
         return payloadBuilder!!.put(key, element)
     }
-    fun setPayload(key: String, element: String): JsonElement? {
+    fun addPayload(key: String, element: String): JsonElement? {
         if (payloadBuilder == null)
             payloadBuilder = Builder()
         return payloadBuilder!!.put(key, element)
     }
-    fun setPayload(key: String, element: Number): JsonElement? {
+    fun addPayload(key: String, element: Number): JsonElement? {
         if (payloadBuilder == null)
             payloadBuilder = Builder()
         return payloadBuilder!!.put(key, element)
     }
-    fun setPayload(key: String, element: Boolean): JsonElement? {
+    fun addPayload(key: String, element: Boolean): JsonElement? {
         if (payloadBuilder == null)
             payloadBuilder = Builder()
         return payloadBuilder!!.put(key, element)
@@ -71,9 +71,6 @@ open class ProtocolBuilder (protected val type: String, protected val namespace:
             })
         }
 
-//    val header: Header = Header(namespace, name, messageId)
-//    var payload: Payload? = null
-//    var context: Any? = null
 
     override fun toString(): String {
         return "$type { namespace = $namespace | name = $name }"

@@ -3,6 +3,7 @@ package jie.android.alexahelper.smartwatchsdk.channel.alexa
 import jie.android.alexahelper.smartwatchsdk.DeviceInfo
 import jie.android.alexahelper.smartwatchsdk.RuntimeInfo
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
+import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.serialization.json.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -31,7 +32,7 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
         .addInterceptor(MyLoggingInterceptor().apply { level = MyLoggingInterceptor.Level.BODY })
         .build()
 
-    fun postEvents(bodies: Map<String, RequestBody>, callback: ChannelPostCallback): Unit {
+    private fun postEvent(closeResponse: Boolean, bodies: Map<String, RequestBody>, callback: ChannelPostCallback): Unit {
         val boundary: String = makePartBoundary()
         val builder: MultipartBody.Builder = MultipartBody.Builder()
         with (builder) {
@@ -54,19 +55,35 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                response.close()
+                if (closeResponse) response.close()
                 callback(true, null, response)
             }
 
         })
     }
 
-    fun postEvents(json: JsonObject, callback: ChannelPostCallback): Unit {
+    fun postEvent(closeResponse: Boolean, json: JsonObject, callback: ChannelPostCallback): Unit {
         val body: RequestBody = json.toString().toRequestBody(
             "application/json;charset=utf-8".toMediaType())
 
         val bodies: Map<String, RequestBody> = mutableMapOf(Pair<String, RequestBody>("metadata", body))
-        postEvents(bodies, callback)
+        postEvent(closeResponse, bodies, callback)
+    }
+
+    fun postEvent(json: JsonObject, callback: ChannelPostCallback): Unit {
+        postEvent(true, json, callback)
+    }
+
+    fun postEventWithAudio(json: JsonObject, extra: ByteArray, callback: ChannelPostCallback): Unit {
+        val body: RequestBody = json.toString().toRequestBody("application/json;charset=utf-8".toMediaType())
+
+        val audio: RequestBody = extra.toRequestBody("application/octet-stream".toMediaType())
+
+        val bodies: Map<String, RequestBody> = mutableMapOf(
+            Pair<String, RequestBody>("metadata", body),
+            Pair<String, RequestBody>("audio", audio)
+        )
+        postEvent(false, bodies, callback)
     }
 
     internal fun postAuthorize(callback: ChannelPostCallback) {

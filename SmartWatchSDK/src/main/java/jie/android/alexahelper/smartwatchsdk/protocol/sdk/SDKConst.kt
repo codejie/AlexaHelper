@@ -6,11 +6,17 @@ open class SDKException constructor(val code: Int, message: String? = null): Exc
 object SDKConst {
     const val ACTION_SDK_EXCEPTION = "sdk.exception"
     const val ACTION_SDK_TEST = "sdk.test"
+
     const val ACTION_DEVICE_SET_INFO = "device.setInfo"
+
     const val ACTION_ALEXA_LOGIN = "alexa.login"
     const val ACTION_ALEXA_LOGIN_WITH_TOKEN = "alexa.loginWithToken"
-    const val ACTION_SET_DND = "alexa.setDND"
+    const val ACTION_ALEXA_SET_DND = "alexa.setDND"
     const val ACTION_ALEXA_CLEAR_INDICATOR = "alexa.clearIndicator"
+    const val ACTION_ALEXA_SPEECH_START = "alexa.speechStart"
+    const val ACTION_ALEXA_SPEECH_STOP = "alexa.speechStop"
+    const val ACTION_ALEXA_SPEECH_RECOGNIZE = "alexa.speechRecognize"
+//                                                "alexa.speechRecognize"
 
 
     const val RESULT_CODE_SUCCESS = 0
@@ -23,5 +29,6 @@ object SDKConst {
 
     const val RESULT_MESSAGE_INVALID_FORMAT = "invalid format"
     const val RESULT_MESSAGE_MISSING_FIELD = "missing field"
+    const val RESULT_MESSAGE_MISSING_EXTRA = "missing extra"
     const val RESULT_MESSAGE_MISSING_PARAMETERS = "missing parameters"
 }

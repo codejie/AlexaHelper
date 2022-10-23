@@ -64,8 +64,7 @@ private fun authorize(sdk: SmartWatchSDK, action: ActionWrapper) {
 }
 
 private fun onAuthorizeFailed(sdk: SmartWatchSDK, action: ActionWrapper, message: String?) {
-    sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_LOGIN_FAIL, message));
-//    action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_LOGIN_FAIL, message).build().toString())
+    action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_LOGIN_FAIL, message).build().toString())
 }
 
 private fun onAuthorizeSuccess(sdk: SmartWatchSDK, action: ActionWrapper, result: AuthorizeResult?) {
@@ -88,8 +87,8 @@ private fun authorizeWithToken(sdk: SmartWatchSDK, action: ActionWrapper) {
             createDownChannel(sdk, action);
         } else {
             Logger.w("authorize token failed - $reason")
-            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "authorize token failed - $reason"))
-//            action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "authorize token failed - $reason").build().toString())
+//            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "authorize token failed - $reason"))
+            action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "authorize token failed - $reason").build().toString())
         }
     }
 }
@@ -102,8 +101,8 @@ private fun fetchAuthorizeToken(sdk: SmartWatchSDK, action: ActionWrapper) {
             createDownChannel(sdk, action)
         } else {
             Logger.w("authorize token failed - $reason")
-            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "authorize token failed - $reason"))
-//            action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "authorize token failed - $reason").build().toString())
+//            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "authorize token failed - $reason"))
+            action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "authorize token failed - $reason").build().toString())
         }
     }
 }
@@ -116,58 +115,58 @@ private fun createDownChannel(sdk: SmartWatchSDK, action: ActionWrapper): Unit {
             postSynchronizeStateAction(sdk, action)
         } else {
             Logger.w("create down channel failed - $reason")
-            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "create down channel failed - $reason"))
-//            action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "create down channel failed - $reason").build().toString())
+//            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "create down channel failed - $reason"))
+            action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "create down channel failed - $reason").build().toString())
         }
     }
 }
 
 private fun postSynchronizeStateAction(sdk: SmartWatchSDK, action: ActionWrapper) {
     val event: JsonObject = EventBuilder(AlexaConst.NS_SYSTEM, AlexaConst.NAME_SYNCHRONIZE_STATE).create()
-    sdk.httpChannel.postEvents(event) { success, reason, response ->
+    sdk.httpChannel.postEvent(event) { success, reason, response ->
         if (success) {
             Logger.d("postSynchronizeStateAction success - ${response!!.code}")
             postVerifyGateway(sdk, action)
         } else {
             Logger.w("postSynchronizeStateAction failed - $reason")
-            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postSynchronizeStateAction - $reason"))
-//            action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postSynchronizeStateAction - $reason").build().toString())
+//            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postSynchronizeStateAction - $reason"))
+            action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postSynchronizeStateAction - $reason").build().toString())
         }
     }
 }
 
 private fun postVerifyGateway(sdk: SmartWatchSDK, action: ActionWrapper) {
     val event: JsonObject = EventBuilder(AlexaConst.NS_ALEXA_API_GATEWAY, AlexaConst.NAME_VERIFY_GATEWAY).create()
-    sdk.httpChannel.postEvents(event) { success, reason, response ->
+    sdk.httpChannel.postEvent(event) { success, reason, response ->
         if (success) {
             Logger.d("postVerifyGateway success - ${response!!.code}")
             postAlexaDiscovery(sdk, action)
         } else {
             Logger.w("postVerifyGateway failed - $reason")
-            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postVerifyGateway - $reason"))
-//            action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postVerifyGateway - $reason").build().toString())
+//            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postVerifyGateway - $reason"))
+            action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postVerifyGateway - $reason").build().toString())
         }
     }
 }
 
 private fun postAlexaDiscovery(sdk: SmartWatchSDK, action: ActionWrapper) {
     val event: JsonObject = EventBuilder(AlexaConst.NS_ALEXA_DISCOVERY, AlexaConst.NAME_ADD_OR_UPDATE_REPORT).apply {
-        setHeader("payloadVersion", "3")
-        setHeader("eventCorrelationToken", makeMessageId())
+        addHeader("payloadVersion", "3")
+        addHeader("eventCorrelationToken", makeMessageId())
 
         val scope: JsonObject = buildJsonObject {
             put("type","BearerToken")
             put("token", RuntimeInfo.accessToken)
         }
-        setPayload("scope", scope)
-        setPayload("endpoints", buildJsonArray {
+        addPayload("scope", scope)
+        addPayload("endpoints", buildJsonArray {
             for (element in EndpointInfo.endpoints.values) {
                 add(element)
             }
         })
     }.create()
 
-    sdk.httpChannel.postEvents(event) { success, reason, response ->
+    sdk.httpChannel.postEvent(event) { success, reason, response ->
         if (success) {
             Logger.d("postAlexaDiscovery success - ${response!!.code}")
 
@@ -177,15 +176,18 @@ private fun postAlexaDiscovery(sdk: SmartWatchSDK, action: ActionWrapper) {
                     put("refreshToken", RuntimeInfo.refreshToken)
                 }
                 setPayload(payload)
-            }
+            }.build()
 
-//            action.callback?.onResult(result.toString())
+            action.callback?.onResult(result.toString())
 //            sdk.sdkCallback(SDKMessage.LOGIN_SUCCESS, null)
-            sdk.resultCallbackHook(action, result);
+//            sdk.resultCallbackHook(action, result);
+
+            // set Timer
+
         } else {
             Logger.w("postAlexaDiscovery failed - $reason")
-            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postAlexaDiscovery - $reason"))
-//            action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postAlexaDiscovery - $reason").build().toString())
+//            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postAlexaDiscovery - $reason"))
+            action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postAlexaDiscovery - $reason").build().toString())
         }
     }
 }

@@ -25,6 +25,9 @@ open class DirectiveParser {
 
     class DirectivePart(headers: Map<String, String>, val directive: JsonObject)
         : Part(PartType.DIRECTIVE, headers) {
+        override fun toString(): String {
+            return "${super.toString()}\n${directive.toString()}"
+        }
     }
 
     class OctetBufferPart(headers: Map<String, String>, val buffer: ByteArray)
@@ -192,6 +195,7 @@ class ResponseStreamDirectiveParser() : DirectiveParser() {
                 } else {
                     val boundaryBytes: ByteArray = boundary!!.toByteArray()
                     val cache = ByteArray(32)
+                    val bigBuffer = ByteArray(32 *1024)
 
                     val srcStream = source.inputStream()
                     srcStream.mark(64 * 1024)
@@ -200,12 +204,12 @@ class ResponseStreamDirectiveParser() : DirectiveParser() {
                     var ch: Int
                     while ( srcStream.read().also { ch = it } != -1 ) {
                         if (ch.toByte() != CR) {
-//                            buffer[read] = ch.toByte()
+                            bigBuffer[read] = ch.toByte()
                             ++read
                         } else {
                             cache[0] = ch.toByte()
                             val r = srcStream.read(cache, 1, boundaryBytes.size + 1)
-                            read += (boundaryBytes.size + 1)
+//                            read += (boundaryBytes.size + 1)
                             if (r == boundaryBytes.size + 1) {
                                 if (cache[1] == LF && bytesEqual(
                                         cache,
@@ -217,15 +221,15 @@ class ResponseStreamDirectiveParser() : DirectiveParser() {
                                     break
                                 }
                             }
+                            cache.forEach {
+                                bigBuffer[read] = it
+                                ++ read
+                            }
                         }
                     }
 
-                    if (!srcStream.markSupported()) {
-                        throw Error("Source Stream can NOT mark!")
-                    }
-                    srcStream.reset()
                     val buffer: ByteArray = ByteArray(read)
-                    srcStream.read(buffer, 0, read)
+                    bigBuffer.copyInto(buffer, 0, 0, read)
 
                     val part = buildOctetBufferPart(headers, buffer)
                     parts.add(part)

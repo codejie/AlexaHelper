@@ -12,11 +12,13 @@ import jie.android.alexahelper.smartwatchsdk.channel.sdk.SDKChannel
 import jie.android.alexahelper.smartwatchsdk.utils.SDKScheduler
 import kotlinx.serialization.SerializationException
 
-enum class SDKMessage {
-    LOGIN_SUCCESS
+sealed class SDKNotification constructor(val msg: Message, val data: Any? = null) {
+    enum class Message {
+        LOGIN_SUCCESS
+    }
 }
 
-typealias ResultCallbackHook = (action: ActionWrapper, result: ResultWrapper) -> Unit
+//typealias ResultCallbackHook = (action: ActionWrapper, result: ResultWrapper) -> Unit
 
 class SmartWatchSDK constructor() {
     internal lateinit var requestContext: RequestContext
@@ -27,16 +29,16 @@ class SmartWatchSDK constructor() {
     internal val sdkChannel: SDKChannel = SDKChannel(this)
     internal val sdkScheduler: SDKScheduler = SDKScheduler(this)
 
-    internal val resultCallbackHook: ResultCallbackHook = { action, result ->
-        when (result.name) {
-            SDKConst.ACTION_ALEXA_LOGIN,
-            SDKConst.ACTION_ALEXA_LOGIN_WITH_TOKEN -> resultLogin(action, result)
-            else -> {
-                Logger.d("Not been hooked action - ${action.name}")
-                action.callback?.onResult(result.build().toString(), result.extra)
-            }
-        }
-    }
+//    internal val resultCallbackHook: ResultCallbackHook = { action, result ->
+//        when (result.name) {
+//            SDKConst.ACTION_ALEXA_LOGIN,
+//            SDKConst.ACTION_ALEXA_LOGIN_WITH_TOKEN -> resultLogin(action, result)
+//            else -> {
+//                Logger.d("Not been hooked action - ${action.name}")
+//                action.callback?.onResult(result.build().toString(), result.extra)
+//            }
+//        }
+//    }
 
     fun attach(context: Context, actionListener: OnActionListener) {
         requestContext = RequestContext.create(context)
@@ -62,11 +64,15 @@ class SmartWatchSDK constructor() {
         try {
             val action: ActionWrapper = ActionWrapper.parse(data, extra, callback)
             when (action.name) {
+//                SDKConst.ACTION_ALEXA_SPEECH_RECOGNIZE -> AlexaAction.speechRecognize(this, action)
                 SDKConst.ACTION_SDK_TEST -> SDKAction.test(this, action)
                 SDKConst.ACTION_DEVICE_SET_INFO -> DeviceAction.setInfo(this, action)
                 SDKConst.ACTION_ALEXA_LOGIN -> AlexaAction.login(this, action) // onActionLogin(action)
                 SDKConst.ACTION_ALEXA_LOGIN_WITH_TOKEN -> AlexaAction.loginWithToken(this, action)
-                SDKConst.ACTION_SET_DND -> AlexaAction.setDND(this, action)
+                SDKConst.ACTION_ALEXA_SET_DND -> AlexaAction.setDND(this, action)
+                SDKConst.ACTION_ALEXA_SPEECH_START -> AlexaAction.speechStart(this, action)
+                SDKConst.ACTION_ALEXA_SPEECH_STOP -> AlexaAction.speechStop(this, action)
+                SDKConst.ACTION_ALEXA_SPEECH_RECOGNIZE -> AlexaAction.speechRecognize(this, action)
                 else -> throw SDKException(
                     SDKConst.RESULT_CODE_INVALID_FORMAT,
                     SDKConst.RESULT_MESSAGE_INVALID_FORMAT
@@ -79,10 +85,18 @@ class SmartWatchSDK constructor() {
         }
     }
 
-    private fun resultLogin(action: ActionWrapper, result: ResultWrapper) {
-        Logger.d("login action result - ${result.code}")
-        action.callback?.onResult(result.build().toString(), result.extra)
+    fun onNotification(notification: SDKNotification) {
+
     }
+
+    fun onTimer(timer: SDKScheduler.Timer) {
+
+    }
+
+//    private fun resultLogin(action: ActionWrapper, result: ResultWrapper) {
+//        Logger.d("login action result - ${result.code}")
+//        action.callback?.onResult(result.build().toString(), result.extra)
+//    }
 
 
 }

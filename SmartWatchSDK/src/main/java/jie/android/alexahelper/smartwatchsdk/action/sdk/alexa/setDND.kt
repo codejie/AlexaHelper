@@ -18,10 +18,10 @@ fun setDNDAction(sdk: SmartWatchSDK, action: ActionWrapper) {
     val event: JsonObject = EventBuilder(
         AlexaConst.NS_ALEXA_DO_NOT_DISTURB,
         AlexaConst.NAME_DO_NOT_DISTURB_CHANGED).apply {
-            setPayload("enabled", enabled)
+            addPayload("enabled", enabled)
     }.create()
 
-    sdk.httpChannel.postEvents(event) { success, reason, response ->
+    sdk.httpChannel.postEvent(event) { success, reason, response ->
         val result = ResultWrapper(action.name,
             if (success) SDKConst.RESULT_CODE_SUCCESS else SDKConst.RESULT_CODE_ACTION_FAILED,
             reason
@@ -29,7 +29,8 @@ fun setDNDAction(sdk: SmartWatchSDK, action: ActionWrapper) {
             val payload = buildJsonObject {
                 put("enabled", enabled)
             }
-        } .build()
+            setPayload(payload)
+        }.build()
 
         action.callback?.onResult(result.toString())
     }

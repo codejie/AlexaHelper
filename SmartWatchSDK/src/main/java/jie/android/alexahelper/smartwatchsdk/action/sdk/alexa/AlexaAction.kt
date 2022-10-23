@@ -7,4 +7,8 @@ object AlexaAction {
     fun login(sdk: SmartWatchSDK, action: ActionWrapper) = loginAction(sdk, false, action)
     fun loginWithToken(sdk: SmartWatchSDK, action: ActionWrapper) = loginAction(sdk, true, action)
     fun setDND(sdk: SmartWatchSDK, action: ActionWrapper) = setDNDAction(sdk, action)
+    fun speechStart(sdk: SmartWatchSDK, action: ActionWrapper) = speechStartAction(sdk, action)
+    fun speechStop(sdk: SmartWatchSDK, action: ActionWrapper) = speechStopAction(sdk, action)
+    fun speechRecognize(sdk: SmartWatchSDK, action: ActionWrapper) = speechRecognizeAction(sdk, action)
+
 }
