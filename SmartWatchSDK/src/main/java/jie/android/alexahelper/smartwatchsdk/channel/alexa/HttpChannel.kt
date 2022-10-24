@@ -32,7 +32,7 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
         .addInterceptor(MyLoggingInterceptor().apply { level = MyLoggingInterceptor.Level.BODY })
         .build()
 
-    private fun postEvent(closeResponse: Boolean, bodies: Map<String, RequestBody>, callback: ChannelPostCallback): Unit {
+    private fun postEvent(closeResponse: Boolean, bodies: Map<String, RequestBody>, callback: ChannelPostCallback?): Unit {
         val boundary: String = makePartBoundary()
         val builder: MultipartBody.Builder = MultipartBody.Builder()
         with (builder) {
@@ -51,18 +51,20 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
 
         client.newCall(request).enqueue(object: Callback {
             override fun onFailure(call: Call, e: IOException) {
-                callback(false, e.message, null)
+                if (callback != null)
+                    callback(false, e.message, null)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 if (closeResponse) response.close()
-                callback(true, null, response)
+                if (callback != null)
+                    callback(true, null, response)
             }
 
         })
     }
 
-    fun postEvent(closeResponse: Boolean, json: JsonObject, callback: ChannelPostCallback): Unit {
+    fun postEvent(closeResponse: Boolean, json: JsonObject, callback: ChannelPostCallback?): Unit {
         val body: RequestBody = json.toString().toRequestBody(
             "application/json;charset=utf-8".toMediaType())
 
@@ -70,11 +72,11 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
         postEvent(closeResponse, bodies, callback)
     }
 
-    fun postEvent(json: JsonObject, callback: ChannelPostCallback): Unit {
+    fun postEvent(json: JsonObject, callback: ChannelPostCallback?): Unit {
         postEvent(true, json, callback)
     }
 
-    fun postEventWithAudio(json: JsonObject, extra: ByteArray, callback: ChannelPostCallback): Unit {
+    fun postEventWithAudio(json: JsonObject, extra: ByteArray, callback: ChannelPostCallback?): Unit {
         val body: RequestBody = json.toString().toRequestBody("application/json;charset=utf-8".toMediaType())
 
         val audio: RequestBody = extra.toRequestBody("application/octet-stream".toMediaType())

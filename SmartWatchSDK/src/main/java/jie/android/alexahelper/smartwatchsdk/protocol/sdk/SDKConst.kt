@@ -11,12 +11,13 @@ object SDKConst {
 
     const val ACTION_ALEXA_LOGIN = "alexa.login"
     const val ACTION_ALEXA_LOGIN_WITH_TOKEN = "alexa.loginWithToken"
-    const val ACTION_ALEXA_SET_DND = "alexa.setDND"
+    const val ACTION_ALEXA_SET_DND = "alexa.setDoNotDisturb"
     const val ACTION_ALEXA_CLEAR_INDICATOR = "alexa.clearIndicator"
     const val ACTION_ALEXA_SPEECH_START = "alexa.speechStart"
-    const val ACTION_ALEXA_SPEECH_STOP = "alexa.speechStop"
+    const val ACTION_ALEXA_SPEECH_END = "alexa.speechEnd"
     const val ACTION_ALEXA_SPEECH_RECOGNIZE = "alexa.speechRecognize"
-//                                                "alexa.speechRecognize"
+
+    const val ACTION_ALEXA_DND_CHANGED = "alexa.doNotDisturbChanged"
 
 
     const val RESULT_CODE_SUCCESS = 0

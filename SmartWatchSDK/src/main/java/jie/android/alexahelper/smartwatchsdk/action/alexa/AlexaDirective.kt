@@ -1,4 +1,4 @@
-package jie.android.alexahelper.smartwatchsdk.action.alexa.alexa
+package jie.android.alexahelper.smartwatchsdk.action.alexa
 
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.DirectiveParser
@@ -13,6 +13,6 @@ fun onAlexaDirective(sdk: SmartWatchSDK, directive: Directive, parts: List<Direc
     }
 }
 
-fun onEventProcessed(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.DirectivePart>) {
+private fun onEventProcessed(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.DirectivePart>) {
 
 }

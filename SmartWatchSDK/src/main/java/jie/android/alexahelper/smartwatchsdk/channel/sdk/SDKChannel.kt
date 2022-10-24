@@ -2,7 +2,8 @@ package jie.android.alexahelper.smartwatchsdk.channel.sdk
 
 import jie.android.alexahelper.smartwatchsdk.SDKNotification
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
-import jie.android.alexahelper.smartwatchsdk.action.alexa.alexa.onAlexaDirective
+import jie.android.alexahelper.smartwatchsdk.action.alexa.onAlexaDirective
+import jie.android.alexahelper.smartwatchsdk.action.alexa.onAlexaDoNotDisturbDirective
 import jie.android.alexahelper.smartwatchsdk.action.alexa.onNotificationsDirective
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.DirectiveParser
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
@@ -67,6 +68,7 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
                 when (directive?.namespace) {
                     AlexaConst.NS_ALEXA -> onAlexaDirective(sdk, directive, directiveParts)
                     AlexaConst.NS_NOTIFICATIONS -> onNotificationsDirective(sdk, directive, directiveParts)
+                    AlexaConst.NS_ALEXA_DO_NOT_DISTURB -> onAlexaDoNotDisturbDirective(sdk, directive, directiveParts)
                     else -> Logger.w("unsupported - ${directive.toString()}")
                 }
             }

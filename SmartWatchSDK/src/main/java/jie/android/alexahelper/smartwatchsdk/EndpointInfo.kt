@@ -89,7 +89,7 @@ private fun loadSelf(endpointInfo: EndpointInfo) {
             add(Capability.makeSpeedRecognizer())
             add(Capability.makeAlexaApiGateway())
             add(Capability.makeSpeechSynthesizer())
-//            add(Capability.makeAudioPlayer())
+            add(Capability.makeAudioPlayer())
             add(Capability.makeTemplateRuntime())
         })
     }
@@ -235,7 +235,7 @@ object Capability {
     fun makeAudioPlayer(): JsonObject {
         val configurations = buildJsonObject {
             put("fingerprint", buildJsonObject {
-                put("packageName", "android.media.MediaPlayer")
+                put("package", "android.media.MediaPlayer")
                 put("buildType", "DEBUG")
                 put("versionNumber", "1.0")
             })
