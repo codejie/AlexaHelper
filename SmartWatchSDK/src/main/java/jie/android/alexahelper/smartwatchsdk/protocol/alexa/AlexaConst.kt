@@ -24,4 +24,7 @@ object AlexaConst {
     const val NS_SPEECH_RECOGNIZER = "SpeechRecognizer"
     const val NAME_RECOGNIZE = "Recognize"
 
+    const val NS_SPEECH_SYNTHESIZER = "SpeechSynthesizer"
+    const val NAME_SPEAK = "Speak"
+
 }

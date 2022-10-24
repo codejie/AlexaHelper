@@ -2,11 +2,15 @@ package jie.android.alexahelper.smartwatchsdk.action.sdk.alexa
 
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.ResponseStreamDirectiveParser
+import jie.android.alexahelper.smartwatchsdk.channel.sdk.ChannelData
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.EventBuilder
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Utils
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -68,18 +72,6 @@ fun speechRecognizeAction(sdk: SmartWatchSDK, action: ActionWrapper) {
 
     sdk.httpChannel.postEventWithAudio(event, action.extra as ByteArray) { success, reason, response ->
 
-        val source: BufferedSource = response!!.body!!.source()
-
-//        Logger.d(if (source.exhausted()) "SOURCE exhausted" else "SOURCE not")
-
-        val parser: ResponseStreamDirectiveParser = ResponseStreamDirectiveParser()
-        val parts = parser.parseParts(source)
-
-        Logger.d("recognize response - ")
-        for (part in parts) {
-            Logger.d(part.toString())
-        }
-
         val result = ResultWrapper(action.name,
             if (success) SDKConst.RESULT_CODE_SUCCESS else SDKConst.RESULT_CODE_ACTION_FAILED,
             reason
@@ -91,6 +83,20 @@ fun speechRecognizeAction(sdk: SmartWatchSDK, action: ActionWrapper) {
         }.build()
 
         action.callback?.onResult(result.toString())
+
+        CoroutineScope(Dispatchers.IO).launch {
+            // speak
+//            val source: BufferedSource = response!!.body!!.source()
+
+            val parser: ResponseStreamDirectiveParser = ResponseStreamDirectiveParser()
+            val parts = response?.let { parser.parseParts(it) }
+
+//            Logger.d("recognize response - ")
+//            for (part in parts) {
+//                Logger.d(part.toString())
+//            }
+            parts?.let { sdk.sdkChannel.send(ChannelData(ChannelData.DataType.DirectiveParts, it)) }
+        }
     }
 
 }

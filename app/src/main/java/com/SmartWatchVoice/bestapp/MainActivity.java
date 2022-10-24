@@ -30,6 +30,11 @@ import com.SmartWatchVoice.bestapp.utils.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK;
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnActionListener;
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback;
@@ -57,16 +62,37 @@ public class MainActivity extends AppCompatActivity {
             try {
                 JSONObject action = new JSONObject(data);
 
-                JSONObject result = new JSONObject();
-                result.put("type", "result");
-                result.put("name", action.getString("name"));
-                result.put("version", 1);
+                String name = action.getString("name");
 
-                callback.onResult(result.toString(), null);
+                switch (name) {
+                    case "alexa.speechSpeak": {
+                        // file
+                        String filename = System.currentTimeMillis() + ".mp3";
+                        File file = RuntimeInfo.getInstance().makeSpeechMP3File(filename); // new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "a.mp3");
+                        FileOutputStream ofs = new FileOutputStream(file);
+                        byte[] b = (byte[]) extra;
+                        ofs.write(b);
+                        ofs.close();
+
+                        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_AUDIO_FILE, filename);
+                    }
+                    break;
+                    default: {
+                        JSONObject result = new JSONObject();
+                        result.put("type", "result");
+                        result.put("name", action.getString("name"));
+                        result.put("version", 1);
+
+                        callback.onResult(result.toString(), null);
+                    }
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
         }
     };
 

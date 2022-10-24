@@ -5,6 +5,7 @@ import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.action.alexa.onAlexaDirective
 import jie.android.alexahelper.smartwatchsdk.action.alexa.onAlexaDoNotDisturbDirective
 import jie.android.alexahelper.smartwatchsdk.action.alexa.onNotificationsDirective
+import jie.android.alexahelper.smartwatchsdk.action.alexa.onSpeechSynthesizerDirective
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.DirectiveParser
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Directive
@@ -36,7 +37,7 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
                 Logger.d("sdk channel receive - ${data.toString()}")
                 when (data.type) {
                     ChannelData.DataType.Timer -> onTimer(data.data as SDKScheduler.Timer)
-                    ChannelData.DataType.DirectiveParts -> onDirectiveParts(data.data as List<DirectiveParser.DirectivePart>)
+                    ChannelData.DataType.DirectiveParts -> onDirectiveParts(data.data as List<DirectiveParser.Part>)
                     ChannelData.DataType.Notification -> onNotification(data.data as SDKNotification)
                     else -> Logger.w("receive unknown type - ${data.type}")
                 }
@@ -61,14 +62,15 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
         sdk.onTimer(timer)
     }
 
-    private fun onDirectiveParts(directiveParts: List<DirectiveParser.DirectivePart>) {
+    private fun onDirectiveParts(directiveParts: List<DirectiveParser.Part>) {
         for (part in directiveParts) {
             if (part.type == DirectiveParser.PartType.DIRECTIVE) {
-                val directive = Directive.parse(part.directive)
+                val directive = Directive.parse((part as DirectiveParser.DirectivePart).directive)
                 when (directive?.namespace) {
                     AlexaConst.NS_ALEXA -> onAlexaDirective(sdk, directive, directiveParts)
                     AlexaConst.NS_NOTIFICATIONS -> onNotificationsDirective(sdk, directive, directiveParts)
                     AlexaConst.NS_ALEXA_DO_NOT_DISTURB -> onAlexaDoNotDisturbDirective(sdk, directive, directiveParts)
+                    AlexaConst.NS_SPEECH_SYNTHESIZER -> onSpeechSynthesizerDirective(sdk, directive, directiveParts)
                     else -> Logger.w("unsupported - ${directive.toString()}")
                 }
             }

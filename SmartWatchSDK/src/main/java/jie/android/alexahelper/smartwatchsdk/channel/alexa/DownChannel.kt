@@ -9,13 +9,13 @@ import okio.BufferedSource
 import java.nio.charset.StandardCharsets
 
 class DownChannel constructor(val sdk: SmartWatchSDK) {
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+//    private val scope = CoroutineScope(Dispatchers.IO)
     private var job: Job? = null
 
     fun start(response: Response): Unit {
 //        stop()
 
-        job = scope.launch(Dispatchers.IO) {
+        job = CoroutineScope(Dispatchers.IO).launch {
             val parser = DownChannelDirectiveParser()
             val source: BufferedSource = response.body!!.source()
 

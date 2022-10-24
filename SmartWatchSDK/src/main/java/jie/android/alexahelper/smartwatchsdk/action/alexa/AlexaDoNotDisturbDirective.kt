@@ -10,14 +10,14 @@ import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
-fun onAlexaDoNotDisturbDirective(sdk: SmartWatchSDK, directive: Directive, directiveParts: List<DirectiveParser.DirectivePart>) {
+fun onAlexaDoNotDisturbDirective(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     when (directive.name) {
-        AlexaConst.NAME_SET_DO_NOT_DISTURB -> onSetDoNotDisturb(sdk, directive, directiveParts)
+        AlexaConst.NAME_SET_DO_NOT_DISTURB -> onSetDoNotDisturb(sdk, directive, parts)
         else -> Logger.w("unsupported Alexa.DoNotDisturb - $directive")
     }
 }
 
-private fun onSetDoNotDisturb(sdk: SmartWatchSDK, directive: Directive, directiveParts: List<DirectiveParser.DirectivePart>) {
+private fun onSetDoNotDisturb(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     val enabled = directive.payload?.getBoolean("enabled", false)
     if (enabled != null) {
         val action = ActionWrapper(SDKConst.ACTION_ALEXA_DND_CHANGED).apply {

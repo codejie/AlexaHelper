@@ -4,6 +4,7 @@ import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import okhttp3.Response
 import okio.BufferedSource
 import java.util.*
 
@@ -141,12 +142,16 @@ class ResponseStreamDirectiveParser() : DirectiveParser() {
 
     }
 
-    fun parseParts(source: BufferedSource): List<Part> {
+    fun parseParts(response: Response): List<Part> {
+
         val parts: MutableList<Part> = arrayListOf<Part>()
         var isHeader = false
         var isBody = false
         var isJson = false
         var headers: MutableMap<String, String> = hashMapOf()
+
+        val source: BufferedSource = response!!.body!!.source()
+
         while (!source.exhausted()) {
             if (!isBody) {
                 val line = source.readUtf8Line()
@@ -186,7 +191,7 @@ class ResponseStreamDirectiveParser() : DirectiveParser() {
                     val l = source.readUtf8Line()
                     if (l != null) {
                         buildDirectivePart(headers, l)?.let { parts.add(it) }
-                        headers.clear()
+                        headers = hashMapOf()
                         isJson = false
                         isBody = false
                     } else {
@@ -194,38 +199,29 @@ class ResponseStreamDirectiveParser() : DirectiveParser() {
                     }
                 } else {
                     val boundaryBytes: ByteArray = boundary!!.toByteArray()
-                    val cache = ByteArray(32)
-                    val bigBuffer = ByteArray(32 *1024)
+                    val cache = ByteArray(boundaryBytes.size)
+                    val bigBuffer = ByteArray(256 * 1024)
 
                     val srcStream = source.inputStream()
-                    srcStream.mark(64 * 1024)
 
                     var read = 0
                     var ch: Int
                     while ( srcStream.read().also { ch = it } != -1 ) {
-                        if (ch.toByte() != CR) {
+                        bigBuffer[read] = ch.toByte()
+                        if (bigBuffer[read] == CR) {
+                            if (srcStream.read().also { ch = it } == -1) break
+                            ++ read
                             bigBuffer[read] = ch.toByte()
-                            ++read
-                        } else {
-                            cache[0] = ch.toByte()
-                            val r = srcStream.read(cache, 1, boundaryBytes.size + 1)
-//                            read += (boundaryBytes.size + 1)
-                            if (r == boundaryBytes.size + 1) {
-                                if (cache[1] == LF && bytesEqual(
-                                        cache,
-                                        2,
-                                        boundaryBytes,
-                                        boundaryBytes.size
-                                    )
-                                ) {
+                            if (bigBuffer[read] == LF) {
+                                if (srcStream.read(cache, 0, boundaryBytes.size) < boundaryBytes.size) break;
+                                if (bytesEqual(cache, 0, boundaryBytes, boundaryBytes.size)) {
                                     break
                                 }
-                            }
-                            cache.forEach {
-                                bigBuffer[read] = it
-                                ++ read
+                                cache.copyInto(bigBuffer, read + 1, boundaryBytes.size)
+                                read += boundaryBytes.size - 1
                             }
                         }
+                        ++ read
                     }
 
                     val buffer: ByteArray = ByteArray(read)
@@ -234,11 +230,13 @@ class ResponseStreamDirectiveParser() : DirectiveParser() {
                     val part = buildOctetBufferPart(headers, buffer)
                     parts.add(part)
 
-                    headers.clear()
+                    headers = hashMapOf()
                     isBody = false
                 }
             }
         }
+
+        response.close()
 
         Logger.d("source end.")
         return parts
