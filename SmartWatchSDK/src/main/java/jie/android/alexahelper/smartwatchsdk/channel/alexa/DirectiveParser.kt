@@ -244,7 +244,7 @@ class ResponseStreamDirectiveParser() : DirectiveParser() {
                     val retBuffer = ByteArray(count)
                     count = 0
                     ret.forEach {
-                        it.copyInto(retBuffer, count, it.size)
+                        it.copyInto(retBuffer, count, 0, it.size)
                         count += it.size
                     }
 

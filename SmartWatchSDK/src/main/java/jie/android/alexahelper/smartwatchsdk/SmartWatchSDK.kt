@@ -72,6 +72,7 @@ class SmartWatchSDK constructor() {
                 SDKConst.ACTION_ALEXA_SPEECH_START -> AlexaAction.speechStart(this, action)
                 SDKConst.ACTION_ALEXA_SPEECH_END -> AlexaAction.speechStop(this, action)
                 SDKConst.ACTION_ALEXA_SPEECH_RECOGNIZE -> AlexaAction.speechRecognize(this, action)
+                SDKConst.ACTION_ALEXA_SET_TIME_ZONE -> AlexaAction.setTimeZone(this, action)
                 else -> throw SDKException(
                     SDKConst.RESULT_CODE_INVALID_FORMAT,
                     SDKConst.RESULT_MESSAGE_INVALID_FORMAT

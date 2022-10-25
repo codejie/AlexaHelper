@@ -7,14 +7,12 @@ import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.EventBuilder
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Utils
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
-import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import okio.BufferedSource
 
 fun speechStartAction(sdk: SmartWatchSDK, action: ActionWrapper) {
     val dialogId = Utils.makeMessageId()

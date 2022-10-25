@@ -21,6 +21,8 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
     private val avsAuthorizeUrl: String = "https://api.amazon.com/auth/o2/token"
     private val avsVersion: String = "/v20160207"
 
+    public var isLogin = false
+
     private val downChannel: DownChannel = DownChannel(sdk)
 
     private var client: OkHttpClient = OkHttpClient.Builder()

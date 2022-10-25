@@ -178,6 +178,8 @@ private fun postAlexaDiscovery(sdk: SmartWatchSDK, action: ActionWrapper) {
                 setPayload(payload)
             }.build()
 
+            sdk.httpChannel.isLogin = true
+
             action.callback?.onResult(result.toString())
 //            sdk.sdkCallback(SDKMessage.LOGIN_SUCCESS, null)
 //            sdk.resultCallbackHook(action, result);
@@ -185,6 +187,8 @@ private fun postAlexaDiscovery(sdk: SmartWatchSDK, action: ActionWrapper) {
             // set Timer
 
         } else {
+            sdk.httpChannel.isLogin = false
+
             Logger.w("postAlexaDiscovery failed - $reason")
 //            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postAlexaDiscovery - $reason"))
             action.callback?.onResult(ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postAlexaDiscovery - $reason").build().toString())

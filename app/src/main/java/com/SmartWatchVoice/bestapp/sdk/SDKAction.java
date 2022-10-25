@@ -58,4 +58,17 @@ public class SDKAction {
             e.printStackTrace();
         }
     }
+
+    public static void setTimeZone(String timeZone, OnResultCallback callback) {
+        JsonObject payload = new JsonObject();
+        payload.addProperty("timeZone", timeZone);
+
+        JsonObject action = new JsonObject();
+        action.addProperty("type", "action");
+        action.addProperty("name", "alexa.setTimeZone");
+        action.addProperty("version", 1);
+        action.add("payload", payload);
+
+        sdk.action(action.toString(), null, callback);
+    }
 }

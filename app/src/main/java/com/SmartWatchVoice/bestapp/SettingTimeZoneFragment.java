@@ -19,11 +19,16 @@ import android.widget.TextView;
 import com.SmartWatchVoice.bestapp.action.EventAction;
 import com.SmartWatchVoice.bestapp.action.system.TimeZoneChangedAction;
 import com.SmartWatchVoice.bestapp.databinding.FragmentSettingTimeZoneBinding;
+import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;
 import com.SmartWatchVoice.bestapp.system.SettingInfo;
+import com.SmartWatchVoice.bestapp.utils.Logger;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.util.List;
 
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback;
 import okhttp3.Response;
 
 public class SettingTimeZoneFragment extends Fragment {
@@ -137,13 +142,18 @@ public class SettingTimeZoneFragment extends Fragment {
     }
 
     private void onChanged(String timezone) {
-        new TimeZoneChangedAction(timezone).create().post(new EventAction.OnChannelResponse() {
+        SDKAction.setTimeZone(timezone, new OnResultCallback() {
             @Override
-            public void OnResponse(@NonNull Response response) {
-                SettingInfo.getInstance().timeZone = timezone;
-                SettingInfo.getInstance().flush();;
+            public void onResult(@NonNull String data, @Nullable Object extra) {
+                Logger.d("setTimeZone Result - " + data);
+                JsonObject result = JsonParser.parseString(data).getAsJsonObject();
+                JsonObject payload = result.get("payload").getAsJsonObject();
+                String timeZone = payload.get("timeZone").getAsString();
 
-                adapter.setSelected(timezone);
+                SettingInfo.getInstance().timeZone = timeZone;
+                SettingInfo.getInstance().flush();
+
+                adapter.setSelected(timeZone);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -153,5 +163,22 @@ public class SettingTimeZoneFragment extends Fragment {
                 });
             }
         });
+//
+//        new TimeZoneChangedAction(timezone).create().post(new EventAction.OnChannelResponse() {
+//            @Override
+//            public void OnResponse(@NonNull Response response) {
+//                SettingInfo.getInstance().timeZone = timezone;
+//                SettingInfo.getInstance().flush();;
+//
+//                adapter.setSelected(timezone);
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        adapter.notifyDataSetChanged();
+//                        NavHostFragment.findNavController(SettingTimeZoneFragment.this).navigate(R.id.action_settingTimeZoneFragment_to_homeFragment);
+//                    }
+//                });
+//            }
+//        });
     }
 }
