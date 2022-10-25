@@ -24,10 +24,14 @@ private fun onSpeak(sdk: SmartWatchSDK, directive: Directive, parts: List<Direct
                 put("format", directive.payload!!.getString("format"))
                 put("token", directive.payload!!.getString("token"))
                 put("playMode", directive.payload!!.getString("playBehavior"))
-                put("caption", buildJsonObject {
-                    put("content", directive.payload!!.getJsonObject("caption")!!.getString("content"))
-                    put("type", directive.payload!!.getJsonObject("caption")!!.getString("type"))
-                })
+
+                val caption = directive.payload!!.getJsonObject("caption", false)
+                caption?.also {
+                    put("caption", buildJsonObject {
+                        put("content", caption.getString("content"))
+                        put("type", caption.getString("type"))
+                    })
+                }
             }
 
             setPayload(payload)
@@ -35,10 +39,10 @@ private fun onSpeak(sdk: SmartWatchSDK, directive: Directive, parts: List<Direct
 
         val audio = directive.payload!!.getString("url")!!.split(":")
         val part = parts.find {
-            it -> (it.type == DirectiveParser.PartType.OCTET_BUFFER) && (it.headers["Content-ID"] == "<${audio[1]}>")
+            it -> (it.type == DirectiveParser.PartType.OCTET_BUFFERS) && (it.headers["Content-ID"] == "<${audio[1]}>")
         }
 
-        sdk.onActionListener.onAction(action.toString(), (part as DirectiveParser.OctetBufferPart).buffer, object : OnResultCallback {
+        sdk.onActionListener.onAction(action.toString(), (part as DirectiveParser.OctetBuffersPart).buffer, object : OnResultCallback {
             override fun onResult(data: String, extra: Any?) {
                 TODO("Not yet implemented")
             }

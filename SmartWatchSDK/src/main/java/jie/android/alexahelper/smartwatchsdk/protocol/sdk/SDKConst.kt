@@ -17,7 +17,7 @@ object SDKConst {
     const val ACTION_ALEXA_SPEECH_END = "alexa.speechEnd"
     const val ACTION_ALEXA_SPEECH_RECOGNIZE = "alexa.speechRecognize"
 
-    const val ACTION_ALEXA_DND_CHANGED = "alexa.doNotDisturbChanged"
+    const val ACTION_ALEXA_DND_UPDATED = "alexa.doNotDisturbUpdated"
     const val ACTION_ALEXA_SPEECH_SPEAK = "alexa.speechSpeak"
 
 

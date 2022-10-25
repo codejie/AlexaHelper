@@ -20,7 +20,7 @@ fun onAlexaDoNotDisturbDirective(sdk: SmartWatchSDK, directive: Directive, parts
 private fun onSetDoNotDisturb(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     val enabled = directive.payload?.getBoolean("enabled", false)
     if (enabled != null) {
-        val action = ActionWrapper(SDKConst.ACTION_ALEXA_DND_CHANGED).apply {
+        val action = ActionWrapper(SDKConst.ACTION_ALEXA_DND_UPDATED).apply {
             val payload = buildJsonObject {
                 put("enabled", enabled)
             }
@@ -34,7 +34,7 @@ private fun onSetDoNotDisturb(sdk: SmartWatchSDK, directive: Directive, parts: L
                     val enabled = result.getPayload()!!.getBoolean("enabled")!!
                     reportDoNotDisturb(sdk, enabled)
                 } catch (e: Exception) {
-                    Logger.w("${SDKConst.ACTION_ALEXA_DND_CHANGED} Result exception - ${e.message}")
+                    Logger.w("${SDKConst.ACTION_ALEXA_DND_UPDATED} Result exception - ${e.message}")
                 }
             }
         })

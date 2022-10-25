@@ -6,12 +6,13 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import okhttp3.Response
 import okio.BufferedSource
+import java.nio.ByteBuffer
 import java.util.*
 
 open class DirectiveParser {
     enum class PartType {
         DIRECTIVE,
-        OCTET_BUFFER
+        OCTET_BUFFERS
     }
 
     open class Part(val type: PartType, val headers: Map<String, String>) {
@@ -31,8 +32,8 @@ open class DirectiveParser {
         }
     }
 
-    class OctetBufferPart(headers: Map<String, String>, val buffer: ByteArray)
-        : Part(PartType.OCTET_BUFFER, headers) {
+    class OctetBuffersPart(headers: Map<String, String>, val buffer: ByteArray)
+        : Part(PartType.OCTET_BUFFERS, headers) {
         }
 
     protected var boundary: String? = null
@@ -69,8 +70,8 @@ open class DirectiveParser {
         return null
     }
 
-    protected open fun buildOctetBufferPart(headers: Map<String, String>, buffer: ByteArray): OctetBufferPart {
-        return OctetBufferPart(
+    protected open fun buildOctetBufferPart(headers: Map<String, String>, buffer: ByteArray): OctetBuffersPart {
+        return OctetBuffersPart(
             headers,
             buffer
         )
@@ -139,7 +140,6 @@ class ResponseStreamDirectiveParser() : DirectiveParser() {
             }
             return true
         }
-
     }
 
     fun parseParts(response: Response): List<Part> {
@@ -200,7 +200,9 @@ class ResponseStreamDirectiveParser() : DirectiveParser() {
                 } else {
                     val boundaryBytes: ByteArray = boundary!!.toByteArray()
                     val cache = ByteArray(boundaryBytes.size)
-                    val bigBuffer = ByteArray(256 * 1024)
+
+                    val ret = arrayListOf<ByteArray>()
+                    val bigBuffer = ByteArray(16 * 1024 + boundaryBytes.size + 2)
 
                     val srcStream = source.inputStream()
 
@@ -222,12 +224,31 @@ class ResponseStreamDirectiveParser() : DirectiveParser() {
                             }
                         }
                         ++ read
+                        if (read >= (16 * 1024)) {
+                            val buffer = ByteArray(read)
+                            ret.add(bigBuffer.copyInto(buffer, 0, 0, read))
+
+                            read = 0
+                        }
                     }
 
-                    val buffer: ByteArray = ByteArray(read)
-                    bigBuffer.copyInto(buffer, 0, 0, read)
+                    if (read > 0) {
+                        val buffer = ByteArray(read)
+                        ret.add(bigBuffer.copyInto(buffer, 0, 0, read))
+                    }
+//
+//                    val buffer: ByteArray = ByteArray(read)
+//                    bigBuffer.copyInto(buffer, 0, 0, read)
+                    var count = 0
+                    ret.forEach { count += it.size}
+                    val retBuffer = ByteArray(count)
+                    count = 0
+                    ret.forEach {
+                        it.copyInto(retBuffer, count, it.size)
+                        count += it.size
+                    }
 
-                    val part = buildOctetBufferPart(headers, buffer)
+                    val part = buildOctetBufferPart(headers, retBuffer)
                     parts.add(part)
 
                     headers = hashMapOf()
