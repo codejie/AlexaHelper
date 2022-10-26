@@ -1,11 +1,13 @@
 package com.SmartWatchVoice.bestapp.sdk;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK;
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback;
@@ -66,6 +68,35 @@ public class SDKAction {
         JsonObject action = new JsonObject();
         action.addProperty("type", "action");
         action.addProperty("name", "alexa.setTimeZone");
+        action.addProperty("version", 1);
+        action.add("payload", payload);
+
+        sdk.action(action.toString(), null, callback);
+    }
+
+    public static void setDND(Boolean enabled, OnResultCallback callback) {
+        JsonObject payload = new JsonObject();
+        payload.addProperty("enabled", enabled);
+
+        JsonObject action = new JsonObject();
+        action.addProperty("type", "action");
+        action.addProperty("name", "alexa.setDoNotDisturb");
+        action.addProperty("version", 1);
+        action.add("payload", payload);
+
+        sdk.action(action.toString(), null, callback);
+    }
+
+    public static void setLocales(String locale, OnResultCallback callback) {
+        JsonArray values = new JsonArray();
+        values.add(locale);
+
+        JsonObject payload = new JsonObject();
+        payload.add("locales", values);
+
+        JsonObject action = new JsonObject();
+        action.addProperty("type", "action");
+        action.addProperty("name", "alexa.setLocales");
         action.addProperty("version", 1);
         action.add("payload", payload);
 

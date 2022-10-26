@@ -7,17 +7,54 @@ import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Directive
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.EventBuilder
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
 fun onSystemDirective(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     when (directive.name) {
         AlexaConst.NAME_SET_TIME_ZONE -> onSetTimeZone(sdk, directive, parts)
+        AlexaConst.NAME_SET_LOCALES -> onSetLocales(sdk, directive, parts)
         else  -> Logger.w("unsupported System - $directive")
     }
 }
 
-fun onSetTimeZone(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
+private fun onSetLocales(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
+    val locales = directive.payload?.getJsonArray("locales")
+    if (locales != null) {
+        val action = ActionWrapper(SDKConst.ACTION_ALEXA_LOCALES_UPDATED).apply {
+            val payload = buildJsonObject {
+                put("locales", locales)
+            }
+            setPayload(payload)
+        }.build()
+
+        sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
+            override fun onResult(data: String, extra: Any?) {
+                try {
+                    val result = ResultWrapper.parse(data, extra)
+                    val ret = result.getPayload()!!.getJsonArray("locales")!!
+                    localesReport(sdk, ret)
+                } catch (e: Exception) {
+                    Logger.w("${SDKConst.ACTION_ALEXA_LOCALES_UPDATED} Result exception - ${e.message}")
+                }
+            }
+        })
+    } else {
+        Logger.w("$directive missing filed - locales")
+    }
+}
+
+private fun localesReport(sdk: SmartWatchSDK, locales: JsonArray) {
+    val event = EventBuilder(AlexaConst.NS_SYSTEM, AlexaConst.NAME_LOCALES_REPORT).apply {
+        addPayload("locales", locales)
+    }.create()
+
+    sdk.httpChannel.postEvent(event, null)
+}
+
+
+private fun onSetTimeZone(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     val timezone = directive.payload?.getString("timeZone", false)
     if (timezone != null) {
         val action = ActionWrapper(SDKConst.ACTION_ALEXA_TIME_ZONE_UPDATED).apply {

@@ -4,6 +4,7 @@ open class SDKException constructor(val code: Int, message: String? = null): Exc
 }
 
 object SDKConst {
+
     // Action
     const val ACTION_SDK_EXCEPTION = "sdk.exception"
     const val ACTION_SDK_TEST = "sdk.test"
@@ -18,11 +19,13 @@ object SDKConst {
     const val ACTION_ALEXA_SPEECH_END = "alexa.speechEnd"
     const val ACTION_ALEXA_SPEECH_RECOGNIZE = "alexa.speechRecognize"
     const val ACTION_ALEXA_SET_TIME_ZONE = "alexa.setTimeZone"
+    const val ACTION_ALEXA_SET_LOCALS = "alexa.setLocales"
 
 
     const val ACTION_ALEXA_DND_UPDATED = "alexa.doNotDisturbUpdated"
     const val ACTION_ALEXA_SPEECH_SPEAK = "alexa.speechSpeak"
     const val ACTION_ALEXA_TIME_ZONE_UPDATED = "alexa.timeZoneUpdated"
+    const val ACTION_ALEXA_LOCALES_UPDATED = "alexa.localesUpdated"
 
 
 

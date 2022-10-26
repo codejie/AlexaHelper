@@ -1,5 +1,6 @@
 package jie.android.alexahelper.smartwatchsdk
 
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.getString
 import kotlinx.serialization.json.*
 import java.util.*
 
@@ -9,39 +10,6 @@ internal object EndpointInfo {
     init {
         // self
         loadSelf(this)
-//        val id = "${DeviceInfo.Product.clientId}::${DeviceInfo.Product.id}::${DeviceInfo.Product.serialNumber}"
-//        add(id, buildJsonObject {
-//            put("endpointId", id)
-//            put("manufacturerName", "TouchTech")
-//            put("friendlyName", "TouchAce")
-//            put("displayCategories", buildJsonArray {
-//                add("SPEAKER")
-//                add("MUSIC_SYSTEM")
-//            })
-//            put("description", "TouchAlexa Self")
-//
-//            put("registration", buildJsonObject {
-//                put("productId", DeviceInfo.Product.id)
-//                put("deviceSerialNumber", DeviceInfo.Product.serialNumber)
-//            })
-//
-//            put("connections", buildJsonArray {
-//                add(buildJsonObject {
-//                    put("type", "TCP_IP")
-//                    put("value", "127.0.0.1")
-//                })
-//            })
-//
-//            put("additionalAttributes", buildJsonObject {
-//                put("manufacturer", DeviceInfo.Manufacturer.name)
-//                put("model", DeviceInfo.Manufacturer.model)
-//                put("serialNumber", DeviceInfo.Product.serialNumber)
-//                put("firmwareVersion", DeviceInfo.Manufacturer.firmware)
-//                put("softwareVersion", DeviceInfo.Manufacturer.software)
-//            })
-//
-//            put("capabilities", buildJsonArray {  })
-//        })
     }
 
     fun add(id: String, json: JsonObject): JsonObject? = endpoints.put(id, json)
@@ -55,8 +23,8 @@ private fun loadSelf(endpointInfo: EndpointInfo) {
         put("manufacturerName", "TouchTech")
         put("friendlyName", "TouchAce")
         put("displayCategories", buildJsonArray {
-            add("SPEAKER")
             add("MUSIC_SYSTEM")
+            add("SPEAKER")
         })
         put("description", "TouchAlexa Self")
 
@@ -95,6 +63,7 @@ private fun loadSelf(endpointInfo: EndpointInfo) {
     }
 
     endpointInfo.add(id, data)
+    endpointInfo.add(thingSpot.getString("endpointId")!!, thingSpot)
 }
 
 object Capability {
@@ -273,3 +242,26 @@ object Capability {
     }
 }
 
+private val thingSpot = buildJsonObject {
+    put("endpointId", "${DeviceInfo.Product.clientId}::${DeviceInfo.Product.id}::${DeviceInfo.Product.serialNumber}-Light-Spot")
+    put("manufacturerName", "TouchTech")
+    put("friendlyName", "Spot")
+    put("displayCategories", buildJsonArray {
+        add("LIGHT")
+    })
+    put("description", "TouchAlexa LightSpot")
+
+    put("additionalAttributes", buildJsonObject {
+        put("manufacturer", DeviceInfo.Manufacturer.name)
+        put("model", "Light-Sport-1")
+        put("serialNumber", "1")
+        put("firmwareVersion", "1.0")
+        put("softwareVersion", "20221020")
+        put("customIdentifier", "spot-01")
+    })
+
+    put("capabilities", buildJsonArray {
+        add(Capability.makeAlexa())
+        add(Capability.makeAlexaPowerController())
+    })
+}

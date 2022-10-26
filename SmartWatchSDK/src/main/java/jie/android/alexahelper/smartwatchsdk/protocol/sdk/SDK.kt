@@ -142,8 +142,19 @@ fun JsonObject.getBoolean(key: String, checked: Boolean = true): Boolean? {
         )
     return ret
 }
+
 fun JsonObject.getJsonObject(key: String, checked: Boolean = true): JsonObject? {
     val ret = this[key]?.jsonObject
+    if (ret == null && checked)
+        throw SDKException(
+            SDKConst.RESULT_CODE_MISSING_FIELD,
+            "${SDKConst.RESULT_MESSAGE_MISSING_FIELD} - $key"
+        )
+    return ret
+}
+
+fun JsonObject.getJsonArray(key: String, checked: Boolean = true): JsonArray? {
+    val ret = this[key]?.jsonArray
     if (ret == null && checked)
         throw SDKException(
             SDKConst.RESULT_CODE_MISSING_FIELD,

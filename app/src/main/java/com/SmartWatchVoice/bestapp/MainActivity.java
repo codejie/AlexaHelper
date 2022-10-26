@@ -24,9 +24,12 @@ import com.SmartWatchVoice.bestapp.handler.HandlerConst;
 import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
+import com.SmartWatchVoice.bestapp.system.SettingInfo;
 import com.SmartWatchVoice.bestapp.utils.Logger;
 import com.SmartWatchVoice.bestapp.utils.Utils;
+import com.google.gson.JsonArray;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,6 +37,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK;
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnActionListener;
@@ -77,6 +81,17 @@ public class MainActivity extends AppCompatActivity {
                         Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_AUDIO_FILE, filename);
                     }
                     break;
+                    case "alexa.doNotDisturbUpdated": {
+                        onDoNotDisturbUpdatedAction(action, extra, callback);
+                    }
+                    case "alexa.timeZoneUpdated": {
+                        onTimeZoneUpdatedAction(action, extra, callback);
+                    }
+                    break;
+                    case "alexa.localesUpdated": {
+                        onLocalesUpdatedAction(action, extra, callback);
+                    }
+                    break;
                     default: {
                         JSONObject result = new JSONObject();
                         result.put("type", "result");
@@ -95,6 +110,73 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void onLocalesUpdatedAction(JSONObject action, Object extra, OnResultCallback callback) {
+        try {
+            JSONArray locales = action.getJSONObject("payload").getJSONArray("locales");
+            ArrayList<String> list = new ArrayList<>();
+            for (int i = 0; i < locales.length(); ++ i) {
+                list.add(locales.getString(i));
+            }
+            SettingInfo.getInstance().locales = list;
+
+            JSONObject payload = new JSONObject();
+//            JsonArray lo = new JsonArray();
+//            SettingInfo.getInstance().locales.forEach( it -> lo.add(it));
+            payload.put("locales", locales);
+
+            JSONObject result = new JSONObject();
+            result.put("type", "result");
+            result.put("name", action.getString("name"));
+            result.put("version", 1);
+            result.put("payload", payload);
+
+            callback.onResult(result.toString(), null);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void onTimeZoneUpdatedAction(JSONObject action, Object extra, OnResultCallback callback) {
+        try {
+            String timezone = action.getJSONObject("payload").getString("timeZone");
+            SettingInfo.getInstance().timeZone = timezone;
+
+            JSONObject payload = new JSONObject();
+            payload.put("timeZone", SettingInfo.getInstance().timeZone);
+
+            JSONObject result = new JSONObject();
+            result.put("type", "result");
+            result.put("name", action.getString("name"));
+            result.put("version", 1);
+            result.put("payload", payload);
+
+            callback.onResult(result.toString(), null);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void onDoNotDisturbUpdatedAction(JSONObject action, Object extra, OnResultCallback callback) {
+
+        try {
+            Boolean enabled = action.getJSONObject("payload").getBoolean("enabled");
+            SettingInfo.getInstance().doNotDisturb = enabled;
+
+            JSONObject payload = new JSONObject();
+            payload.put("enabled", SettingInfo.getInstance().doNotDisturb);
+
+            JSONObject result = new JSONObject();
+            result.put("type", "result");
+            result.put("name", action.getString("name"));
+            result.put("version", 1);
+            result.put("payload", payload);
+
+            callback.onResult(result.toString(), null);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -346,13 +428,28 @@ public class MainActivity extends AppCompatActivity {
             product.put("id", DeviceInfo.ProductId);
             product.put("clientId", DeviceInfo.ClientId);
             product.put("serialNumber", DeviceInfo.ProductSerialNumber);
+            product.put("name", "TouchAlexa");
+            product.put("friendlyName", "TouchAce");
+            product.put("description", "Touch Self");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
+        JSONObject manufacturer = new JSONObject();
+        try {
+            manufacturer.put("name", "TouchManufacturer");
+            manufacturer.put("model", "Touch-1");
+            manufacturer.put("firmware", "1.0");
+            manufacturer.put("software", "20221020");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
         JSONObject payload = new JSONObject();
         try {
             payload.put("product", product);
+            payload.put("manufacturer", manufacturer);
         } catch (JSONException e) {
             e.printStackTrace();
         }

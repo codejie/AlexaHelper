@@ -11,5 +11,6 @@ object AlexaAction {
     fun speechStop(sdk: SmartWatchSDK, action: ActionWrapper) = speechStopAction(sdk, action)
     fun speechRecognize(sdk: SmartWatchSDK, action: ActionWrapper) = speechRecognizeAction(sdk, action)
     fun setTimeZone(sdk: SmartWatchSDK, action: ActionWrapper) = setTimeZoneAction(sdk,action)
+    fun setLocales(sdk: SmartWatchSDK, action: ActionWrapper) = setLocalesAction(sdk, action)
 
 }

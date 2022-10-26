@@ -18,10 +18,14 @@ import com.SmartWatchVoice.bestapp.action.EventAction;
 import com.SmartWatchVoice.bestapp.action.alexa_do_not_disturb.DoNotDisturbChangedAction;
 import com.SmartWatchVoice.bestapp.databinding.FragmentHomeBinding;
 import com.SmartWatchVoice.bestapp.handler.HandlerConst;
+import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.system.SettingInfo;
 import com.SmartWatchVoice.bestapp.utils.Logger;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback;
 import okhttp3.Response;
 
 public class HomeFragment extends Fragment {
@@ -75,13 +79,25 @@ public class HomeFragment extends Fragment {
         binding.switchHomeDnd.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                new DoNotDisturbChangedAction(b).create().post(new EventAction.OnChannelResponse() {
+                SDKAction.setDND(b, new OnResultCallback() {
                     @Override
-                    public void OnResponse(@NonNull Response response) {
-                        Logger.d("change DoNotDisturb - " + b);
-                        SettingInfo.getInstance().doNotDisturb = b;
+                    public void onResult(@NonNull String data, @Nullable Object extra) {
+                        JsonObject result = JsonParser.parseString(data).getAsJsonObject();
+                        Boolean enabled = result.getAsJsonObject("payload").get("enabled").getAsBoolean();
+
+                        Logger.d("change DoNotDisturb - " + enabled);
+                        SettingInfo.getInstance().doNotDisturb = enabled;
+
                     }
                 });
+
+//                new DoNotDisturbChangedAction(b).create().post(new EventAction.OnChannelResponse() {
+//                    @Override
+//                    public void OnResponse(@NonNull Response response) {
+//                        Logger.d("change DoNotDisturb - " + b);
+//                        SettingInfo.getInstance().doNotDisturb = b;
+//                    }
+//                });
             }
         });
         binding.buttonHomeLanguage.setOnClickListener(new View.OnClickListener() {

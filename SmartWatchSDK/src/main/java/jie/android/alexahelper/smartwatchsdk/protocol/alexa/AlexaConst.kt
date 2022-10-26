@@ -12,6 +12,9 @@ object AlexaConst {
     const val NAME_TIME_ZONE_CHANGED = "TimeZoneChanged"
     const val NAME_SET_TIME_ZONE = "SetTimeZone"
     const val NAME_TIME_ZONE_REPORT = "TimeZoneReport"
+    const val NAME_SET_LOCALES = "SetLocales"
+    const val NAME_LOCALES_REPORT = "LocalesReport"
+    const val NAME_LOCALES_CHANGED = "LocalesChanged"
 
 
     const val NS_ALEXA_API_GATEWAY = "Alexa.ApiGateway"

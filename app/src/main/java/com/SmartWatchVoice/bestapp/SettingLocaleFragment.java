@@ -19,12 +19,14 @@ import com.SmartWatchVoice.bestapp.action.EventAction;
 import com.SmartWatchVoice.bestapp.action.system.LocalesChangedAction;
 import com.SmartWatchVoice.bestapp.action.system.TimeZoneChangedAction;
 import com.SmartWatchVoice.bestapp.databinding.FragmentSettingLocaleBinding;
+import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;
 import com.SmartWatchVoice.bestapp.system.SettingInfo;
 
 import java.util.Arrays;
 import java.util.List;
 
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback;
 import okhttp3.Response;
 
 
@@ -142,9 +144,10 @@ public class SettingLocaleFragment extends Fragment {
     }
 
     private void onChanged(String locale) {
-        new LocalesChangedAction(Arrays.asList(locale)).create().post(new EventAction.OnChannelResponse() {
+
+        SDKAction.setLocales(locale, new OnResultCallback() {
             @Override
-            public void OnResponse(@NonNull Response response) {
+            public void onResult(@NonNull String data, @Nullable Object extra) {
                 SettingInfo.getInstance().locales = Arrays.asList(locale);
                 SettingInfo.getInstance().flush();;
 
@@ -158,5 +161,22 @@ public class SettingLocaleFragment extends Fragment {
                 });
             }
         });
+
+//        new LocalesChangedAction(Arrays.asList(locale)).create().post(new EventAction.OnChannelResponse() {
+//            @Override
+//            public void OnResponse(@NonNull Response response) {
+//                SettingInfo.getInstance().locales = Arrays.asList(locale);
+//                SettingInfo.getInstance().flush();;
+//
+//                adapter.setSelected(locale);
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        adapter.notifyDataSetChanged();
+//                        NavHostFragment.findNavController(SettingLocaleFragment.this).navigate(R.id.action_settingLocaleFragment_to_homeFragment);
+//                    }
+//                });
+//            }
+//        });
     }
 }

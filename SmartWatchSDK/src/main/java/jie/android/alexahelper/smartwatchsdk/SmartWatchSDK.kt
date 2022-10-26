@@ -8,6 +8,7 @@ import jie.android.alexahelper.smartwatchsdk.action.sdk.sdk.SDKAction
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.HttpChannel
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import jie.android.alexahelper.smartwatchsdk.channel.sdk.SDKChannel
+import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import jie.android.alexahelper.smartwatchsdk.utils.SDKScheduler
 import kotlinx.serialization.SerializationException
 
@@ -61,6 +62,7 @@ class SmartWatchSDK constructor() {
 
     fun action(data: String, extra: Any?, callback: OnResultCallback) {
         try {
+            Logger.d("sdk action() - $data")
             val action: ActionWrapper = ActionWrapper.parse(data, extra, callback)
             when (action.name) {
 //                SDKConst.ACTION_ALEXA_SPEECH_RECOGNIZE -> AlexaAction.speechRecognize(this, action)
@@ -73,6 +75,7 @@ class SmartWatchSDK constructor() {
                 SDKConst.ACTION_ALEXA_SPEECH_END -> AlexaAction.speechStop(this, action)
                 SDKConst.ACTION_ALEXA_SPEECH_RECOGNIZE -> AlexaAction.speechRecognize(this, action)
                 SDKConst.ACTION_ALEXA_SET_TIME_ZONE -> AlexaAction.setTimeZone(this, action)
+                SDKConst.ACTION_ALEXA_SET_LOCALS -> AlexaAction.setLocales(this, action)
                 else -> throw SDKException(
                     SDKConst.RESULT_CODE_INVALID_FORMAT,
                     SDKConst.RESULT_MESSAGE_INVALID_FORMAT
