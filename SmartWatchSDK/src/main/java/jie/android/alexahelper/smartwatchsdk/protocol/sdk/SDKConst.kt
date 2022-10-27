@@ -26,6 +26,7 @@ object SDKConst {
     const val ACTION_ALEXA_SPEECH_SPEAK = "alexa.speechSpeak"
     const val ACTION_ALEXA_TIME_ZONE_UPDATED = "alexa.timeZoneUpdated"
     const val ACTION_ALEXA_LOCALES_UPDATED = "alexa.localesUpdated"
+    const val ACTION_ALEXA_ALARM_ADDED = "alexa.alarmAdded"
 
 
 

@@ -35,6 +35,7 @@ object AlexaConst {
     const val NAME_SPEAK = "Speak"
 
     const val NS_ALERTS = "Alerts"
+    const val NAME_SET_ALERT = "SetAlert"
 
 
 }
