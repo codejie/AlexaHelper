@@ -70,6 +70,7 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
                     AlexaConst.NS_SPEECH_SYNTHESIZER -> onSpeechSynthesizerDirective(sdk, directive, directiveParts)
                     AlexaConst.NS_ALEXA_API_GATEWAY -> onAlexaApiGatewayDirective(sdk, directive, directiveParts)
                     AlexaConst.NS_SYSTEM -> onSystemDirective(sdk, directive, directiveParts)
+                    AlexaConst.NS_ALERTS -> 
                     else -> Logger.w("unsupported - ${directive.toString()}")
                 }
             }

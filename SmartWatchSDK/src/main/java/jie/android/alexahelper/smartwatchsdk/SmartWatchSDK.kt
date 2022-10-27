@@ -29,17 +29,6 @@ class SmartWatchSDK constructor() {
     internal val sdkChannel: SDKChannel = SDKChannel(this)
     internal val sdkScheduler: SDKScheduler = SDKScheduler(this)
 
-//    internal val resultCallbackHook: ResultCallbackHook = { action, result ->
-//        when (result.name) {
-//            SDKConst.ACTION_ALEXA_LOGIN,
-//            SDKConst.ACTION_ALEXA_LOGIN_WITH_TOKEN -> resultLogin(action, result)
-//            else -> {
-//                Logger.d("Not been hooked action - ${action.name}")
-//                action.callback?.onResult(result.build().toString(), result.extra)
-//            }
-//        }
-//    }
-
     fun attach(context: Context, actionListener: OnActionListener) {
         requestContext = RequestContext.create(context)
         onActionListener = actionListener
