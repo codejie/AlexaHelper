@@ -66,7 +66,7 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
         })
     }
 
-    fun postEvent(closeResponse: Boolean, json: JsonObject, callback: ChannelPostCallback?): Unit {
+    private fun postEvent(closeResponse: Boolean, json: JsonObject, callback: ChannelPostCallback?): Unit {
         val body: RequestBody = json.toString().toRequestBody(
             "application/json;charset=utf-8".toMediaType())
 

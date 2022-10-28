@@ -92,6 +92,14 @@ public class MainActivity extends AppCompatActivity {
                         onLocalesUpdatedAction(action, extra, callback);
                     }
                     break;
+                    case "alexa.alertAdded": {
+                        onAlertAdded(action, extra, callback);
+                    }
+                    break;
+                    case "alexa.alertDeleted": {
+                        onAlertDeleted(action, extra, callback);
+                    }
+                    break;
                     default: {
                         JSONObject result = new JSONObject();
                         result.put("type", "result");
@@ -110,6 +118,60 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void onAlertDeleted(JSONObject action, Object extra, OnResultCallback callback) {
+        try {
+            JSONObject payload = action.getJSONObject("payload");
+            JSONArray tokens = payload.getJSONArray("tokens");
+            for (int i = 0; i < tokens.length(); ++ i) {
+                String token = tokens.getString(i);
+                SettingInfo.getInstance().alertInfo.deleteAlert(token);
+            }
+//            String token = payload.getString("token");
+
+            JSONObject p = new JSONObject();
+            p.put("tokens", tokens);
+
+            JSONObject result = new JSONObject();
+            result.put("type", "result");
+            result.put("name", action.getString("name"));
+            result.put("version", 1);
+            result.put("payload", p);
+
+            callback.onResult(result.toString(), null);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void onAlertAdded(JSONObject action, Object extra, OnResultCallback callback) {
+        try {
+            JSONObject payload = action.getJSONObject("payload");
+            String token = payload.getString("token");
+            String type = payload.getString("type");
+            String scheduledTime = payload.getString("scheduledTime");
+            Long loopCount = payload.getLong("loopCount");
+            Long loopPause = payload.getLong("loopPause");
+            String label = payload.getString("label");
+//            String startTime = payload.getString("startTime");
+
+            SettingInfo.getInstance().alertInfo.setAlert(token, type, scheduledTime, loopCount, loopPause, label);
+
+            JSONObject p = new JSONObject();
+            p.put("token", token);
+
+            JSONObject result = new JSONObject();
+            result.put("type", "result");
+            result.put("name", action.getString("name"));
+            result.put("version", 1);
+            result.put("payload", p);
+
+            callback.onResult(result.toString(), null);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void onLocalesUpdatedAction(JSONObject action, Object extra, OnResultCallback callback) {
         try {

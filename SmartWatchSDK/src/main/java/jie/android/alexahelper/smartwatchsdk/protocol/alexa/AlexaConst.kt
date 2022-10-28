@@ -36,6 +36,15 @@ object AlexaConst {
 
     const val NS_ALERTS = "Alerts"
     const val NAME_SET_ALERT = "SetAlert"
-
+    const val NAME_SET_ALERT_FAILED = "SetAlertFailed"
+    const val NAME_SET_ALERT_SUCCEEDED = "SetAlertSucceeded"
+    const val NAME_DELETE_ALERT = "DeleteAlert"
+    const val NAME_DELETE_ALERT_FAILED = "DeleteAlertFailed"
+    const val NAME_DELETE_ALERT_SUCCEEDED = "DeleteAlertSucceeded"
+    const val NAME_DELETES_ALERT = "DeleteAlerts"
+    const val NAME_DELETE_ALERTS_FAILED = "DeleteAlertsFailed"
+    const val NAME_DELETE_ALERTS_SUCCEEDED = "DeleteAlertsSucceeded"
+    const val NAME_ALERT_STARTED = "AlertStarted"
+    const val NAME_ALERT_STOPPED = "AlertStopped"
 
 }

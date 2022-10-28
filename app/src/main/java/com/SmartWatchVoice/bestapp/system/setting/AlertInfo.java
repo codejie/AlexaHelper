@@ -104,6 +104,23 @@ public class AlertInfo implements SettingItem {
         alerts.add(alert);
     }
 
+    public void setAlert(String token, String type, String scheduledTime, Long loopCount, Long loopPause,
+                         String label) {
+        alerts.removeIf(item -> item.token.equals(token));
+
+        Alert alert = new Alert();
+        alert.token = token;
+        alert.type = type;
+        alert.state = State.ENABLED;
+        alert.scheduledTime = scheduledTime;
+        alert.loopCount = loopCount;
+        alert.loopPauseInMilliSeconds = loopPause;
+        alert.label = label;
+//        alert.originalTime = startTime;
+
+        alerts.add(alert);
+    }
+
     public void setAsset(String id, String url, String filename) {
         if (assets.get(id) == null) {
             Asset asset = new Asset();
