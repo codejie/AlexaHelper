@@ -4,7 +4,6 @@ import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.EventBuilder
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put

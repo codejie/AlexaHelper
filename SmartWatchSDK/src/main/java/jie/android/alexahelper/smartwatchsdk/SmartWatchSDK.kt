@@ -6,8 +6,8 @@ import jie.android.alexahelper.smartwatchsdk.action.sdk.alexa.AlexaAction
 import jie.android.alexahelper.smartwatchsdk.action.sdk.device.DeviceAction
 import jie.android.alexahelper.smartwatchsdk.action.sdk.sdk.SDKAction
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.HttpChannel
-import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import jie.android.alexahelper.smartwatchsdk.channel.sdk.SDKChannel
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import jie.android.alexahelper.smartwatchsdk.utils.SDKScheduler
 import kotlinx.serialization.SerializationException

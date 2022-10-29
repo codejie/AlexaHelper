@@ -42,7 +42,8 @@ private fun onSpeak(sdk: SmartWatchSDK, directive: Directive, parts: List<Direct
             it -> (it.type == DirectiveParser.PartType.OCTET_BUFFERS) && (it.headers["Content-ID"] == "<${audio[1]}>")
         }
 
-        sdk.onActionListener.onAction(action.toString(), (part as DirectiveParser.OctetBuffersPart).buffer, object : OnResultCallback {
+        sdk.onActionListener.onAction(action.toString(), (part as DirectiveParser.OctetBuffersPart).buffer, object :
+            OnResultCallback {
             override fun onResult(data: String, extra: Any?) {
                 TODO("Not yet implemented")
             }
