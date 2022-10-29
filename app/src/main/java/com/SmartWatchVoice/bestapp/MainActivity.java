@@ -25,9 +25,18 @@ import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.system.SettingInfo;
+import com.SmartWatchVoice.bestapp.system.channel.Helper;
 import com.SmartWatchVoice.bestapp.utils.Logger;
 import com.SmartWatchVoice.bestapp.utils.Utils;
-import com.google.gson.JsonArray;
+import com.amazon.identity.auth.device.AuthError;
+import com.amazon.identity.auth.device.api.authorization.AuthCancellation;
+import com.amazon.identity.auth.device.api.authorization.AuthorizationManager;
+import com.amazon.identity.auth.device.api.authorization.AuthorizeListener;
+import com.amazon.identity.auth.device.api.authorization.AuthorizeRequest;
+import com.amazon.identity.auth.device.api.authorization.AuthorizeResult;
+import com.amazon.identity.auth.device.api.authorization.ScopeFactory;
+import com.amazon.identity.auth.device.api.workflow.RequestContext;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +47,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK;
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnActionListener;
@@ -45,12 +55,10 @@ import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback;
 
 public class MainActivity extends AppCompatActivity {
 
-//    interface AppDeviceCallback {
-//        void onMessage(int what, Object result);
-//    }
-
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
+
+    private RequestContext requestContext = null;
 
     private Handler handler = null;
     private HandlerThread directiveThread = null;
@@ -252,27 +260,34 @@ public class MainActivity extends AppCompatActivity {
 
         SDKAction.sdk = smartWatchSDK;
 
-        JSONObject json = new JSONObject();
-        try {
-            json.put("type", "action");
-            json.put("name", "sdk.test");
-            json.put("version", 1);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        smartWatchSDK.action(json.toString(), null, new OnResultCallback() {
-            @Override
-            public void onResult(@NonNull String data, @Nullable Object extra) {
-                Logger.d("onResult - " + data);
-            }
-        });
+//        JSONObject json = new JSONObject();
+//        try {
+//            json.put("type", "action");
+//            json.put("name", "sdk.test");
+//            json.put("version", 1);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        smartWatchSDK.action(json.toString(), null, new OnResultCallback() {
+//            @Override
+//            public void onResult(@NonNull String data, @Nullable Object extra) {
+//                Logger.d("onResult - " + data);
+//            }
+//        });
 
         DeviceInfo.init(this);
         RuntimeInfo.getInstance().start(this);
 
         initHandlers();
-//        initRequestContext();
+        initRequestContext();
+
+        setDeviceInfo(new OnResultCallback() {
+            @Override
+            public void onResult(@NonNull String data, @Nullable Object extra) {
+                Logger.d("setInfo result - " + data);
+            }
+        });
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -324,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        requestContext.onResume();
+        requestContext.onResume();
 //        Device.Companion.getInstance().onResume();
         smartWatchSDK.resume(this);
     }
@@ -351,17 +366,18 @@ public class MainActivity extends AppCompatActivity {
                 Logger.v("MainHandler - " + message);
                 switch (message.what) {
                     case HandlerConst.MSG_FETCH_TOKEN:
-                        setDeviceInfo(new OnResultCallback() {
-                            @Override
-                            public void onResult(@NonNull String data, @Nullable Object extra) {
-                                Logger.d("setInfo result - " + data);
-                                if (RuntimeInfo.getInstance().authInfo == null ||  RuntimeInfo.getInstance().authInfo.refreshToken == null) {
-                                    fetchProductAccessToken();
-                                } else {
-                                    loginWithToken();
-                                }
-                            }
-                        });
+                        authorize();
+//                        setDeviceInfo(new OnResultCallback() {
+//                            @Override
+//                            public void onResult(@NonNull String data, @Nullable Object extra) {
+//                                Logger.d("setInfo result - " + data);
+//                                if (RuntimeInfo.getInstance().authInfo == null ||  RuntimeInfo.getInstance().authInfo.refreshToken == null) {
+//                                    fetchProductAccessToken();
+//                                } else {
+//                                    loginWithToken();
+//                                }
+//                            }
+//                        });
                         break;
                     case HandlerConst.MSG_LOGIN_SUCCESS:
                     case HandlerConst.MSG_REFRESH_TOKEN_SUCCESS:
@@ -393,6 +409,68 @@ public class MainActivity extends AppCompatActivity {
         RuntimeInfo.getInstance().directiveHandler = directiveHandler;
     }
 
+    private void initRequestContext() {
+        requestContext = RequestContext.create(this.getApplicationContext());
+        requestContext.registerListener(new AuthorizeListener() {
+            @Override
+            public void onSuccess(AuthorizeResult authorizeResult) {
+//                HttpChannel.getInstance().onAuthorizeSuccess(authorizeResult);
+                onAuthorizeSuccess(authorizeResult);
+            }
+
+            @Override
+            public void onError(AuthError authError) {
+                Logger.e("Authorization error - " + authError.getMessage());
+            }
+
+            @Override
+            public void onCancel(AuthCancellation authCancellation) {
+                Logger.w("Authorization canceled.");
+            }
+        });
+    }
+
+    private void onAuthorizeSuccess(AuthorizeResult authorizeResult) {
+        final String authCode = authorizeResult.getAuthorizationCode();
+        final String redirectUri = authorizeResult.getRedirectURI();
+
+        String authClientId = authorizeResult.getClientId();
+
+//        fetchAuthToken(authCode, redirectUri);
+
+        RuntimeInfo.getInstance().updateAuthInfo(authCode, redirectUri);
+        RuntimeInfo.getInstance().authInfo.authClientId = authClientId;
+
+        fetchAuthorizationToken();
+    }
+
+    public void authorize() {
+//        RuntimeInfo.AuthorizationInfo authInfo = RuntimeInfo.getInstance().authInfo;
+//        if (authInfo == null || authInfo.refreshToken == null) {
+//        String VerifierCode = UUID.randomUUID().toString();
+        RuntimeInfo.getInstance().updateAuthInfoVerifierCode(UUID.randomUUID().toString());
+        final String CODE_CHALLENGE = Helper.makeCodeChallenge(RuntimeInfo.getInstance().authInfo.verifierCode); //VerifierCode); // DeviceInfo.VerifierCode);
+
+        final JsonObject attrs = new JsonObject();
+        attrs.addProperty("deviceSerialNumber", DeviceInfo.ProductSerialNumber);
+
+        final JsonObject scopeData = new JsonObject();
+        scopeData.add("productInstanceAttributes", attrs);
+        scopeData.addProperty("productID", DeviceInfo.ProductId);
+
+        try {
+            AuthorizationManager.authorize(new AuthorizeRequest.Builder(requestContext)
+                    .addScopes(ScopeFactory.scopeNamed("alexa:voice_service:pre_auth"),
+                            ScopeFactory.scopeNamed("alexa:all", new JSONObject(scopeData.toString())))
+                    .forGrantType(AuthorizeRequest.GrantType.AUTHORIZATION_CODE)
+                    .withProofKeyParameters(CODE_CHALLENGE, "S256")
+                    .build());
+        } catch (JSONException e) {
+            Logger.w("fetch token fail - " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     public void fetchProductAccessToken() {
 
         JSONObject json = new JSONObject();
@@ -403,6 +481,46 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        smartWatchSDK.action(json.toString(), null, new OnResultCallback() {
+            @Override
+            public void onResult(@NonNull String data, @Nullable Object extra) {
+                Logger.d("login - " + data);
+                try {
+                    JSONObject result = new JSONObject(data);
+                    JSONObject payload = result.getJSONObject("payload");
+                    String token = payload.getString("refreshToken");
+                    RuntimeInfo.getInstance().updateAuthInfo(token);
+
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_SUCCESS);
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().mainHandler, HandlerConst.MSG_LOGIN_SUCCESS);
+
+                } catch (JSONException e) {
+                    Logger.w("login result parse failed - " + e.getMessage());
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_FAIL);
+                }
+            }
+        });
+    }
+
+    private void fetchAuthorizationToken() {
+        JSONObject payload = new JSONObject();
+        JSONObject json = new JSONObject();
+
+        try {
+            payload.put("verifierCode", RuntimeInfo.getInstance().authInfo.verifierCode);
+            payload.put("authorizationCode", RuntimeInfo.getInstance().authInfo.code);
+            payload.put("redirectUri", RuntimeInfo.getInstance().authInfo.redirectUri);
+            payload.put("authorizationClientId", RuntimeInfo.getInstance().authInfo.authClientId);
+
+            json.put("type", "action");
+            json.put("name", "alexa.login");
+            json.put("version", 1);
+
+            json.put("payload", payload);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         smartWatchSDK.action(json.toString(), null, new OnResultCallback() {
             @Override
             public void onResult(@NonNull String data, @Nullable Object extra) {

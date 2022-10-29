@@ -21,6 +21,8 @@ public class RuntimeInfo {
         public String code;
         public String redirectUri;
         public String refreshToken;
+        public String verifierCode;
+        public String authClientId;
     }
 
     public static RuntimeInfo instance = null;
@@ -99,6 +101,15 @@ public class RuntimeInfo {
             authInfo = new AuthorizationInfo();
         }
         authInfo.refreshToken = token;
+        flushAuthInfo();
+    }
+
+    public void updateAuthInfoVerifierCode(String code) {
+        if (authInfo == null) {
+            authInfo = new AuthorizationInfo();
+        }
+        authInfo.verifierCode = code;
+
         flushAuthInfo();
     }
 

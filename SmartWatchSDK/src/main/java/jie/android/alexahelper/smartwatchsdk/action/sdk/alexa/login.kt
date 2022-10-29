@@ -3,14 +3,13 @@ package jie.android.alexahelper.smartwatchsdk.action.sdk.alexa
 import com.amazon.identity.auth.device.AuthError
 import com.amazon.identity.auth.device.api.authorization.*
 import jie.android.alexahelper.smartwatchsdk.*
-import jie.android.alexahelper.smartwatchsdk.DeviceInfo
 import jie.android.alexahelper.smartwatchsdk.EndpointInfo
 import jie.android.alexahelper.smartwatchsdk.RuntimeInfo
+import jie.android.alexahelper.smartwatchsdk.channel.alexa.makeCodeChallenge
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.EventBuilder
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Utils.makeMessageId
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
-import jie.android.alexahelper.smartwatchsdk.channel.alexa.makeCodeChallenge
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import kotlinx.serialization.json.*
 import org.json.JSONObject
@@ -21,6 +20,7 @@ fun loginAction(sdk: SmartWatchSDK, withToken: Boolean, action: ActionWrapper) {
         authorizeWithToken(sdk, action)
     } else {
         authorize(sdk, action)
+//        fetchAuthorizeToken(sdk, action)
     }
 }
 
@@ -68,7 +68,7 @@ private fun onAuthorizeFailed(sdk: SmartWatchSDK, action: ActionWrapper, message
 }
 
 private fun onAuthorizeSuccess(sdk: SmartWatchSDK, action: ActionWrapper, result: AuthorizeResult?) {
-    RuntimeInfo.authorizeCode = result?.authorizationCode
+    RuntimeInfo.authorizationCode = result?.authorizationCode
     RuntimeInfo.redirectUri = result?.redirectURI
 
     fetchAuthorizeToken(sdk, action)
@@ -94,6 +94,13 @@ private fun authorizeWithToken(sdk: SmartWatchSDK, action: ActionWrapper) {
 }
 
 private fun fetchAuthorizeToken(sdk: SmartWatchSDK, action: ActionWrapper) {
+
+//    val payload = action.getPayload()!!
+//    RuntimeInfo.verifierCode = payload.getString("verifierCode")
+//    RuntimeInfo.authorizationCode = payload.getString("authorizationCode")
+//    RuntimeInfo.redirectUri = payload.getString("redirectUri")
+//    RuntimeInfo.authorizationClientId = payload.getString("authorizationClientId")
+
     sdk.httpChannel.postAuthorize { success, reason, response ->
         if (success) {
             // create down channel

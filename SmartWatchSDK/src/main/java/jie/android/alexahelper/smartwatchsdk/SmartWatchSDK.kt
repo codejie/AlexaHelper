@@ -91,6 +91,4 @@ class SmartWatchSDK constructor() {
 //        Logger.d("login action result - ${result.code}")
 //        action.callback?.onResult(result.build().toString(), result.extra)
 //    }
-
-
 }

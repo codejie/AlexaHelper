@@ -3,7 +3,6 @@ package jie.android.alexahelper.smartwatchsdk.channel.alexa
 import jie.android.alexahelper.smartwatchsdk.DeviceInfo
 import jie.android.alexahelper.smartwatchsdk.RuntimeInfo
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
-import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.serialization.json.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -93,7 +92,7 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
     internal fun postAuthorize(callback: ChannelPostCallback) {
         val body: JsonObject = buildJsonObject {
             put("grant_type", "authorization_code")
-            put("code", RuntimeInfo.authorizeCode)
+            put("code", RuntimeInfo.authorizationCode)
             put("redirect_uri", RuntimeInfo.redirectUri)
             put("client_id", DeviceInfo.Product.clientId)
             put("code_verifier", RuntimeInfo.verifierCode)
