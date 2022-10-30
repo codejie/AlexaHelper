@@ -2,6 +2,7 @@ package jie.android.alexahelper.smartwatchsdk.action.sdk.alexa
 
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.ActionWrapper
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback
 
 object AlexaAction {
     fun login(sdk: SmartWatchSDK, action: ActionWrapper) = loginAction(sdk, false, action)
@@ -14,5 +15,7 @@ object AlexaAction {
     fun setLocales(sdk: SmartWatchSDK, action: ActionWrapper) = setLocalesAction(sdk, action)
     fun alertStart(sdk: SmartWatchSDK, action: ActionWrapper) = alertStartAction(sdk, action)
     fun alertEnd(sdk: SmartWatchSDK, action: ActionWrapper) = alertEndAction(sdk, action)
+
+    fun tokenUpdated(sdk: SmartWatchSDK, success: Boolean, message: String?, callback: OnResultCallback) = tokenUpdatedAction(sdk, success, message, callback)
 
 }

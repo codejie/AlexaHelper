@@ -1,16 +1,22 @@
 package jie.android.alexahelper.smartwatchsdk.action.sdk.alexa
 
+import android.app.Notification
 import com.amazon.identity.auth.device.AuthError
 import com.amazon.identity.auth.device.api.authorization.*
 import jie.android.alexahelper.smartwatchsdk.*
 import jie.android.alexahelper.smartwatchsdk.EndpointInfo
 import jie.android.alexahelper.smartwatchsdk.RuntimeInfo
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.makeCodeChallenge
+import jie.android.alexahelper.smartwatchsdk.channel.sdk.ChannelData
+import jie.android.alexahelper.smartwatchsdk.channel.sdk.SDKNotification
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.EventBuilder
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Utils.makeMessageId
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.*
 import org.json.JSONObject
 import java.util.*
@@ -187,12 +193,16 @@ private fun postAlexaDiscovery(sdk: SmartWatchSDK, action: ActionWrapper) {
 
             sdk.httpChannel.isLogin = true
 
+            CoroutineScope(Dispatchers.IO).launch {
+                sdk.sdkChannel.send(
+                    ChannelData(
+                        ChannelData.DataType.Notification,
+                        SDKNotification.Message.LOGIN_SUCCESS
+                    )
+                )
+            }
+
             action.callback?.onResult(result.toString())
-//            sdk.sdkCallback(SDKMessage.LOGIN_SUCCESS, null)
-//            sdk.resultCallbackHook(action, result);
-
-            // set Timer
-
         } else {
             sdk.httpChannel.isLogin = false
 
@@ -203,3 +213,18 @@ private fun postAlexaDiscovery(sdk: SmartWatchSDK, action: ActionWrapper) {
     }
 }
 
+fun tokenUpdatedAction(sdk: SmartWatchSDK, success: Boolean, message: String?, callback: OnResultCallback) {
+    val action = ActionWrapper(SDKConst.ACTION_ALEXA_TOKEN_UPDATED).apply {
+        val payload = buildJsonObject {
+            put("accessToken", RuntimeInfo.accessToken)
+            put("refreshToken", RuntimeInfo.refreshToken)
+        }
+        setPayload(payload)
+    }.build()
+
+    sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
+        override fun onResult(data: String, extra: Any?) {
+            Logger.d("token updated result - $data")
+        }
+    })
+}

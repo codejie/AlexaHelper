@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                     case "alexa.doNotDisturbUpdated": {
                         onDoNotDisturbUpdatedAction(action, extra, callback);
                     }
+                    break;
                     case "alexa.timeZoneUpdated": {
                         onTimeZoneUpdatedAction(action, extra, callback);
                     }
@@ -366,18 +367,18 @@ public class MainActivity extends AppCompatActivity {
                 Logger.v("MainHandler - " + message);
                 switch (message.what) {
                     case HandlerConst.MSG_FETCH_TOKEN:
-                        authorize();
-//                        setDeviceInfo(new OnResultCallback() {
-//                            @Override
-//                            public void onResult(@NonNull String data, @Nullable Object extra) {
-//                                Logger.d("setInfo result - " + data);
-//                                if (RuntimeInfo.getInstance().authInfo == null ||  RuntimeInfo.getInstance().authInfo.refreshToken == null) {
-//                                    fetchProductAccessToken();
-//                                } else {
-//                                    loginWithToken();
-//                                }
-//                            }
-//                        });
+                        setDeviceInfo(new OnResultCallback() {
+                            @Override
+                            public void onResult(@NonNull String data, @Nullable Object extra) {
+                                Logger.d("setInfo result - " + data);
+                                if (RuntimeInfo.getInstance().authInfo == null ||  RuntimeInfo.getInstance().authInfo.refreshToken == null) {
+//                                    authorize();
+                                    fetchProductAccessToken();
+                                } else {
+                                    loginWithToken();
+                                }
+                            }
+                        });
                         break;
                     case HandlerConst.MSG_LOGIN_SUCCESS:
                     case HandlerConst.MSG_REFRESH_TOKEN_SUCCESS:

@@ -5,6 +5,11 @@ import jie.android.alexahelper.smartwatchsdk.channel.sdk.ChannelData
 import kotlinx.coroutines.*
 
 class SDKScheduler constructor(private val sdk: SmartWatchSDK) {
+    enum class TimerType {
+        DOWN_CHANNEL_PING,
+        TOKEN_REFRESH
+    }
+
     data class Timer(val delayMillis: Long, val repeat: Boolean = false, val param: Any? = null) {
         var id: Long = -1L
         var counter: Long  = delayMillis
@@ -17,34 +22,44 @@ class SDKScheduler constructor(private val sdk: SmartWatchSDK) {
     private val timers: MutableList<Timer> = mutableListOf()
 
     fun addTimer(timer: Timer): Long {
-        timer.id = (++ timerId)
-        timers.add(timer)
-        return timerId
-    }
-
-    fun removeTimer(id: Long) {
-        timers.removeIf {
-            it.id == id
+        synchronized(this) {
+            timer.id = (++timerId)
+            timers.add(timer)
+            return timerId
         }
     }
 
-    fun removeAllTimers() {
-        timers.clear()
+    fun removeTimer(id: Long) {
+        synchronized(this) {
+            timers.removeIf {
+                it.id == id
+            }
+        }
+    }
+
+    private fun removeAllTimers() {
+        synchronized(this) {
+            timers.clear()
+        }
     }
 
     fun start() {
-        job = CoroutineScope(Dispatchers.IO).launch {
-            do {
-                for (timer in timers) {
-                    timer.counter -= delayMillis
-                    if (timer.counter <= 0L) {
-                        sdk.sdkChannel.send(ChannelData(ChannelData.DataType.Timer, timer))
-                        if (timer.repeat) timer.counter = timer.delayMillis else timers.remove(timer)
+        synchronized(this) {
+            job = CoroutineScope(Dispatchers.IO).launch {
+                do {
+                    for (timer in timers) {
+                        timer.counter -= delayMillis
+                        if (timer.counter <= 0L) {
+                            sdk.sdkChannel.send(ChannelData(ChannelData.DataType.Timer, timer))
+                            if (timer.repeat) timer.counter = timer.delayMillis else timers.remove(
+                                timer
+                            )
+                        }
                     }
-                }
 
-                delay(delayMillis)
-            } while (true)
+                    delay(delayMillis)
+                } while (true)
+            }
         }
     }
 

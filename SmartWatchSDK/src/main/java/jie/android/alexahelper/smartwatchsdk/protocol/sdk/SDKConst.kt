@@ -22,6 +22,7 @@ object SDKConst {
     const val ACTION_ALEXA_SET_LOCALS = "alexa.setLocales"
 
 
+    const val ACTION_ALEXA_TOKEN_UPDATED = "alexa.tokenUpdated"
     const val ACTION_ALEXA_DND_UPDATED = "alexa.doNotDisturbUpdated"
     const val ACTION_ALEXA_SPEECH_SPEAK = "alexa.speechSpeak"
     const val ACTION_ALEXA_TIME_ZONE_UPDATED = "alexa.timeZoneUpdated"
@@ -39,6 +40,7 @@ object SDKConst {
     const val RESULT_CODE_MISSING_PARAMETERS = -3
     const val RESULT_CODE_ACTION_FAILED = -4
     const val RESULT_CODE_OFFLINE = -5
+    const val RESULT_CODE_NOT_SUPPORTED = -6
 
     const val RESULT_CODE_LOGIN_FAIL = -100
 
@@ -47,4 +49,5 @@ object SDKConst {
     const val RESULT_MESSAGE_MISSING_EXTRA = "missing extra"
     const val RESULT_MESSAGE_MISSING_PARAMETERS = "missing parameters"
     const val RESULT_MESSAGE_OFFLINE = "not online"
+    const val RESULT_MESSAGE_NOT_SUPPORTED = "action not supported"
 }

@@ -5,20 +5,14 @@ import com.amazon.identity.auth.device.api.workflow.RequestContext
 import jie.android.alexahelper.smartwatchsdk.action.sdk.alexa.AlexaAction
 import jie.android.alexahelper.smartwatchsdk.action.sdk.device.DeviceAction
 import jie.android.alexahelper.smartwatchsdk.action.sdk.sdk.SDKAction
+import jie.android.alexahelper.smartwatchsdk.channel.alexa.ChannelPostCallback
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.HttpChannel
 import jie.android.alexahelper.smartwatchsdk.channel.sdk.SDKChannel
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import jie.android.alexahelper.smartwatchsdk.utils.SDKScheduler
 import kotlinx.serialization.SerializationException
-
-sealed class SDKNotification constructor(val msg: Message, val data: Any? = null) {
-    enum class Message {
-        LOGIN_SUCCESS
-    }
-}
-
-//typealias ResultCallbackHook = (action: ActionWrapper, result: ResultWrapper) -> Unit
+import okhttp3.Response
 
 class SmartWatchSDK constructor() {
     internal lateinit var requestContext: RequestContext
@@ -79,16 +73,47 @@ class SmartWatchSDK constructor() {
         }
     }
 
-    fun onNotification(notification: SDKNotification) {
+    fun refreshToken() {
+        Logger.d("refreshToken.")
 
+        RuntimeInfo.refreshToken?.let {
+            httpChannel.postRefreshAccessToken(it) { success, reason, _ ->
+                AlexaAction.tokenUpdated(this, success, reason, object : OnResultCallback {
+                    override fun onResult(data: String, extra: Any?) {
+                        Logger.d("token updated result - $data")
+                    }
+                })
+            }
+        }
     }
 
-    fun onTimer(timer: SDKScheduler.Timer) {
+    fun pingDownChannel() {
+        Logger.d("ping down channel.")
 
+        RuntimeInfo.accessToken?.let {
+            httpChannel.postDownChannelPing(it) { success, reason, _ ->
+                if (!success) {
+                    Logger.w("down channel ping failed - $reason")
+                } else {
+                    RuntimeInfo.downChannelPingTimer = sdkScheduler.addTimer(SDKScheduler.Timer(280 * 1000, false, SDKScheduler.TimerType.DOWN_CHANNEL_PING))
+                }
+            }
+        }
+
+//        RuntimeInfo.downChannelPingTimer = sdkScheduler.addTimer(SDKScheduler.Timer(280 * 1000, false, SDKScheduler.TimerType.DOWN_CHANNEL_PING))
     }
 
-//    private fun resultLogin(action: ActionWrapper, result: ResultWrapper) {
-//        Logger.d("login action result - ${result.code}")
-//        action.callback?.onResult(result.build().toString(), result.extra)
-//    }
+    fun onDownChannelBreak() {
+        sdkScheduler.removeTimer(RuntimeInfo.downChannelPingTimer)
+
+        httpChannel.getDownChannel { success, reason, response ->
+            if (success) {
+                Logger.d("down channel recreate.")
+//                RuntimeInfo.downChannelPingTimer = sdkScheduler.addTimer(SDKScheduler.Timer(280 * 1000, false, SDKScheduler.TimerType.DOWN_CHANNEL_PING))
+            } else {
+                Logger.w("down channel recreate failed - $reason")
+            }
+        }
+    }
+
 }

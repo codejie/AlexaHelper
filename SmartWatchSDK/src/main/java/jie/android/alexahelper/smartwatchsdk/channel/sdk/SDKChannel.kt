@@ -1,6 +1,6 @@
 package jie.android.alexahelper.smartwatchsdk.channel.sdk
 
-import jie.android.alexahelper.smartwatchsdk.SDKNotification
+import jie.android.alexahelper.smartwatchsdk.RuntimeInfo
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.action.alexa.*
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.DirectiveParser
@@ -14,6 +14,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 
+sealed class SDKNotification constructor(val msg: Message, val data: Any? = null) {
+    enum class Message {
+        LOGIN_SUCCESS,
+        DOWN_CHANNEL_BREAK
+    }
+}
 data class ChannelData (val type: DataType, val data: Any? = null) {
     enum class DataType {
         DirectiveParts,
@@ -35,7 +41,7 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
                 when (data.type) {
                     ChannelData.DataType.Timer -> onTimer(data.data as SDKScheduler.Timer)
                     ChannelData.DataType.DirectiveParts -> onDirectiveParts(data.data as List<DirectiveParser.Part>)
-                    ChannelData.DataType.Notification -> onNotification(data.data as SDKNotification)
+                    ChannelData.DataType.Notification -> onNotification(data.data as SDKNotification.Message)
                     else -> Logger.w("receive unknown type - ${data.type}")
                 }
             } while (true)
@@ -51,12 +57,37 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
         job?.cancel()
     }
 
-    private fun onNotification(notification: SDKNotification) {
-        sdk.onNotification(notification)
+    private fun onNotification(message: SDKNotification.Message) {
+        when (message) {
+            SDKNotification.Message.LOGIN_SUCCESS -> onNotificationLoginSuccess()
+            SDKNotification.Message.DOWN_CHANNEL_BREAK -> onNotificationDownChannelBreak()
+            else -> Logger.w("Unknown notification - $message")
+        }
+    }
+
+    private fun onNotificationDownChannelBreak() {
+        sdk.onDownChannelBreak()
+    }
+
+    private fun onNotificationLoginSuccess() {
+        sdk.sdkScheduler.addTimer(SDKScheduler.Timer(55 *60 * 1000, true, SDKScheduler.TimerType.TOKEN_REFRESH))
+//        RuntimeInfo.downChannelPingTimer = sdk.sdkScheduler.addTimer(SDKScheduler.Timer(280 * 1000, false, SDKScheduler.TimerType.DOWN_CHANNEL_PING))
     }
 
     private fun onTimer(timer: SDKScheduler.Timer) {
-        sdk.onTimer(timer)
+        when (val type = timer.param!! as SDKScheduler.TimerType) {
+            SDKScheduler.TimerType.DOWN_CHANNEL_PING -> onTimerDownChannelPing()
+            SDKScheduler.TimerType.TOKEN_REFRESH -> onTimerTokenRefresh()
+            else -> Logger.w("Unknown Timer type - $type")
+        }
+    }
+
+    private fun onTimerTokenRefresh() {
+        sdk.refreshToken()
+    }
+
+    private fun onTimerDownChannelPing() {
+        sdk.pingDownChannel()
     }
 
     private fun onDirectiveParts(directiveParts: List<DirectiveParser.Part>) {

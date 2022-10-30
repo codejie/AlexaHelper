@@ -2,6 +2,7 @@ package jie.android.alexahelper.smartwatchsdk.channel.alexa
 
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.channel.sdk.ChannelData
+import jie.android.alexahelper.smartwatchsdk.channel.sdk.SDKNotification
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.coroutines.*
 import okhttp3.Response
@@ -36,6 +37,7 @@ class DownChannel constructor(val sdk: SmartWatchSDK) {
                 Logger.w("Down Channel fail - ${e.message}")
             } finally {
                 response.close()
+                sdk.sdkChannel.send(ChannelData(ChannelData.DataType.Notification, SDKNotification.Message.DOWN_CHANNEL_BREAK))
             }
         }
     }

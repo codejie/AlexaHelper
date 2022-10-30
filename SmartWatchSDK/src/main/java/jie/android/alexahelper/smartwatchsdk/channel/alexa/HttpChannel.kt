@@ -3,6 +3,7 @@ package jie.android.alexahelper.smartwatchsdk.channel.alexa
 import jie.android.alexahelper.smartwatchsdk.DeviceInfo
 import jie.android.alexahelper.smartwatchsdk.RuntimeInfo
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
+import jie.android.alexahelper.smartwatchsdk.utils.SDKScheduler
 import kotlinx.serialization.json.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -137,6 +138,7 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
 
             override fun onResponse(call: Call, response: Response) {
                 downChannel.start(response)
+                RuntimeInfo.downChannelPingTimer = sdk.sdkScheduler.addTimer(SDKScheduler.Timer(280 * 1000, false, SDKScheduler.TimerType.DOWN_CHANNEL_PING))
                 callback(true, null, response)
             }
         })
@@ -176,4 +178,20 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
         })
     }
 
+    fun postDownChannelPing(token: String, callback: ChannelPostCallback) {
+        val request: Request = Request.Builder()
+            .url("$avsBaseUrl/ping")
+            .addHeader("authorization", "Bearer $token")
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                callback(false, e.message, null)
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                callback(true, null, response)
+            }
+        })
+    }
 }

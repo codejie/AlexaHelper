@@ -20,13 +20,13 @@ private fun loadSelf(endpointInfo: EndpointInfo) {
     val id = "${DeviceInfo.Product.clientId}::${DeviceInfo.Product.id}::${DeviceInfo.Product.serialNumber}"
     val data = buildJsonObject {
         put("endpointId", id)
-        put("manufacturerName", "TouchTech")
-        put("friendlyName", "TouchAce")
+        put("manufacturerName", DeviceInfo.Product.name)
+        put("friendlyName", DeviceInfo.Product.friendlyName)
         put("displayCategories", buildJsonArray {
             add("MUSIC_SYSTEM")
             add("SPEAKER")
         })
-        put("description", "TouchAlexa Self")
+        put("description", DeviceInfo.Product.description)
 
         put("registration", buildJsonObject {
             put("productId", DeviceInfo.Product.id)
@@ -63,7 +63,7 @@ private fun loadSelf(endpointInfo: EndpointInfo) {
     }
 
     endpointInfo.add(id, data)
-    endpointInfo.add(thingSpot.getString("endpointId")!!, thingSpot)
+//    endpointInfo.add(thingSpot.getString("endpointId")!!, thingSpot)
 }
 
 object Capability {
