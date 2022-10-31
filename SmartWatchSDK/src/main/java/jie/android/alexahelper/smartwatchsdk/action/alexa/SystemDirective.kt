@@ -15,6 +15,7 @@ fun onSystemDirective(sdk: SmartWatchSDK, directive: Directive, parts: List<Dire
     when (directive.name) {
         AlexaConst.NAME_SET_TIME_ZONE -> onSetTimeZone(sdk, directive, parts)
         AlexaConst.NAME_SET_LOCALES -> onSetLocales(sdk, directive, parts)
+        AlexaConst.NAME_REPORT_STATE -> onReportState(sdk, directive, parts)
         else  -> Logger.w("unsupported System - $directive")
     }
 }

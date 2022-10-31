@@ -13,6 +13,7 @@ class SDKScheduler constructor(private val sdk: SmartWatchSDK) {
     data class Timer(val delayMillis: Long, val repeat: Boolean = false, val param: Any? = null) {
         var id: Long = -1L
         var counter: Long  = delayMillis
+        var timeout: Boolean = false
     }
 
     private val delayMillis: Long = 1000L
@@ -22,7 +23,7 @@ class SDKScheduler constructor(private val sdk: SmartWatchSDK) {
     private val timers: MutableList<Timer> = mutableListOf()
 
     fun addTimer(timer: Timer): Long {
-        synchronized(this) {
+        synchronized(timers) {
             timer.id = (++timerId)
             timers.add(timer)
             return timerId
@@ -30,7 +31,7 @@ class SDKScheduler constructor(private val sdk: SmartWatchSDK) {
     }
 
     fun removeTimer(id: Long) {
-        synchronized(this) {
+        synchronized(timers) {
             timers.removeIf {
                 it.id == id
             }
@@ -38,22 +39,22 @@ class SDKScheduler constructor(private val sdk: SmartWatchSDK) {
     }
 
     private fun removeAllTimers() {
-        synchronized(this) {
+        synchronized(timers) {
             timers.clear()
         }
     }
 
     fun start() {
-        synchronized(this) {
+        synchronized(timers) {
             job = CoroutineScope(Dispatchers.IO).launch {
                 do {
+                    timers.removeIf { it.timeout }
+
                     for (timer in timers) {
                         timer.counter -= delayMillis
                         if (timer.counter <= 0L) {
                             sdk.sdkChannel.send(ChannelData(ChannelData.DataType.Timer, timer))
-                            if (timer.repeat) timer.counter = timer.delayMillis else timers.remove(
-                                timer
-                            )
+                            if (timer.repeat) timer.counter = timer.delayMillis else timer.timeout = true
                         }
                     }
 

@@ -29,9 +29,6 @@ class SmartWatchSDK constructor() {
 
         sdkChannel.start()
         sdkScheduler.start()
-
-//        sdkScheduler.addTimer(SDKScheduler.Timer(2000, true, "timer1"))
-//        sdkScheduler.addTimer(SDKScheduler.Timer(4000, false, "timer2"))
     }
 
     fun detach(context: Context) {
@@ -80,7 +77,7 @@ class SmartWatchSDK constructor() {
             httpChannel.postRefreshAccessToken(it) { success, reason, _ ->
                 AlexaAction.tokenUpdated(this, success, reason, object : OnResultCallback {
                     override fun onResult(data: String, extra: Any?) {
-                        Logger.d("token updated result - $data")
+                        Logger.v("token updated result - $data")
                     }
                 })
             }
@@ -96,6 +93,7 @@ class SmartWatchSDK constructor() {
                     Logger.w("down channel ping failed - $reason")
                 } else {
                     RuntimeInfo.downChannelPingTimer = sdkScheduler.addTimer(SDKScheduler.Timer(280 * 1000, false, SDKScheduler.TimerType.DOWN_CHANNEL_PING))
+                    Logger.v("down channel ping")
                 }
             }
         }
@@ -108,7 +106,7 @@ class SmartWatchSDK constructor() {
 
         httpChannel.getDownChannel { success, reason, response ->
             if (success) {
-                Logger.d("down channel recreate.")
+                Logger.v("down channel recreate.")
 //                RuntimeInfo.downChannelPingTimer = sdkScheduler.addTimer(SDKScheduler.Timer(280 * 1000, false, SDKScheduler.TimerType.DOWN_CHANNEL_PING))
             } else {
                 Logger.w("down channel recreate failed - $reason")
