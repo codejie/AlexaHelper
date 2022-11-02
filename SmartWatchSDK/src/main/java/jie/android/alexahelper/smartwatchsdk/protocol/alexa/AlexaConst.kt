@@ -16,6 +16,7 @@ object AlexaConst {
     const val NAME_LOCALES_REPORT = "LocalesReport"
     const val NAME_LOCALES_CHANGED = "LocalesChanged"
     const val NAME_REPORT_STATE = "ReportState"
+    const val NAME_STATE_REPORT = "StateReport"
 
     const val NS_ALEXA_API_GATEWAY = "Alexa.ApiGateway"
     const val NAME_VERIFY_GATEWAY = "VerifyGateway"

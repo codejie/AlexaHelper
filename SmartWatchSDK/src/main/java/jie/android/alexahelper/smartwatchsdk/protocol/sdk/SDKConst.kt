@@ -31,6 +31,7 @@ object SDKConst {
     const val ACTION_ALEXA_ALERT_DELETED = "alexa.alertDeleted"
     const val ACTION_ALEXA_ALERT_START = "alexa.alertStart"
     const val ACTION_ALEXA_ALERT_END = "alexa.alertEnd"
+    const val ACTION_ALEXA_SETTING_EXPECT = "alexa.settingExpect"
 
 
     // Result

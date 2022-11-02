@@ -8,6 +8,7 @@ import jie.android.alexahelper.smartwatchsdk.protocol.alexa.EventBuilder
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
@@ -18,6 +19,49 @@ fun onSystemDirective(sdk: SmartWatchSDK, directive: Directive, parts: List<Dire
         AlexaConst.NAME_REPORT_STATE -> onReportState(sdk, directive, parts)
         else  -> Logger.w("unsupported System - $directive")
     }
+}
+
+fun onReportState(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
+    val action = ActionWrapper(SDKConst.ACTION_ALEXA_SETTING_EXPECT).build()
+    sdk.onActionListener.onAction(action.toString(), null, object: OnResultCallback {
+        override fun onResult(data: String, extra: Any?) {
+            val result = ResultWrapper.parse(data, extra)
+            val timeZone = result.getPayload()!!.getString("timeZone")!!
+            val locales = result.getPayload()!!.getJsonArray("locales")!!
+
+            stateReport(sdk, timeZone, locales)
+        }
+    })
+}
+
+private fun stateReport(sdk: SmartWatchSDK, timeZone: String, locales: JsonArray) {
+    val event = EventBuilder(AlexaConst.NS_SYSTEM, AlexaConst.NAME_STATE_REPORT).apply {
+        val states = buildJsonArray {
+            buildJsonObject {
+                put("header", buildJsonObject {
+                    put("namespace", AlexaConst.NS_SYSTEM)
+                    put("name", AlexaConst.NAME_TIME_ZONE_REPORT)
+                })
+                put("payload", buildJsonObject {
+                    put("timeZone", timeZone)
+                })
+            }
+
+            buildJsonObject {
+                put("header", buildJsonObject {
+                    put("namespace", AlexaConst.NS_SYSTEM)
+                    put("name", AlexaConst.NAME_LOCALES_REPORT)
+                })
+                put("payload", buildJsonObject {
+                    put("locales", locales)
+                })
+            }
+        }
+
+        addPayload("states", states)
+    }.create()
+
+    sdk.httpChannel.postEvent(event, null)
 }
 
 private fun onSetLocales(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
