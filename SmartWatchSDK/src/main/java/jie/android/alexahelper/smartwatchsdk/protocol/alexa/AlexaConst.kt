@@ -32,9 +32,13 @@ object AlexaConst {
 
     const val NS_SPEECH_RECOGNIZER = "SpeechRecognizer"
     const val NAME_RECOGNIZE = "Recognize"
+    const val NAME_EXPECT_SPEECH = "ExpectSpeech"
 
     const val NS_SPEECH_SYNTHESIZER = "SpeechSynthesizer"
     const val NAME_SPEAK = "Speak"
+    const val NAME_SPEECH_STARTED = "SpeechStarted"
+    const val NAME_SPEECH_FINISHED = "SpeechFinished"
+    const val NAME_SPEECH_INTERRUPTED = "SpeechInterrupted"
 
     const val NS_ALERTS = "Alerts"
     const val NAME_SET_ALERT = "SetAlert"

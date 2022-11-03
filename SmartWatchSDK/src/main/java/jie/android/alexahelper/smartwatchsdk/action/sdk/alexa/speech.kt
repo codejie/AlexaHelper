@@ -96,5 +96,87 @@ fun speechRecognizeAction(sdk: SmartWatchSDK, action: ActionWrapper) {
             parts?.let { sdk.sdkChannel.send(ChannelData(ChannelData.DataType.DirectiveParts, it)) }
         }
     }
+}
 
+fun speakStartAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+    action.getPayload()
+        ?: throw SDKException(SDKConst.RESULT_CODE_MISSING_FIELD, SDKConst.RESULT_MESSAGE_MISSING_FIELD)
+
+    val dialogId = action.getPayload()!!.getString("dialogId")
+    val token = action.getPayload()!!.getString("token")!!
+
+    val event = EventBuilder(AlexaConst.NS_SPEECH_SYNTHESIZER, AlexaConst.NAME_SPEECH_STARTED).apply {
+        addPayload("token", token)
+    }.create()
+
+    sdk.httpChannel.postEvent(event) { success, reason, _ ->
+        val result = ResultWrapper(action.name,
+            if (success) SDKConst.RESULT_CODE_SUCCESS else SDKConst.RESULT_CODE_ACTION_FAILED,
+            reason
+        ).apply {
+            val payload = buildJsonObject {
+                dialogId?.let { put("dialogId", it) }
+                put("token", token)
+            }
+            setPayload(payload)
+        }.build()
+
+        action.callback?.onResult(result.toString(), null)
+    }
+}
+
+fun speakEndAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+    action.getPayload()
+        ?: throw SDKException(SDKConst.RESULT_CODE_MISSING_FIELD, SDKConst.RESULT_MESSAGE_MISSING_FIELD)
+
+    val dialogId = action.getPayload()!!.getString("dialogId")
+    val token = action.getPayload()!!.getString("token")!!
+
+    val event = EventBuilder(AlexaConst.NS_SPEECH_SYNTHESIZER, AlexaConst.NAME_SPEECH_FINISHED).apply {
+        addPayload("token", token)
+    }.create()
+
+    sdk.httpChannel.postEvent(event) { success, reason, _ ->
+        val result = ResultWrapper(action.name,
+            if (success) SDKConst.RESULT_CODE_SUCCESS else SDKConst.RESULT_CODE_ACTION_FAILED,
+            reason
+        ).apply {
+            val payload = buildJsonObject {
+                dialogId?.let { put("dialogId", it) }
+                put("token", token)
+            }
+            setPayload(payload)
+        }.build()
+
+        action.callback?.onResult(result.toString(), null)
+    }
+}
+
+fun speakInterruptedAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+    action.getPayload()
+        ?: throw SDKException(SDKConst.RESULT_CODE_MISSING_FIELD, SDKConst.RESULT_MESSAGE_MISSING_FIELD)
+
+    val dialogId = action.getPayload()!!.getString("dialogId")
+    val token = action.getPayload()!!.getString("token")!!
+    val offset = action.getPayload()!!.getInt("offset")!!
+
+    val event = EventBuilder(AlexaConst.NS_SPEECH_SYNTHESIZER, AlexaConst.NAME_SPEECH_INTERRUPTED).apply {
+        addPayload("token", token)
+    }.create()
+
+    sdk.httpChannel.postEvent(event) { success, reason, _ ->
+        val result = ResultWrapper(action.name,
+            if (success) SDKConst.RESULT_CODE_SUCCESS else SDKConst.RESULT_CODE_ACTION_FAILED,
+            reason
+        ).apply {
+            val payload = buildJsonObject {
+                dialogId?.let { put("dialogId", it) }
+                put("token", token)
+                put("offsetInMilliseconds", offset)
+            }
+            setPayload(payload)
+        }.build()
+
+        action.callback?.onResult(result.toString(), null)
+    }
 }

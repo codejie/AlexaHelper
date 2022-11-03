@@ -12,7 +12,37 @@ import kotlinx.serialization.json.put
 fun onSpeechSynthesizerDirective(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     when (directive.name) {
         AlexaConst.NAME_SPEAK -> onSpeak(sdk, directive, parts)
+        AlexaConst.NAME_EXPECT_SPEECH -> onExpectSpeech(sdk, directive, parts)
         else -> Logger.w("unsupported SpeechSynthesizer - $directive")
+    }
+}
+
+fun onExpectSpeech(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
+    try {
+        val dialogId = directive.header!!.getString("dialogRequestId")
+        val timeout = directive.payload!!.getInt("timeoutInMilliseconds")
+        val initiator  = directive.payload!!.getJsonObject("initiator")!!
+        val initiatorType = initiator.getString("type")
+        val initiatorToken = initiator.getJsonObject("payload")!!.getString("token")
+
+        val action = ActionWrapper(SDKConst.ACTION_ALEXA_SPEECH_EXPECT).apply {
+            val payload = buildJsonObject {
+                put("dialogId", dialogId)
+                put("initiatorType", initiatorType)
+                put("initiatorToken", initiatorToken)
+                put("timeout", timeout)
+            }
+
+            setPayload(payload)
+        }.build()
+
+        sdk.onActionListener.onAction(action.toString(), null, object: OnResultCallback {
+            override fun onResult(data: String, extra: Any?) {
+                Logger.d("$action.name result - $data")
+            }
+        })
+    } catch (e: Exception) {
+        Logger.w("onExpectSpeech exception - ${e.message}")
     }
 }
 
@@ -49,7 +79,7 @@ private fun onSpeak(sdk: SmartWatchSDK, directive: Directive, parts: List<Direct
                 object :
                     OnResultCallback {
                     override fun onResult(data: String, extra: Any?) {
-                        TODO("Not yet implemented")
+                        Logger.d("$action.name result - $data")
                     }
                 })
         } else {
