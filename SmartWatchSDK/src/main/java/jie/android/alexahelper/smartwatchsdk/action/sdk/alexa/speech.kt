@@ -27,7 +27,7 @@ fun speechStartAction(sdk: SmartWatchSDK, action: ActionWrapper) {
     action.callback?.onResult(result.toString())
 }
 
-fun speechStopAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+fun speechEndAction(sdk: SmartWatchSDK, action: ActionWrapper) {
     val actionPayload = action.getPayload()
         ?: throw SDKException(SDKConst.RESULT_CODE_MISSING_FIELD, SDKConst.RESULT_MESSAGE_MISSING_FIELD)
 
@@ -95,6 +95,28 @@ fun speechRecognizeAction(sdk: SmartWatchSDK, action: ActionWrapper) {
 //            }
             parts?.let { sdk.sdkChannel.send(ChannelData(ChannelData.DataType.DirectiveParts, it)) }
         }
+    }
+}
+fun speechExpectSkippedAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+    val dialog = action.getPayload(false)?.getString("dialogId")
+    val event = EventBuilder(AlexaConst.NS_SPEECH_RECOGNIZER, AlexaConst.NAME_EXPECT_SPEECH_TIMEOUT).apply {
+        dialog?.let {
+            addPayload("dialogId", dialog)
+        }
+    }.create()
+
+    sdk.httpChannel.postEvent(event) { success, reason, _ ->
+        val result = ResultWrapper(action.name,
+            if (success) SDKConst.RESULT_CODE_SUCCESS else SDKConst.RESULT_CODE_ACTION_FAILED,
+            reason
+        ).apply {
+          dialog?.let {
+            setPayload(buildJsonObject {
+                put("dialogId", it)
+            })
+          }
+        }.build()
+        action.callback?.onResult(result.toString(), null)
     }
 }
 

@@ -1,5 +1,6 @@
 package com.SmartWatchVoice.bestapp;
 
+import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -148,13 +149,6 @@ public class SpeechFragment extends Fragment {
                 }
             }
         });
-
-//        binding.imageExpectSpeech.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                onExpectSpeech(1000L);
-//            }
-//        });
 
         resetView();
     }

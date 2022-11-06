@@ -33,6 +33,8 @@ object AlexaConst {
     const val NS_SPEECH_RECOGNIZER = "SpeechRecognizer"
     const val NAME_RECOGNIZE = "Recognize"
     const val NAME_EXPECT_SPEECH = "ExpectSpeech"
+    const val NAME_STOP_CAPTURE = "StopCapture"
+    const val NAME_EXPECT_SPEECH_TIMEOUT = "ExpectSpeechTimeOut"
 
     const val NS_SPEECH_SYNTHESIZER = "SpeechSynthesizer"
     const val NAME_SPEAK = "Speak"

@@ -98,6 +98,7 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
                     AlexaConst.NS_ALEXA -> onAlexaDirective(sdk, directive, directiveParts)
                     AlexaConst.NS_NOTIFICATIONS -> onNotificationsDirective(sdk, directive, directiveParts)
                     AlexaConst.NS_ALEXA_DO_NOT_DISTURB -> onAlexaDoNotDisturbDirective(sdk, directive, directiveParts)
+                    AlexaConst.NS_SPEECH_RECOGNIZER -> onSpeechRecognizerDirective(sdk, directive, directiveParts)
                     AlexaConst.NS_SPEECH_SYNTHESIZER -> onSpeechSynthesizerDirective(sdk, directive, directiveParts)
                     AlexaConst.NS_ALEXA_API_GATEWAY -> onAlexaApiGatewayDirective(sdk, directive, directiveParts)
                     AlexaConst.NS_SYSTEM -> onSystemDirective(sdk, directive, directiveParts)

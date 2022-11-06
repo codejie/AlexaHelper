@@ -18,6 +18,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.SmartWatchVoice.bestapp.alexa.api.Payload;
 import com.SmartWatchVoice.bestapp.databinding.ActivityMainBinding;
 import com.SmartWatchVoice.bestapp.handler.DirectiveCallback;
 import com.SmartWatchVoice.bestapp.handler.HandlerConst;
@@ -28,14 +29,6 @@ import com.SmartWatchVoice.bestapp.system.SettingInfo;
 import com.SmartWatchVoice.bestapp.system.channel.Helper;
 import com.SmartWatchVoice.bestapp.utils.Logger;
 import com.SmartWatchVoice.bestapp.utils.Utils;
-import com.amazon.identity.auth.device.AuthError;
-import com.amazon.identity.auth.device.api.authorization.AuthCancellation;
-import com.amazon.identity.auth.device.api.authorization.AuthorizationManager;
-import com.amazon.identity.auth.device.api.authorization.AuthorizeListener;
-import com.amazon.identity.auth.device.api.authorization.AuthorizeRequest;
-import com.amazon.identity.auth.device.api.authorization.AuthorizeResult;
-import com.amazon.identity.auth.device.api.authorization.ScopeFactory;
-import com.amazon.identity.auth.device.api.workflow.RequestContext;
 import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
@@ -58,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
 
-    private RequestContext requestContext = null;
+//    private RequestContext requestContext = null;
 
     private Handler handler = null;
     private HandlerThread directiveThread = null;
@@ -78,15 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (name) {
                     case "alexa.speechSpeak": {
-                        // file
-                        String filename = System.currentTimeMillis() + ".mp3";
-                        File file = RuntimeInfo.getInstance().makeSpeechMP3File(filename); // new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "a.mp3");
-                        FileOutputStream ofs = new FileOutputStream(file);
-                        byte[] b = (byte[]) extra;
-                        ofs.write(b);
-                        ofs.close();
-
-                        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_AUDIO_FILE, filename);
+                        onSpeechSpeak(action, extra, callback);
                     }
                     break;
                     case "alexa.doNotDisturbUpdated": {
@@ -110,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                     default: {
+                        Logger.w("Unsupported action - " + name);
+
                         JSONObject result = new JSONObject();
                         result.put("type", "result");
                         result.put("name", action.getString("name"));
@@ -118,15 +105,40 @@ public class MainActivity extends AppCompatActivity {
                         callback.onResult(result.toString(), null);
                     }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (JSONException | IOException e) {
                 e.printStackTrace();
             }
         }
     };
+
+    private void onSpeechSpeak(JSONObject action, Object extra, OnResultCallback callback) throws IOException, JSONException {
+        // file
+        if (extra != null) {
+            String filename = System.currentTimeMillis() + ".mp3";
+            File file = RuntimeInfo.getInstance().makeSpeechMP3File(filename); // new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "a.mp3");
+            FileOutputStream ofs = new FileOutputStream(file);
+            byte[] b = (byte[]) extra;
+            ofs.write(b);
+            ofs.close();
+
+            Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_AUDIO_FILE, filename);
+        }
+
+        JSONObject payload = action.getJSONObject("payload");
+        if (payload != null) {
+            JSONObject caption = payload.getJSONObject("caption");
+            if (caption != null) {
+                String content = caption.getString("content");
+                if (content != null) {
+                    Payload.Caption webvtt = new Payload.Caption();
+                    webvtt.content = content;
+                    webvtt.type = caption.getString("type");
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_WEB_VTT, webvtt);
+                }
+            }
+        }
+
+    }
 
     private void onAlertDeleted(JSONObject action, Object extra, OnResultCallback callback) {
         try {
@@ -281,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
         RuntimeInfo.getInstance().start(this);
 
         initHandlers();
-        initRequestContext();
+//        initRequestContext();
 
         setDeviceInfo(new OnResultCallback() {
             @Override
@@ -340,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        requestContext.onResume();
+//        requestContext.onResume();
 //        Device.Companion.getInstance().onResume();
         smartWatchSDK.resume(this);
     }
@@ -409,68 +421,68 @@ public class MainActivity extends AppCompatActivity {
         directiveHandler = Handler.createAsync(directiveThread.getLooper(), new DirectiveCallback());
         RuntimeInfo.getInstance().directiveHandler = directiveHandler;
     }
-
-    private void initRequestContext() {
-        requestContext = RequestContext.create(this.getApplicationContext());
-        requestContext.registerListener(new AuthorizeListener() {
-            @Override
-            public void onSuccess(AuthorizeResult authorizeResult) {
-//                HttpChannel.getInstance().onAuthorizeSuccess(authorizeResult);
-                onAuthorizeSuccess(authorizeResult);
-            }
-
-            @Override
-            public void onError(AuthError authError) {
-                Logger.e("Authorization error - " + authError.getMessage());
-            }
-
-            @Override
-            public void onCancel(AuthCancellation authCancellation) {
-                Logger.w("Authorization canceled.");
-            }
-        });
-    }
-
-    private void onAuthorizeSuccess(AuthorizeResult authorizeResult) {
-        final String authCode = authorizeResult.getAuthorizationCode();
-        final String redirectUri = authorizeResult.getRedirectURI();
-
-        String authClientId = authorizeResult.getClientId();
-
-//        fetchAuthToken(authCode, redirectUri);
-
-        RuntimeInfo.getInstance().updateAuthInfo(authCode, redirectUri);
-        RuntimeInfo.getInstance().authInfo.authClientId = authClientId;
-
-        fetchAuthorizationToken();
-    }
-
-    public void authorize() {
-//        RuntimeInfo.AuthorizationInfo authInfo = RuntimeInfo.getInstance().authInfo;
-//        if (authInfo == null || authInfo.refreshToken == null) {
-//        String VerifierCode = UUID.randomUUID().toString();
-        RuntimeInfo.getInstance().updateAuthInfoVerifierCode(UUID.randomUUID().toString());
-        final String CODE_CHALLENGE = Helper.makeCodeChallenge(RuntimeInfo.getInstance().authInfo.verifierCode); //VerifierCode); // DeviceInfo.VerifierCode);
-
-        final JsonObject attrs = new JsonObject();
-        attrs.addProperty("deviceSerialNumber", DeviceInfo.ProductSerialNumber);
-
-        final JsonObject scopeData = new JsonObject();
-        scopeData.add("productInstanceAttributes", attrs);
-        scopeData.addProperty("productID", DeviceInfo.ProductId);
-
-        try {
-            AuthorizationManager.authorize(new AuthorizeRequest.Builder(requestContext)
-                    .addScopes(ScopeFactory.scopeNamed("alexa:voice_service:pre_auth"),
-                            ScopeFactory.scopeNamed("alexa:all", new JSONObject(scopeData.toString())))
-                    .forGrantType(AuthorizeRequest.GrantType.AUTHORIZATION_CODE)
-                    .withProofKeyParameters(CODE_CHALLENGE, "S256")
-                    .build());
-        } catch (JSONException e) {
-            Logger.w("fetch token fail - " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+//
+//    private void initRequestContext() {
+//        requestContext = RequestContext.create(this.getApplicationContext());
+//        requestContext.registerListener(new AuthorizeListener() {
+//            @Override
+//            public void onSuccess(AuthorizeResult authorizeResult) {
+////                HttpChannel.getInstance().onAuthorizeSuccess(authorizeResult);
+//                onAuthorizeSuccess(authorizeResult);
+//            }
+//
+//            @Override
+//            public void onError(AuthError authError) {
+//                Logger.e("Authorization error - " + authError.getMessage());
+//            }
+//
+//            @Override
+//            public void onCancel(AuthCancellation authCancellation) {
+//                Logger.w("Authorization canceled.");
+//            }
+//        });
+//    }
+//
+//    private void onAuthorizeSuccess(AuthorizeResult authorizeResult) {
+//        final String authCode = authorizeResult.getAuthorizationCode();
+//        final String redirectUri = authorizeResult.getRedirectURI();
+//
+//        String authClientId = authorizeResult.getClientId();
+//
+////        fetchAuthToken(authCode, redirectUri);
+//
+//        RuntimeInfo.getInstance().updateAuthInfo(authCode, redirectUri);
+//        RuntimeInfo.getInstance().authInfo.authClientId = authClientId;
+//
+//        fetchAuthorizationToken();
+//    }
+//
+//    public void authorize() {
+////        RuntimeInfo.AuthorizationInfo authInfo = RuntimeInfo.getInstance().authInfo;
+////        if (authInfo == null || authInfo.refreshToken == null) {
+////        String VerifierCode = UUID.randomUUID().toString();
+//        RuntimeInfo.getInstance().updateAuthInfoVerifierCode(UUID.randomUUID().toString());
+//        final String CODE_CHALLENGE = Helper.makeCodeChallenge(RuntimeInfo.getInstance().authInfo.verifierCode); //VerifierCode); // DeviceInfo.VerifierCode);
+//
+//        final JsonObject attrs = new JsonObject();
+//        attrs.addProperty("deviceSerialNumber", DeviceInfo.ProductSerialNumber);
+//
+//        final JsonObject scopeData = new JsonObject();
+//        scopeData.add("productInstanceAttributes", attrs);
+//        scopeData.addProperty("productID", DeviceInfo.ProductId);
+//
+//        try {
+//            AuthorizationManager.authorize(new AuthorizeRequest.Builder(requestContext)
+//                    .addScopes(ScopeFactory.scopeNamed("alexa:voice_service:pre_auth"),
+//                            ScopeFactory.scopeNamed("alexa:all", new JSONObject(scopeData.toString())))
+//                    .forGrantType(AuthorizeRequest.GrantType.AUTHORIZATION_CODE)
+//                    .withProofKeyParameters(CODE_CHALLENGE, "S256")
+//                    .build());
+//        } catch (JSONException e) {
+//            Logger.w("fetch token fail - " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
     public void fetchProductAccessToken() {
 

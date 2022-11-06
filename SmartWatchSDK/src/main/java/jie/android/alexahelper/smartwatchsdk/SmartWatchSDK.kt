@@ -5,14 +5,12 @@ import com.amazon.identity.auth.device.api.workflow.RequestContext
 import jie.android.alexahelper.smartwatchsdk.action.sdk.alexa.AlexaAction
 import jie.android.alexahelper.smartwatchsdk.action.sdk.device.DeviceAction
 import jie.android.alexahelper.smartwatchsdk.action.sdk.sdk.SDKAction
-import jie.android.alexahelper.smartwatchsdk.channel.alexa.ChannelPostCallback
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.HttpChannel
 import jie.android.alexahelper.smartwatchsdk.channel.sdk.SDKChannel
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import jie.android.alexahelper.smartwatchsdk.utils.SDKScheduler
 import kotlinx.serialization.SerializationException
-import okhttp3.Response
 
 class SmartWatchSDK constructor() {
     internal lateinit var requestContext: RequestContext
@@ -52,8 +50,9 @@ class SmartWatchSDK constructor() {
                 SDKConst.ACTION_ALEXA_LOGIN_WITH_TOKEN -> AlexaAction.loginWithToken(this, action)
                 SDKConst.ACTION_ALEXA_SET_DND -> AlexaAction.setDND(this, action)
                 SDKConst.ACTION_ALEXA_SPEECH_START -> AlexaAction.speechStart(this, action)
-                SDKConst.ACTION_ALEXA_SPEECH_END -> AlexaAction.speechStop(this, action)
+                SDKConst.ACTION_ALEXA_SPEECH_END -> AlexaAction.speechEnd(this, action)
                 SDKConst.ACTION_ALEXA_SPEECH_RECOGNIZE -> AlexaAction.speechRecognize(this, action)
+                SDKConst.ACTION_ALEXA_SPEECH_EXPECT_SKIPPED -> AlexaAction.speechExpectSkipped(this, action)
                 SDKConst.ACTION_ALEXA_SPEAK_START -> AlexaAction.speakStart(this, action)
                 SDKConst.ACTION_ALEXA_SPEAK_END -> AlexaAction.speakEnd(this, action)
                 SDKConst.ACTION_ALEXA_SPEAK_INTERRUPTED -> AlexaAction.speakInterrupted(this, action)
