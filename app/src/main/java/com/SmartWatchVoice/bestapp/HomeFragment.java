@@ -90,14 +90,6 @@ public class HomeFragment extends Fragment {
 
                     }
                 });
-
-//                new DoNotDisturbChangedAction(b).create().post(new EventAction.OnChannelResponse() {
-//                    @Override
-//                    public void OnResponse(@NonNull Response response) {
-//                        Logger.d("change DoNotDisturb - " + b);
-//                        SettingInfo.getInstance().doNotDisturb = b;
-//                    }
-//                });
             }
         });
         binding.buttonHomeLanguage.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +103,18 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_homeFragment_to_settingTimeZoneFragment);
+            }
+        });
+
+        binding.buttonHomeVerifygateway.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SDKAction.verifyGateway(new OnResultCallback() {
+                    @Override
+                    public void onResult(@NonNull String data, @Nullable Object extra) {
+                        Logger.d("result = " + data);
+                    }
+                });
             }
         });
 

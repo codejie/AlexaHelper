@@ -102,4 +102,13 @@ public class SDKAction {
 
         sdk.action(action.toString(), null, callback);
     }
+
+    public static void verifyGateway(OnResultCallback callback) {
+        JsonObject action = new JsonObject();
+        action.addProperty("type", "action");
+        action.addProperty("name", "alexa.verifyGateway");
+        action.addProperty("version", 1);
+
+        sdk.action(action.toString(), null, callback);
+    }
 }

@@ -53,6 +53,13 @@
                 android:layout_height="match_parent"
                 android:text="TimeZone" />
 
+            <Button
+                android:id="@+id/button_home_verifygateway"
+                style="@style/HomeItemMargin"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="VerifyGateway" />
+
         </LinearLayout>
     </ScrollView>
 
