@@ -24,6 +24,7 @@ object SDKConst {
     const val ACTION_ALEXA_SPEAK_INTERRUPTED = "alexa.speakInterrupted"
     const val ACTION_ALEXA_SET_TIME_ZONE = "alexa.setTimeZone"
     const val ACTION_ALEXA_SET_LOCALS = "alexa.setLocales"
+    const val ACTION_ALEXA_VERIFY_GATEWAY = "alexa.verifyGateway"
 
 
     const val ACTION_ALEXA_TOKEN_UPDATED = "alexa.tokenUpdated"

@@ -41,7 +41,7 @@ fun setTimeZoneAction(sdk: SmartWatchSDK, action: ActionWrapper) {
             addPayload("timeZone", timezone)
     }.create()
 
-    sdk.httpChannel.postEvent(event) { success, reason, response ->
+    sdk.httpChannel.postEvent(event) { success, reason, _ ->
         val result = ResultWrapper(action.name,
             if (success) SDKConst.RESULT_CODE_SUCCESS else SDKConst.RESULT_CODE_ACTION_FAILED,
             reason
@@ -64,7 +64,7 @@ fun setLocalesAction(sdk: SmartWatchSDK, action: ActionWrapper) {
         addPayload("locales", locales)
     }.create()
 
-    sdk.httpChannel.postEvent(event) { success, reason, response ->
+    sdk.httpChannel.postEvent(event) { success, reason, _ ->
         val result = ResultWrapper(action.name,
             if (success) SDKConst.RESULT_CODE_SUCCESS else SDKConst.RESULT_CODE_ACTION_FAILED,
             reason

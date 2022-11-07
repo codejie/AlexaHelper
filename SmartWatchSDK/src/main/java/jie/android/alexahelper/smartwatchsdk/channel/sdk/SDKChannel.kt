@@ -91,21 +91,25 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
     }
 
     private fun onDirectiveParts(directiveParts: List<DirectiveParser.Part>) {
-        for (part in directiveParts) {
-            if (part.type == DirectiveParser.PartType.DIRECTIVE) {
-                val directive = Directive.parse((part as DirectiveParser.DirectivePart).directive)
-                when (directive?.namespace) {
-                    AlexaConst.NS_ALEXA -> onAlexaDirective(sdk, directive, directiveParts)
-                    AlexaConst.NS_NOTIFICATIONS -> onNotificationsDirective(sdk, directive, directiveParts)
-                    AlexaConst.NS_ALEXA_DO_NOT_DISTURB -> onAlexaDoNotDisturbDirective(sdk, directive, directiveParts)
-                    AlexaConst.NS_SPEECH_RECOGNIZER -> onSpeechRecognizerDirective(sdk, directive, directiveParts)
-                    AlexaConst.NS_SPEECH_SYNTHESIZER -> onSpeechSynthesizerDirective(sdk, directive, directiveParts)
-                    AlexaConst.NS_ALEXA_API_GATEWAY -> onAlexaApiGatewayDirective(sdk, directive, directiveParts)
-                    AlexaConst.NS_SYSTEM -> onSystemDirective(sdk, directive, directiveParts)
-                    AlexaConst.NS_ALERTS -> onAlertsDirective(sdk, directive, directiveParts)
-                    else -> Logger.w("unsupported - ${directive.toString()}")
+        try {
+            for (part in directiveParts) {
+                if (part.type == DirectiveParser.PartType.DIRECTIVE) {
+                    val directive = Directive.parse((part as DirectiveParser.DirectivePart).directive)
+                    when (directive?.namespace) {
+                        AlexaConst.NS_ALEXA -> onAlexaDirective(sdk, directive, directiveParts)
+                        AlexaConst.NS_NOTIFICATIONS -> onNotificationsDirective(sdk, directive, directiveParts)
+                        AlexaConst.NS_ALEXA_DO_NOT_DISTURB -> onAlexaDoNotDisturbDirective(sdk, directive, directiveParts)
+                        AlexaConst.NS_SPEECH_RECOGNIZER -> onSpeechRecognizerDirective(sdk, directive, directiveParts)
+                        AlexaConst.NS_SPEECH_SYNTHESIZER -> onSpeechSynthesizerDirective(sdk, directive, directiveParts)
+                        AlexaConst.NS_ALEXA_API_GATEWAY -> onAlexaApiGatewayDirective(sdk, directive, directiveParts)
+                        AlexaConst.NS_SYSTEM -> onSystemDirective(sdk, directive, directiveParts)
+                        AlexaConst.NS_ALERTS -> onAlertsDirective(sdk, directive, directiveParts)
+                        else -> Logger.w("unsupported - ${directive.toString()}")
+                    }
                 }
             }
+        } catch (e: Exception) {
+            Logger.w("alexa directive exception - ${e.message}")
         }
     }
 

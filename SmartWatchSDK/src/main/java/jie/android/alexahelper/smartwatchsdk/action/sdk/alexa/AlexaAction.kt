@@ -19,7 +19,8 @@ object AlexaAction {
     fun setLocales(sdk: SmartWatchSDK, action: ActionWrapper) = setLocalesAction(sdk, action)
     fun alertStart(sdk: SmartWatchSDK, action: ActionWrapper) = alertStartAction(sdk, action)
     fun alertEnd(sdk: SmartWatchSDK, action: ActionWrapper) = alertEndAction(sdk, action)
+    fun verifyGateway(sdk: SmartWatchSDK, action: ActionWrapper) = verifyGatewayAction(sdk, action)
 
+    // fun called by self
     fun tokenUpdated(sdk: SmartWatchSDK, success: Boolean, message: String?, callback: OnResultCallback) = tokenUpdatedAction(sdk, success, message, callback)
-
 }

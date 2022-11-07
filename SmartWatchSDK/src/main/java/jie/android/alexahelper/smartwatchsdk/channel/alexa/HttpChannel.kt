@@ -53,16 +53,15 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
 
         client.newCall(request).enqueue(object: Callback {
             override fun onFailure(call: Call, e: IOException) {
-                if (callback != null)
-                    callback(false, e.message, null)
+                callback?.let { it(false, e.message, null) }
             }
-
             override fun onResponse(call: Call, response: Response) {
                 if (closeResponse) response.close()
-                if (callback != null)
-                    callback(true, null, response)
+                callback?.let {
+                    val success = response.code in 200..204
+                    it(success, if (success) null else "response code: ${response.code}", response)
+                }
             }
-
         })
     }
 

@@ -125,7 +125,8 @@ private fun createDownChannel(sdk: SmartWatchSDK, action: ActionWrapper): Unit {
         if (success) {
             // synchronize state
             Logger.d("createDownChannel success")
-            postSynchronizeStateAction(sdk, action)
+//            postSynchronizeStateAction(sdk, action)
+            postVerifyGateway(sdk, action)
         } else {
             Logger.w("create down channel failed - $reason")
 //            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "create down channel failed - $reason"))
@@ -139,7 +140,8 @@ private fun postSynchronizeStateAction(sdk: SmartWatchSDK, action: ActionWrapper
     sdk.httpChannel.postEvent(event) { success, reason, response ->
         if (success) {
             Logger.d("postSynchronizeStateAction success - ${response!!.code}")
-            postVerifyGateway(sdk, action)
+//            postVerifyGateway(sdk, action)
+            postAlexaDiscovery(sdk, action)
         } else {
             Logger.w("postSynchronizeStateAction failed - $reason")
 //            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postSynchronizeStateAction - $reason"))
@@ -153,7 +155,8 @@ private fun postVerifyGateway(sdk: SmartWatchSDK, action: ActionWrapper) {
     sdk.httpChannel.postEvent(event) { success, reason, response ->
         if (success) {
             Logger.d("postVerifyGateway success - ${response!!.code}")
-            postAlexaDiscovery(sdk, action)
+//            postAlexaDiscovery(sdk, action)
+            postSynchronizeStateAction(sdk, action)
         } else {
             Logger.w("postVerifyGateway failed - $reason")
 //            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postVerifyGateway - $reason"))
