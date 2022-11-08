@@ -94,6 +94,20 @@ public class MainActivity extends AppCompatActivity {
                         onAlertDeleted(action, extra, callback);
                     }
                     break;
+                    case "alexa.settingExpect": {
+                        onSettingExpect(action, extra, callback);
+                    }
+                    break;
+                    case "alexa.speechStop":
+                    case "alexa.clearIndicator": {
+                        JSONObject result = new JSONObject();
+                        result.put("type", "result");
+                        result.put("name", action.getString("name"));
+                        result.put("version", 1);
+
+                        callback.onResult(result.toString(), null);
+                    }
+                    break;
                     default: {
                         Logger.w("Unsupported action - " + name);
 
@@ -110,6 +124,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void onSettingExpect(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
+        JSONObject p = new JSONObject();
+        p.put("timeZone", SettingInfo.getInstance().timeZone);
+        p.put("locales", SettingInfo.getInstance().locales);
+
+        JSONObject result = new JSONObject();
+        result.put("type", "result");
+        result.put("name", action.getString("name"));
+        result.put("version", 1);
+        result.put("payload", p);
+
+        callback.onResult(result.toString(), null);
+    }
 
     private void onSpeechSpeak(JSONObject action, Object extra, OnResultCallback callback) throws IOException, JSONException {
         // file
@@ -203,6 +231,8 @@ public class MainActivity extends AppCompatActivity {
             }
             SettingInfo.getInstance().locales = list;
 
+            Utils.sendToHandlerMessage(RuntimeInfo.getInstance().homeFragmentHandler, HandlerConst.MSG_SETTING_CHANGED);
+
             JSONObject payload = new JSONObject();
 //            JsonArray lo = new JsonArray();
 //            SettingInfo.getInstance().locales.forEach( it -> lo.add(it));
@@ -224,6 +254,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             String timezone = action.getJSONObject("payload").getString("timeZone");
             SettingInfo.getInstance().timeZone = timezone;
+
+            Utils.sendToHandlerMessage(RuntimeInfo.getInstance().homeFragmentHandler, HandlerConst.MSG_SETTING_CHANGED);
 
             JSONObject payload = new JSONObject();
             payload.put("timeZone", SettingInfo.getInstance().timeZone);

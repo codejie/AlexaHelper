@@ -60,6 +60,7 @@ class SmartWatchSDK constructor() {
                 SDKConst.ACTION_ALEXA_SET_LOCALS -> AlexaAction.setLocales(this, action)
                 SDKConst.ACTION_ALEXA_ALERT_START -> AlexaAction.alertStart(this, action)
                 SDKConst.ACTION_ALEXA_ALERT_END -> AlexaAction.alertEnd(this, action)
+                SDKConst.ACTION_VOLUME_UPDATED -> AlexaAction.volumeUpdated(this, action)
                 SDKConst.ACTION_ALEXA_VERIFY_GATEWAY -> AlexaAction.verifyGateway(this, action)
                 else -> throw SDKException(
                     SDKConst.RESULT_CODE_INVALID_FORMAT,
