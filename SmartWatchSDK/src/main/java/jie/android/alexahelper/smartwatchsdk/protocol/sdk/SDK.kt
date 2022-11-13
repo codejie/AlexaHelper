@@ -53,7 +53,7 @@ open class SDK constructor(var type: String?, var name: String?, var version: In
 
 class ActionWrapper(name: String?, version: Int = 1) : SDK("action", name, version) {
     companion object {
-        public fun parse(data: String, extra: Any?, callback: OnResultCallback): ActionWrapper {
+        public fun parse(data: String, extra: Any?, callback: OnResultCallback?): ActionWrapper {
             try {
                 val ret: ActionWrapper = ActionWrapper()
                 ret.data = Json.parseToJsonElement(data) as JsonObject

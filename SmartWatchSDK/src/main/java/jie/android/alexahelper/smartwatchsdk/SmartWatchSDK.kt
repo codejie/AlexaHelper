@@ -3,14 +3,13 @@ package jie.android.alexahelper.smartwatchsdk
 import android.content.Context
 import com.amazon.identity.auth.device.api.workflow.RequestContext
 import jie.android.alexahelper.smartwatchsdk.action.sdk.alexa.AlexaAction
-import jie.android.alexahelper.smartwatchsdk.action.sdk.device.DeviceAction
-import jie.android.alexahelper.smartwatchsdk.action.sdk.sdk.SDKAction
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.HttpChannel
 import jie.android.alexahelper.smartwatchsdk.channel.sdk.SDKChannel
-import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
+import jie.android.alexahelper.smartwatchsdk.channel.sdk.onAction
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnActionListener
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import jie.android.alexahelper.smartwatchsdk.utils.SDKScheduler
-import kotlinx.serialization.SerializationException
 
 class SmartWatchSDK constructor() {
     internal lateinit var requestContext: RequestContext
@@ -38,40 +37,8 @@ class SmartWatchSDK constructor() {
         requestContext.onResume()
     }
 
-    fun action(data: String, extra: Any?, callback: OnResultCallback) {
-        try {
-            Logger.d("sdk action() - $data")
-            val action: ActionWrapper = ActionWrapper.parse(data, extra, callback)
-            when (action.name) {
-//                SDKConst.ACTION_ALEXA_SPEECH_RECOGNIZE -> AlexaAction.speechRecognize(this, action)
-                SDKConst.ACTION_SDK_TEST -> SDKAction.test(this, action)
-                SDKConst.ACTION_DEVICE_SET_INFO -> DeviceAction.setInfo(this, action)
-                SDKConst.ACTION_ALEXA_LOGIN -> AlexaAction.login(this, action) // onActionLogin(action)
-                SDKConst.ACTION_ALEXA_LOGIN_WITH_TOKEN -> AlexaAction.loginWithToken(this, action)
-                SDKConst.ACTION_ALEXA_SET_DND -> AlexaAction.setDND(this, action)
-                SDKConst.ACTION_ALEXA_SPEECH_START -> AlexaAction.speechStart(this, action)
-                SDKConst.ACTION_ALEXA_SPEECH_END -> AlexaAction.speechEnd(this, action)
-                SDKConst.ACTION_ALEXA_SPEECH_RECOGNIZE -> AlexaAction.speechRecognize(this, action)
-                SDKConst.ACTION_ALEXA_SPEECH_EXPECT_SKIPPED -> AlexaAction.speechExpectSkipped(this, action)
-                SDKConst.ACTION_ALEXA_SPEAK_START -> AlexaAction.speakStart(this, action)
-                SDKConst.ACTION_ALEXA_SPEAK_END -> AlexaAction.speakEnd(this, action)
-                SDKConst.ACTION_ALEXA_SPEAK_INTERRUPTED -> AlexaAction.speakInterrupted(this, action)
-                SDKConst.ACTION_ALEXA_SET_TIME_ZONE -> AlexaAction.setTimeZone(this, action)
-                SDKConst.ACTION_ALEXA_SET_LOCALS -> AlexaAction.setLocales(this, action)
-                SDKConst.ACTION_ALEXA_ALERT_START -> AlexaAction.alertStart(this, action)
-                SDKConst.ACTION_ALEXA_ALERT_END -> AlexaAction.alertEnd(this, action)
-                SDKConst.ACTION_VOLUME_UPDATED -> AlexaAction.volumeUpdated(this, action)
-                SDKConst.ACTION_ALEXA_VERIFY_GATEWAY -> AlexaAction.verifyGateway(this, action)
-                else -> throw SDKException(
-                    SDKConst.RESULT_CODE_INVALID_FORMAT,
-                    SDKConst.RESULT_MESSAGE_INVALID_FORMAT
-                )
-            }
-        } catch (e: SDKException) {
-            callback.onResult(ResultWrapper(SDKConst.ACTION_SDK_EXCEPTION, e.code, e.message).build().toString())
-        } catch (e: SerializationException) {
-            callback.onResult(ResultWrapper(SDKConst.ACTION_SDK_EXCEPTION, SDKConst.RESULT_CODE_SUCCESS).build().toString())
-        }
+    fun action(data: String, extra: Any?, callback: OnResultCallback?) {
+        onAction(this, data, extra, callback)
     }
 
     fun refreshToken() {

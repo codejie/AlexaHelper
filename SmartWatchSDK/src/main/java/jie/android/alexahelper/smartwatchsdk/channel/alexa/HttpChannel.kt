@@ -27,8 +27,8 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
 
     private var client: OkHttpClient = OkHttpClient.Builder()
         .protocols(listOf(Protocol.HTTP_2, Protocol.HTTP_1_1))
-        .readTimeout(60, TimeUnit.MINUTES)
-        .writeTimeout(60, TimeUnit.MINUTES)
+        .readTimeout(5, TimeUnit.MINUTES)
+        .writeTimeout(5, TimeUnit.MINUTES)
         .connectTimeout(10000, TimeUnit.MILLISECONDS)
         .pingInterval(280, TimeUnit.SECONDS)
         .addInterceptor(MyLoggingInterceptor().apply { level = MyLoggingInterceptor.Level.BODY })

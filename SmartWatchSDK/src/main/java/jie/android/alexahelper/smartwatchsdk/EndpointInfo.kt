@@ -52,6 +52,7 @@ private fun loadSelf(endpointInfo: EndpointInfo) {
             add(Capability.makeAlexa())
             add(Capability.makeAlexaDoNotDisturb())
             add(Capability.makeNotifications())
+            add(Capability.makeSpeaker())
             add(Capability.makeAlerts())
             add(Capability.makeSystem())
             add(Capability.makeSpeedRecognizer())
@@ -133,6 +134,14 @@ object Capability {
         return buildJsonObject {
             put("type", "AlexaInterface")
             put("interface", "Alexa.DoNotDisturb")
+            put("version", "1.0")
+        }
+    }
+
+    fun makeSpeaker(): JsonObject {
+        return buildJsonObject {
+            put("type", "AlexaInterface")
+            put("interface", "Speaker")
             put("version", "1.0")
         }
     }

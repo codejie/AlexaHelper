@@ -24,6 +24,7 @@ object SDKConst {
     const val ACTION_ALEXA_SPEAK_INTERRUPTED = "alexa.speakInterrupted"
     const val ACTION_ALEXA_SET_TIME_ZONE = "alexa.setTimeZone"
     const val ACTION_ALEXA_SET_LOCALS = "alexa.setLocales"
+    const val ACTION_ALEXA_SET_VOLUME = "alexa.setVolume"
     const val ACTION_ALEXA_VERIFY_GATEWAY = "alexa.verifyGateway"
 
 
@@ -38,7 +39,7 @@ object SDKConst {
     const val ACTION_ALEXA_ALERT_DELETED = "alexa.alertDeleted"
     const val ACTION_ALEXA_ALERT_START = "alexa.alertStart"
     const val ACTION_ALEXA_ALERT_END = "alexa.alertEnd"
-    const val ACTION_VOLUME_UPDATED = "alexa.volumeUpdated"
+    const val ACTION_ALEXA_VOLUME_UPDATED = "alexa.volumeUpdated"
     const val ACTION_ALEXA_SETTING_EXPECT = "alexa.settingExpect"
 
 

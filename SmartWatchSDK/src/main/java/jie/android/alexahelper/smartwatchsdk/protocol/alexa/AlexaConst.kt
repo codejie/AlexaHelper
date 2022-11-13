@@ -55,4 +55,11 @@ object AlexaConst {
     const val NAME_ALERT_STARTED = "AlertStarted"
     const val NAME_ALERT_STOPPED = "AlertStopped"
 
+    const val NS_SPEAKER = "Speaker"
+    const val NAME_SET_VOLUME = "SetVolume"
+    const val NAME_ADJUST_VOLUME = "AdjustVolume"
+    const val NAME_SET_MUTE = "setMute"
+    const val NAME_VOLUME_CHANGED = "VolumeChanged"
+    const val NAME_MUTE_CHANGED = "MuteChanged"
+
 }

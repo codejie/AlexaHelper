@@ -2,6 +2,7 @@ package jie.android.alexahelper.smartwatchsdk.action.sdk.alexa
 
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
+import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Event
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.EventBuilder
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import kotlinx.serialization.json.JsonObject
@@ -76,5 +77,40 @@ fun setLocalesAction(sdk: SmartWatchSDK, action: ActionWrapper) {
         }.build()
 
         action.callback?.onResult(result.toString())
+    }
+}
+
+fun setVolumeAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+    val mode = action.getPayload()!!.getString("mode")!!
+    val volume = action.getPayload()!!.getInt("volume")!!
+
+    var event: JsonObject? = null
+    if (mode == "MUTE" || mode == "UNMUTE") {
+        event = EventBuilder(AlexaConst.NS_SPEAKER, AlexaConst.NAME_MUTE_CHANGED).apply {
+            addPayload("volume", volume)
+            addPayload("muted", (mode == "MUTE"))
+        }.create()
+    } else {
+        event = EventBuilder(AlexaConst.NS_SPEAKER, AlexaConst.NAME_VOLUME_CHANGED).apply {
+            addPayload("volume", volume)
+            addPayload("muted", false)
+        }.create()
+    }
+
+    event?.let {
+        sdk.httpChannel.postEvent(event) { success, reason, _ ->
+            val result = ResultWrapper(action.name,
+                if (success) SDKConst.RESULT_CODE_SUCCESS else SDKConst.RESULT_CODE_ACTION_FAILED,
+                reason
+            ).apply {
+                val payload = buildJsonObject {
+                    put("mode", mode)
+                    put("volume", volume)
+                }
+                setPayload(payload)
+            }.build()
+
+            action.callback?.onResult(result.toString())
+        }
     }
 }

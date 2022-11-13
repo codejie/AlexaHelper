@@ -108,8 +108,9 @@ public class MainActivity extends AppCompatActivity {
                         callback.onResult(result.toString(), null);
                     }
                     break;
+
                     default: {
-                        Logger.w("Unsupported action - " + name);
+                        Logger.w("App unsupported action - " + name);
 
                         JSONObject result = new JSONObject();
                         result.put("type", "result");

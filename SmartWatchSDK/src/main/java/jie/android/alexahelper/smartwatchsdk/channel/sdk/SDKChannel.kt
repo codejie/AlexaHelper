@@ -1,11 +1,8 @@
 package jie.android.alexahelper.smartwatchsdk.channel.sdk
 
-import jie.android.alexahelper.smartwatchsdk.RuntimeInfo
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
-import jie.android.alexahelper.smartwatchsdk.action.alexa.*
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.DirectiveParser
-import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
-import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Directive
+import jie.android.alexahelper.smartwatchsdk.channel.alexa.onDirectiveParts
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import jie.android.alexahelper.smartwatchsdk.utils.SDKScheduler
 import kotlinx.coroutines.CoroutineScope
@@ -39,9 +36,9 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
                 val data = channel.receive()
                 Logger.d("sdk channel receive - ${data.toString()}")
                 when (data.type) {
-                    ChannelData.DataType.Timer -> onTimer(data.data as SDKScheduler.Timer)
-                    ChannelData.DataType.DirectiveParts -> onDirectiveParts(data.data as List<DirectiveParser.Part>)
-                    ChannelData.DataType.Notification -> onNotification(data.data as SDKNotification.Message)
+                    ChannelData.DataType.Timer -> onTimer(sdk, data.data as SDKScheduler.Timer)
+                    ChannelData.DataType.DirectiveParts -> onDirectiveParts(sdk, data.data as List<DirectiveParser.Part>)
+                    ChannelData.DataType.Notification -> onNotification(sdk, data.data as SDKNotification.Message)
                     else -> Logger.w("receive unknown type - ${data.type}")
                 }
             } while (true)
@@ -57,7 +54,7 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
         job?.cancel()
     }
 
-    private fun onNotification(message: SDKNotification.Message) {
+    private fun onNotification(sdk: SmartWatchSDK, message: SDKNotification.Message) {
         when (message) {
             SDKNotification.Message.LOGIN_SUCCESS -> onNotificationLoginSuccess()
             SDKNotification.Message.DOWN_CHANNEL_BREAK -> onNotificationDownChannelBreak()
@@ -74,7 +71,7 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
 //        RuntimeInfo.downChannelPingTimer = sdk.sdkScheduler.addTimer(SDKScheduler.Timer(280 * 1000, false, SDKScheduler.TimerType.DOWN_CHANNEL_PING))
     }
 
-    private fun onTimer(timer: SDKScheduler.Timer) {
+    private fun onTimer(sdk: SmartWatchSDK, timer: SDKScheduler.Timer) {
         when (val type = timer.param!! as SDKScheduler.TimerType) {
             SDKScheduler.TimerType.DOWN_CHANNEL_PING -> onTimerDownChannelPing()
             SDKScheduler.TimerType.TOKEN_REFRESH -> onTimerTokenRefresh()
@@ -90,28 +87,30 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
         sdk.pingDownChannel()
     }
 
-    private fun onDirectiveParts(directiveParts: List<DirectiveParser.Part>) {
-        try {
-            for (part in directiveParts) {
-                if (part.type == DirectiveParser.PartType.DIRECTIVE) {
-                    val directive = Directive.parse((part as DirectiveParser.DirectivePart).directive)
-                    when (directive?.namespace) {
-                        AlexaConst.NS_ALEXA -> onAlexaDirective(sdk, directive, directiveParts)
-                        AlexaConst.NS_NOTIFICATIONS -> onNotificationsDirective(sdk, directive, directiveParts)
-                        AlexaConst.NS_ALEXA_DO_NOT_DISTURB -> onAlexaDoNotDisturbDirective(sdk, directive, directiveParts)
-                        AlexaConst.NS_SPEECH_RECOGNIZER -> onSpeechRecognizerDirective(sdk, directive, directiveParts)
-                        AlexaConst.NS_SPEECH_SYNTHESIZER -> onSpeechSynthesizerDirective(sdk, directive, directiveParts)
-                        AlexaConst.NS_ALEXA_API_GATEWAY -> onAlexaApiGatewayDirective(sdk, directive, directiveParts)
-                        AlexaConst.NS_SYSTEM -> onSystemDirective(sdk, directive, directiveParts)
-                        AlexaConst.NS_ALERTS -> onAlertsDirective(sdk, directive, directiveParts)
-                        else -> Logger.w("unsupported - ${directive.toString()}")
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Logger.w("alexa directive exception - ${e.message}")
-        }
-    }
+//    private fun onDirectiveParts(directiveParts: List<DirectiveParser.Part>) {
+//        try {
+//            for (part in directiveParts) {
+//                if (part.type == DirectiveParser.PartType.DIRECTIVE) {
+//                    val directive = Directive.parse((part as DirectiveParser.DirectivePart).directive)
+//                    when (directive?.namespace) {
+//                        AlexaConst.NS_ALEXA -> onAlexaDirective(sdk, directive, directiveParts)
+//                        AlexaConst.NS_NOTIFICATIONS -> onNotificationsDirective(sdk, directive, directiveParts)
+//                        AlexaConst.NS_ALEXA_DO_NOT_DISTURB -> onAlexaDoNotDisturbDirective(sdk, directive, directiveParts)
+//                        AlexaConst.NS_SPEECH_RECOGNIZER -> onSpeechRecognizerDirective(sdk, directive, directiveParts)
+//                        AlexaConst.NS_SPEECH_SYNTHESIZER -> onSpeechSynthesizerDirective(sdk, directive, directiveParts)
+//                        AlexaConst.NS_ALEXA_API_GATEWAY -> onAlexaApiGatewayDirective(sdk, directive, directiveParts)
+//                        AlexaConst.NS_SYSTEM -> onSystemDirective(sdk, directive, directiveParts)
+//                        AlexaConst.NS_ALERTS -> onAlertsDirective(sdk, directive, directiveParts)
+//                        SDKConst.ACTION_VOLUME_UPDATED -> AlexaAction.volumeUpdated(this, action)
+//
+//                        else -> Logger.w("unsupported - ${directive.toString()}")
+//                    }
+//                }
+//            }
+//        } catch (e: Exception) {
+//            Logger.w("alexa directive exception - ${e.message}")
+//        }
+//    }
 
 
 }
