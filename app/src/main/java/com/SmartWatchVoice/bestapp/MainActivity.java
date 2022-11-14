@@ -74,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
                         onSpeechSpeak(action, extra, callback);
                     }
                     break;
+                    case "alexa.speechExpect": {
+                        onSpeechExpect(action, extra, callback);
+                    }
+                    break;
                     case "alexa.doNotDisturbUpdated": {
                         onDoNotDisturbUpdatedAction(action, extra, callback);
                     }
@@ -125,6 +129,24 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void onSpeechExpect(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
+        JSONObject payload = action.getJSONObject("payload");
+        int timeout = payload.getInt("timeout");
+        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_EXPECT_SPEECH, timeout);
+
+        String dialogId = payload.getString("dialogId");
+        JSONObject p = new JSONObject();
+        p.put("dialogId", dialogId);
+
+        JSONObject result = new JSONObject();
+        result.put("type", "result");
+        result.put("name", action.getString("name"));
+        result.put("version", 1);
+        result.put("payload", p);
+
+        callback.onResult(result.toString(), null);
+    }
 
     private void onSettingExpect(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
         JSONObject p = new JSONObject();
