@@ -20,12 +20,17 @@ class SmartWatchSDK constructor() {
     internal val sdkChannel: SDKChannel = SDKChannel(this)
     internal val sdkScheduler: SDKScheduler = SDKScheduler(this)
 
-    fun attach(context: Context, actionListener: OnActionListener) {
+    fun attach(context: Context, actionListener: OnActionListener): Boolean {
+
+        if (!DeviceInfo.inited) return false
+
         requestContext = RequestContext.create(context)
         onActionListener = actionListener
 
         sdkChannel.start()
         sdkScheduler.start()
+
+        return true
     }
 
     fun detach(context: Context) {

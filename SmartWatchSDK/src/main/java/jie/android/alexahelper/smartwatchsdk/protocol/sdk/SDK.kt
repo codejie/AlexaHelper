@@ -56,7 +56,7 @@ class ActionWrapper(name: String?, version: Int = 1) : SDK("action", name, versi
         public fun parse(data: String, extra: Any?, callback: OnResultCallback?): ActionWrapper {
             try {
                 val ret: ActionWrapper = ActionWrapper()
-                ret.data = Json.parseToJsonElement(data) as JsonObject
+                ret.data = Json.parseToJsonElement(data).jsonObject // as JsonObject
 
                 ret.type = ret.data?.get("type")?.jsonPrimitive?.content
                 ret.name = ret.data?.get("name")?.jsonPrimitive?.content
@@ -85,7 +85,7 @@ class ResultWrapper(name: String?, var code: Int, var message: String? = null, v
         fun parse(data: String, extra: Any?): ResultWrapper {
             try {
                 val ret: ResultWrapper = ResultWrapper()
-                ret.data = Json.parseToJsonElement(data) as JsonObject
+                ret.data = Json.parseToJsonElement(data).jsonObject // as JsonObject
 
                 ret.type = ret.data?.get("type")?.jsonPrimitive?.content
                 ret.name = ret.data?.get("name")?.jsonPrimitive?.content

@@ -1,9 +1,9 @@
 package jie.android.alexahelper.smartwatchsdk
 
-import jie.android.alexahelper.smartwatchsdk.protocol.sdk.getString
 import kotlinx.serialization.json.*
 import java.util.*
 
+@Deprecated("use configuration mode")
 internal object EndpointInfo {
     val endpoints: MutableMap<String, JsonObject> = mutableMapOf()
 

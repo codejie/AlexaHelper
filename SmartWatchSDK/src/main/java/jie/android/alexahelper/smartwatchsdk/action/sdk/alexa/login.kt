@@ -100,13 +100,6 @@ private fun authorizeWithToken(sdk: SmartWatchSDK, action: ActionWrapper) {
 }
 
 private fun fetchAuthorizeToken(sdk: SmartWatchSDK, action: ActionWrapper) {
-
-//    val payload = action.getPayload()!!
-//    RuntimeInfo.verifierCode = payload.getString("verifierCode")
-//    RuntimeInfo.authorizationCode = payload.getString("authorizationCode")
-//    RuntimeInfo.redirectUri = payload.getString("redirectUri")
-//    RuntimeInfo.authorizationClientId = payload.getString("authorizationClientId")
-
     sdk.httpChannel.postAuthorize { success, reason, response ->
         if (success) {
             // create down channel
@@ -176,7 +169,7 @@ private fun postAlexaDiscovery(sdk: SmartWatchSDK, action: ActionWrapper) {
         }
         addPayload("scope", scope)
         addPayload("endpoints", buildJsonArray {
-            for (element in EndpointInfo.endpoints.values) {
+            for (element in DeviceInfo.endpoints.values) {
                 add(element)
             }
         })

@@ -110,7 +110,7 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
             override fun onResponse(call: Call, response: Response) {
                 if (response.code in 200..204) {
                     val result: JsonObject =
-                        Json.parseToJsonElement(response.body!!.string()) as JsonObject
+                        Json.parseToJsonElement(response.body!!.string()).jsonObject // as JsonObject
 
                     RuntimeInfo.accessToken = result["access_token"]?.jsonPrimitive?.content
                     RuntimeInfo.refreshToken = result["refresh_token"]?.jsonPrimitive?.content
@@ -162,7 +162,7 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
             override fun onResponse(call: Call, response: Response) {
                 if (response.code in 200..204) {
                     val result: JsonObject =
-                        Json.parseToJsonElement(response.body!!.string()) as JsonObject
+                        Json.parseToJsonElement(response.body!!.string()).jsonObject // as JsonObject
 
                     RuntimeInfo.accessToken = result["access_token"]?.jsonPrimitive?.content
                     RuntimeInfo.refreshToken = result["refresh_token"]?.jsonPrimitive?.content

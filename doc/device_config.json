@@ -1,12 +1,16 @@
 {
   "product": {
     "id": "",
-    "clientId": "",
+    "clientId": ""
   },
   "manufacturer": {
     "name": "",
     "model": ""
   },
+  "displayCategories": [
+    "MUSIC_SYSTEM",
+    "SPEAKER"
+  ],
   "connections": [
     {
       "type": "TCP_IP",

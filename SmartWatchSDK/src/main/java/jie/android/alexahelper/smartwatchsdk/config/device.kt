@@ -1,16 +1,20 @@
 package jie.android.alexahelper.smartwatchsdk.config
 
-internal const val DeviceConfig: String =
+internal const val configDevice: String =
     """
 {
   "product": {
-    "id": "",
-    "clientId": "",
+    "id": "VWRK4_Module",
+    "clientId": "amzn1.application-oa2-client.a0c1ba72a7d4443bb4436cdc9cf8fa51"
   },
   "manufacturer": {
-    "name": "",
-    "model": ""
+    "name": "TouchManufacturer",
+    "model": "Touch-1"
   },
+  "displayCategories": [
+    "MUSIC_SYSTEM",
+    "SPEAKER"
+  ],
   "connections": [
     {
       "type": "TCP_IP",
