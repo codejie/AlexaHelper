@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         result.put("type", "result");
         result.put("name", action.getString("name"));
         result.put("version", 1);
+
         result.put("payload", p);
 
         callback.onResult(result.toString(), null);

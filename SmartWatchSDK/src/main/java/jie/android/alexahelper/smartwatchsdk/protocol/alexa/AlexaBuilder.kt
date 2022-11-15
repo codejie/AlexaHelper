@@ -17,7 +17,8 @@ internal class Builder {
 open class ProtocolBuilder (protected val type: String, protected val namespace: String, protected val name: String, messageId: String?) {
     private val headerBuilder: Builder = Builder()
     private var payloadBuilder: Builder? = null
-    private var contextBuilder: Builder? = null
+//    private var contextBuilder: Builder? = null
+    private var context: JsonElement? = null
 
     init {
         headerBuilder.put("namespace", namespace)
@@ -52,23 +53,21 @@ open class ProtocolBuilder (protected val type: String, protected val namespace:
         return payloadBuilder!!.put(key, element)
     }
 
-    fun setContext(key: String, element: JsonElement): JsonElement? {
-        if (contextBuilder == null)
-            contextBuilder = Builder()
-        return contextBuilder!!.put(key, element)
+    fun setContext(context: JsonElement) {
+        this.context = context
     }
 
     fun create(): JsonObject =
         buildJsonObject {
             put(type, buildJsonObject {
                 put("header", headerBuilder.build())
-                if (payloadBuilder != null) {
+                payloadBuilder?.let {
                     put("payload", payloadBuilder!!.build())
                 }
-                if (contextBuilder != null) {
-                    put("context", contextBuilder!!.build())
-                }
             })
+            context?.let {
+                put("context", context!!)
+            }
         }
 
 

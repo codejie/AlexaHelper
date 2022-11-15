@@ -32,7 +32,13 @@ internal object DeviceInfo {
         var software: String? = null
     }
 
+    object State {
+        var volumeState: JsonObject? = null
+        var allAlerts: JsonArray? = null
+    }
+
     fun initEndpointInfo(): Boolean = loadEndpointInfo()
+    fun makeContext(): JsonObject = stateToContext()
 }
 
 private fun initInfo(): Boolean {
@@ -97,4 +103,35 @@ private fun loadEndpointInfo(): Boolean {
 
 private fun loadThingInfo(): Boolean {
     return true
+}
+
+private fun stateToContext(): JsonObject {
+    val properties = buildJsonArray {
+        DeviceInfo.State.volumeState?.let {
+            addJsonObject { buildJsonObject {
+                put("header", buildJsonObject {
+                    put("namespace", "Speaker")
+                    put("name", "VolumeState")
+                })
+                put("payload", it)
+            } }
+        }
+
+        DeviceInfo.State.allAlerts?.let {
+            addJsonObject { buildJsonObject {
+                put("header", buildJsonObject {
+                    put("namespace", "Alerts")
+                    put("name", "AlertsState")
+                })
+                put("payload", buildJsonObject {
+                    put("allAlerts", it)
+                })
+            } }
+        }
+    }
+    val ret = buildJsonObject {
+        put("properties", properties)
+    }
+
+    return ret
 }

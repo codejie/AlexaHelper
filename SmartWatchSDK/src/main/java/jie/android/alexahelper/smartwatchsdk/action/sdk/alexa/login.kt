@@ -129,7 +129,9 @@ private fun createDownChannel(sdk: SmartWatchSDK, action: ActionWrapper): Unit {
 }
 
 private fun postSynchronizeStateAction(sdk: SmartWatchSDK, action: ActionWrapper) {
-    val event: JsonObject = EventBuilder(AlexaConst.NS_SYSTEM, AlexaConst.NAME_SYNCHRONIZE_STATE).create()
+    val event: JsonObject = EventBuilder(AlexaConst.NS_SYSTEM, AlexaConst.NAME_SYNCHRONIZE_STATE).apply {
+        setContext(DeviceInfo.makeContext())
+    }.create()
     sdk.httpChannel.postEvent(event) { success, reason, response ->
         if (success) {
             Logger.d("postSynchronizeStateAction success - ${response!!.code}")
