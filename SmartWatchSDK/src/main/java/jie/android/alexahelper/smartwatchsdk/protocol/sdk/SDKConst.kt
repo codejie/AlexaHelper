@@ -10,6 +10,7 @@ object SDKConst {
     const val ACTION_SDK_TEST = "sdk.test"
 
     const val ACTION_DEVICE_SET_INFO = "device.setInfo"
+    const val ACTION_DEVICE_SYNC_STATE = "device.syncState"
 
     const val ACTION_ALEXA_LOGIN = "alexa.login"
     const val ACTION_ALEXA_LOGIN_WITH_TOKEN = "alexa.loginWithToken"
