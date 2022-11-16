@@ -7,10 +7,17 @@ import jie.android.alexahelper.smartwatchsdk.protocol.sdk.getString
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.serialization.json.*
 
+internal data class Product constructor() {
+
+}
+
+
 internal object DeviceInfo {
 
     var inited: Boolean = false
     val endpoints: MutableMap<String, JsonObject> = mutableMapOf()
+
+    var isLogin: Boolean = false
 
     init {
         inited = initInfo()
@@ -108,25 +115,26 @@ private fun loadThingInfo(): Boolean {
 private fun stateToContext(): JsonObject {
     val properties = buildJsonArray {
         DeviceInfo.State.volumeState?.let {
-            addJsonObject { buildJsonObject {
+            add(buildJsonObject {
                 put("header", buildJsonObject {
                     put("namespace", "Speaker")
                     put("name", "VolumeState")
                 })
                 put("payload", it)
-            } }
+            })
         }
 
         DeviceInfo.State.allAlerts?.let {
-            addJsonObject { buildJsonObject {
+            add(buildJsonObject {
                 put("header", buildJsonObject {
                     put("namespace", "Alerts")
                     put("name", "AlertsState")
                 })
                 put("payload", buildJsonObject {
                     put("allAlerts", it)
+                    put("activeAlerts", it)
                 })
-            } }
+            })
         }
     }
     val ret = buildJsonObject {

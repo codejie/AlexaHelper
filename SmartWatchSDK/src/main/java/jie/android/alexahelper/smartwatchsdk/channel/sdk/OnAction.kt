@@ -41,6 +41,8 @@ internal fun onAction(sdk: SmartWatchSDK, data: String, extra: Any?, callback: O
     } catch (e: SDKException) {
         callback?.onResult(ResultWrapper(SDKConst.ACTION_SDK_EXCEPTION, e.code, e.message).build().toString())
     } catch (e: SerializationException) {
-        callback?.onResult(ResultWrapper(SDKConst.ACTION_SDK_EXCEPTION, SDKConst.RESULT_CODE_SUCCESS).build().toString())
-    }    
+        callback?.onResult(ResultWrapper(SDKConst.ACTION_SDK_EXCEPTION, SDKConst.RESULT_CODE_INVALID_FORMAT).build().toString())
+    } catch (e: IllegalArgumentException) {
+        callback?.onResult(ResultWrapper(SDKConst.ACTION_SDK_EXCEPTION, SDKConst.RESULT_CODE_INVALID_FORMAT).build().toString())
+    }
 }

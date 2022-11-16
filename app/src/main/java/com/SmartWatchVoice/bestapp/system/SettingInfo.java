@@ -32,6 +32,9 @@ public class SettingInfo {
     public String timeZone = "Asia/Shanghai";
     public List<String> locales = Arrays.asList("en-US");
 
+    public Integer volume = 100;
+    public Boolean muted = false;
+
     public static SettingInfo load () {
         File file = RuntimeInfo.getInstance().makeSettingFile();
         if (file.exists()) {

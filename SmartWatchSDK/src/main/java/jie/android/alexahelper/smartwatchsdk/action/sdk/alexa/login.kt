@@ -1,10 +1,8 @@
 package jie.android.alexahelper.smartwatchsdk.action.sdk.alexa
 
-import android.app.Notification
 import com.amazon.identity.auth.device.AuthError
 import com.amazon.identity.auth.device.api.authorization.*
 import jie.android.alexahelper.smartwatchsdk.*
-import jie.android.alexahelper.smartwatchsdk.EndpointInfo
 import jie.android.alexahelper.smartwatchsdk.RuntimeInfo
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.makeCodeChallenge
 import jie.android.alexahelper.smartwatchsdk.channel.sdk.ChannelData
@@ -26,7 +24,6 @@ fun loginAction(sdk: SmartWatchSDK, withToken: Boolean, action: ActionWrapper) {
         authorizeWithToken(sdk, action)
     } else {
         authorize(sdk, action)
-//        fetchAuthorizeToken(sdk, action)
     }
 }
 
@@ -189,7 +186,8 @@ private fun postAlexaDiscovery(sdk: SmartWatchSDK, action: ActionWrapper) {
                 setPayload(payload)
             }.build()
 
-            sdk.httpChannel.isLogin = true
+//            sdk.httpChannel.isLogin = true
+            DeviceInfo.isLogin = true
 
             CoroutineScope(Dispatchers.IO).launch {
                 sdk.sdkChannel.send(
@@ -202,7 +200,8 @@ private fun postAlexaDiscovery(sdk: SmartWatchSDK, action: ActionWrapper) {
 
             action.callback?.onResult(result.toString())
         } else {
-            sdk.httpChannel.isLogin = false
+//            sdk.httpChannel.isLogin = false
+            DeviceInfo.isLogin = false
 
             Logger.w("postAlexaDiscovery failed - $reason")
 //            sdk.resultCallbackHook(action, ResultWrapper(action.name, SDKConst.RESULT_CODE_ACTION_FAILED, "postAlexaDiscovery - $reason"))

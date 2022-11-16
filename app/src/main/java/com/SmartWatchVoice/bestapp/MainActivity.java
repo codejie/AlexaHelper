@@ -241,6 +241,13 @@ public class MainActivity extends AppCompatActivity {
             result.put("payload", p);
 
             callback.onResult(result.toString(), null);
+
+            SDKAction.syncState(new OnResultCallback() {
+                @Override
+                public void onResult(@NonNull String data, @Nullable Object extra) {
+                    Logger.d("after alert added sync state");
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -329,34 +336,25 @@ public class MainActivity extends AppCompatActivity {
 
         SDKAction.sdk = smartWatchSDK;
 
-//        JSONObject json = new JSONObject();
-//        try {
-//            json.put("type", "action");
-//            json.put("name", "sdk.test");
-//            json.put("version", 1);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        smartWatchSDK.action(json.toString(), null, new OnResultCallback() {
-//            @Override
-//            public void onResult(@NonNull String data, @Nullable Object extra) {
-//                Logger.d("onResult - " + data);
-//            }
-//        });
-
         DeviceInfo.init(this);
         RuntimeInfo.getInstance().start(this);
 
         initHandlers();
 //        initRequestContext();
 
-        setDeviceInfo(new OnResultCallback() {
+        SDKAction.setDeviceInfo(new OnResultCallback() {
             @Override
             public void onResult(@NonNull String data, @Nullable Object extra) {
                 Logger.d("setInfo result - " + data);
+                SDKAction.syncState(new OnResultCallback() {
+                    @Override
+                    public void onResult(@NonNull String data, @Nullable Object extra) {
+                        Logger.d("syncState result - " + data);
+                    }
+                });
             }
         });
+
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -435,7 +433,7 @@ public class MainActivity extends AppCompatActivity {
                 Logger.v("MainHandler - " + message);
                 switch (message.what) {
                     case HandlerConst.MSG_FETCH_TOKEN:
-                        setDeviceInfo(new OnResultCallback() {
+                        SDKAction.setDeviceInfo(new OnResultCallback() {
                             @Override
                             public void onResult(@NonNull String data, @Nullable Object extra) {
                                 Logger.d("setInfo result - " + data);
@@ -671,48 +669,4 @@ public class MainActivity extends AppCompatActivity {
 //        HttpChannel.getInstance().recreateDownChannel();
     }
 
-    private void setDeviceInfo(OnResultCallback callback) {
-        JSONObject product = new JSONObject();
-        try {
-            product.put("id", DeviceInfo.ProductId);
-            product.put("clientId", DeviceInfo.ClientId);
-            product.put("serialNumber", DeviceInfo.ProductSerialNumber);
-            product.put("name", "TouchAlexa");
-            product.put("friendlyName", "TouchAce");
-            product.put("description", "Touch Self");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JSONObject manufacturer = new JSONObject();
-        try {
-            manufacturer.put("name", "TouchManufacturer");
-            manufacturer.put("model", "Touch-1");
-            manufacturer.put("firmware", "1.0");
-            manufacturer.put("software", "20221020");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        JSONObject payload = new JSONObject();
-        try {
-            payload.put("product", product);
-            payload.put("manufacturer", manufacturer);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JSONObject info = new JSONObject();
-        try {
-            info.put("type", "action");
-            info.put("name", "device.setInfo");
-            info.put("version", 1);
-            info.put("payload", payload);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        smartWatchSDK.action(info.toString(), null, callback);
-    }
 }

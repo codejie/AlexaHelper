@@ -12,7 +12,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-typealias DownChannelActionCallback = () -> Unit
 internal typealias ChannelPostCallback = (success: Boolean, reason: String?, response: Response?) -> Unit
 
 class HttpChannel constructor(val sdk: SmartWatchSDK) {
@@ -21,7 +20,7 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
     private val avsAuthorizeUrl: String = "https://api.amazon.com/auth/o2/token"
     private val avsVersion: String = "/v20160207"
 
-    public var isLogin = false
+//    public var isLogin = false
 
     private val downChannel: DownChannel = DownChannel(sdk)
 
