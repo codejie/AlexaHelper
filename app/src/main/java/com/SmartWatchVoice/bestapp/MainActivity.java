@@ -342,18 +342,18 @@ public class MainActivity extends AppCompatActivity {
         initHandlers();
 //        initRequestContext();
 
-        SDKAction.setDeviceInfo(new OnResultCallback() {
-            @Override
-            public void onResult(@NonNull String data, @Nullable Object extra) {
-                Logger.d("setInfo result - " + data);
-                SDKAction.syncState(new OnResultCallback() {
-                    @Override
-                    public void onResult(@NonNull String data, @Nullable Object extra) {
-                        Logger.d("syncState result - " + data);
-                    }
-                });
-            }
-        });
+//        SDKAction.setDeviceInfo(new OnResultCallback() {
+//            @Override
+//            public void onResult(@NonNull String data, @Nullable Object extra) {
+//                Logger.d("setInfo result - " + data);
+//                SDKAction.syncState(new OnResultCallback() {
+//                    @Override
+//                    public void onResult(@NonNull String data, @Nullable Object extra) {
+//                        Logger.d("syncState result - " + data);
+//                    }
+//                });
+//            }
+//        });
 
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());

@@ -12,7 +12,7 @@ fun setInfoAction(sdk: SmartWatchSDK, action: ActionWrapper) {
 //    DeviceInfo.Product.id = product.getString("id")
 //    DeviceInfo.Product.clientId = product.getString("clientId")
     DeviceInfo.productInfo.serialNumber = product.getString("serialNumber")
-    DeviceInfo.productInfo.name = product.getString("name", false)
+//    DeviceInfo.productInfo.name = product.getString("name", false)
     DeviceInfo.productInfo.friendlyName = product.getString("friendlyName", false)
     DeviceInfo.productInfo.description = product.getString("description", false)
 

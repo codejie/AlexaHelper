@@ -29,25 +29,29 @@ public class SDKAction {
             product.put("name", "TouchAlexa");
             product.put("friendlyName", "TouchAce");
             product.put("description", "Touch Self");
+            product.put("name", "TouchManufacturer");
+            product.put("model", "Touch-1");
+            product.put("firmware", "1.0");
+            product.put("software", "20221020");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        JSONObject manufacturer = new JSONObject();
-        try {
-            manufacturer.put("name", "TouchManufacturer");
-            manufacturer.put("model", "Touch-1");
-            manufacturer.put("firmware", "1.0");
-            manufacturer.put("software", "20221020");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        JSONObject manufacturer = new JSONObject();
+//        try {
+//            manufacturer.put("name", "TouchManufacturer");
+//            manufacturer.put("model", "Touch-1");
+//            manufacturer.put("firmware", "1.0");
+//            manufacturer.put("software", "20221020");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
 
         JSONObject payload = new JSONObject();
         try {
             payload.put("product", product);
-            payload.put("manufacturer", manufacturer);
+//            payload.put("manufacturer", manufacturer);
         } catch (JSONException e) {
             e.printStackTrace();
         }

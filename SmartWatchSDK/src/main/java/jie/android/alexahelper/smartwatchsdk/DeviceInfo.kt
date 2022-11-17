@@ -1,6 +1,7 @@
 package jie.android.alexahelper.smartwatchsdk
 
 import jie.android.alexahelper.smartwatchsdk.config.configDevice
+import jie.android.alexahelper.smartwatchsdk.config.configThings
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.getJsonArray
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.getJsonObject
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.getString
@@ -19,9 +20,20 @@ internal class ProductInfo {
     var firmware: String? = null
     var software: String? = null
 
-    init {
-        loadProductInfo(this)
-    }
+//    init {
+//        loadProductInfo(this)
+//    }
+}
+
+internal class ExtendInfo {
+    var serialNumber: String? = null
+    var name: String? = null
+    var friendlyName: String? = null
+    var description: String? = null
+    var manufacturer: String? = null
+    var model: String? = null
+    var firmware: String? = null
+    var software: String? = null
 }
 
 internal class EndpointInfo {
@@ -62,16 +74,23 @@ internal object DeviceInfo {
 
 //    val endpoints: MutableMap<String, JsonObject> = mutableMapOf()
     val productInfo: ProductInfo = ProductInfo()
-    val endpointInfo: EndpointInfo = EndpointInfo()
+    val extendInfo: MutableMap<String, ExtendInfo> = mutableMapOf()
+//    val endpointInfo: EndpointInfo = EndpointInfo()
 
     val stateInfo: StateInfo = StateInfo()
 
 
 
     init {
-//        inited = initInfo()
+        loadInfo()
     }
 
+    private fun loadInfo(): Boolean {
+        loadProductInfo(productInfo)
+        loadExtendInfo(extendInfo)
+
+        return true
+    }
 //    object Product {
 //        var id: String? = null
 //        var clientId: String? = null
@@ -138,7 +157,6 @@ private fun loadProductInfo(productInfo: ProductInfo): Boolean {
 private fun loadEndpointInfo(endpoints: MutableMap<String, JsonObject>): Boolean {
     try {
         val config = Json.parseToJsonElement(configDevice).jsonObject // as JsonObject
-//        val endpoints =
 
         val id = "${DeviceInfo.productInfo.clientId}::${DeviceInfo.productInfo.id}::${DeviceInfo.productInfo.serialNumber}"
         val data = buildJsonObject {
@@ -177,7 +195,29 @@ private fun loadEndpointInfo(endpoints: MutableMap<String, JsonObject>): Boolean
 }
 
 private fun loadThingInfo(endpoints: MutableMap<String, JsonObject>): Boolean {
-    return true
+    return try {
+        configThings.forEach { it ->
+            val config = Json.parseToJsonElement(it).jsonObject
+
+            val confProduct = config.getJsonObject("product")!!
+            val pNo = confProduct.getString("serialNumber")
+            val pName = confProduct.getString("name")
+            val pDesc = confProduct.getString("description")
+            val pModel = confProduct.getString("pModel")
+            val pMan = confProduct.getString("manufacturer")
+
+            val id = "${DeviceInfo.productInfo.clientId}::${DeviceInfo.productInfo.id}::${DeviceInfo.productInfo.serialNumber}-$pNo"
+            val data = buildJsonObject {
+                put("endpointId", id)
+                put("manufacturerName", pName)
+
+            }
+        }
+        true
+    } catch (e: Exception) {
+        Logger.e("init Things Info failed - ${e.message}")
+        false
+    }
 }
 
 private fun endpointsToArray(endpoints: MutableMap<String, JsonObject>): JsonArray {
