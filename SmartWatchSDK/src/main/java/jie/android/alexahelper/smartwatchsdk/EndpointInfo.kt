@@ -3,67 +3,67 @@ package jie.android.alexahelper.smartwatchsdk
 import kotlinx.serialization.json.*
 import java.util.*
 
-@Deprecated("use configuration mode")
-internal object EndpointInfo {
-    val endpoints: MutableMap<String, JsonObject> = mutableMapOf()
-
-    init {
-        // self
-        loadSelf(this)
-    }
-
-    fun add(id: String, json: JsonObject): JsonObject? = endpoints.put(id, json)
-    fun add(id: String, json: String): JsonObject? = add(id, Json.parseToJsonElement(json) as JsonObject)
-}
+//@Deprecated("use configuration mode")
+//internal object EndpointInfo {
+//    val endpoints: MutableMap<String, JsonObject> = mutableMapOf()
+//
+//    init {
+//        // self
+//        loadSelf(this)
+//    }
+//
+//    fun add(id: String, json: JsonObject): JsonObject? = endpoints.put(id, json)
+//    fun add(id: String, json: String): JsonObject? = add(id, Json.parseToJsonElement(json) as JsonObject)
+//}
 
 private fun loadSelf(endpointInfo: EndpointInfo) {
-    val id = "${DeviceInfo.Product.clientId}::${DeviceInfo.Product.id}::${DeviceInfo.Product.serialNumber}"
-    val data = buildJsonObject {
-        put("endpointId", id)
-        put("manufacturerName", DeviceInfo.Product.name)
-        put("friendlyName", DeviceInfo.Product.friendlyName)
-        put("displayCategories", buildJsonArray {
-            add("MUSIC_SYSTEM")
-            add("SPEAKER")
-        })
-        put("description", DeviceInfo.Product.description)
-
-        put("registration", buildJsonObject {
-            put("productId", DeviceInfo.Product.id)
-            put("deviceSerialNumber", DeviceInfo.Product.serialNumber)
-        })
-
-        put("connections", buildJsonArray {
-            add(buildJsonObject {
-                put("type", "TCP_IP")
-                put("value", "127.0.0.1")
-            })
-        })
-
-        put("additionalAttributes", buildJsonObject {
-            put("manufacturer", DeviceInfo.Manufacturer.name)
-            put("model", DeviceInfo.Manufacturer.model)
-            put("serialNumber", DeviceInfo.Product.serialNumber)
-            put("firmwareVersion", DeviceInfo.Manufacturer.firmware)
-            put("softwareVersion", DeviceInfo.Manufacturer.software)
-        })
-
-        put("capabilities", buildJsonArray {
-            add(Capability.makeAlexa())
-            add(Capability.makeAlexaDoNotDisturb())
-            add(Capability.makeNotifications())
-            add(Capability.makeSpeaker())
-            add(Capability.makeAlerts())
-            add(Capability.makeSystem())
-            add(Capability.makeSpeedRecognizer())
-            add(Capability.makeAlexaApiGateway())
-            add(Capability.makeSpeechSynthesizer())
-            add(Capability.makeAudioPlayer())
-            add(Capability.makeTemplateRuntime())
-        })
-    }
-
-    endpointInfo.add(id, data)
+//    val id = "${DeviceInfo.Product.clientId}::${DeviceInfo.Product.id}::${DeviceInfo.Product.serialNumber}"
+//    val data = buildJsonObject {
+//        put("endpointId", id)
+//        put("manufacturerName", DeviceInfo.Product.name)
+//        put("friendlyName", DeviceInfo.Product.friendlyName)
+//        put("displayCategories", buildJsonArray {
+//            add("MUSIC_SYSTEM")
+//            add("SPEAKER")
+//        })
+//        put("description", DeviceInfo.Product.description)
+//
+//        put("registration", buildJsonObject {
+//            put("productId", DeviceInfo.Product.id)
+//            put("deviceSerialNumber", DeviceInfo.Product.serialNumber)
+//        })
+//
+//        put("connections", buildJsonArray {
+//            add(buildJsonObject {
+//                put("type", "TCP_IP")
+//                put("value", "127.0.0.1")
+//            })
+//        })
+//
+//        put("additionalAttributes", buildJsonObject {
+//            put("manufacturer", DeviceInfo.Manufacturer.name)
+//            put("model", DeviceInfo.Manufacturer.model)
+//            put("serialNumber", DeviceInfo.Product.serialNumber)
+//            put("firmwareVersion", DeviceInfo.Manufacturer.firmware)
+//            put("softwareVersion", DeviceInfo.Manufacturer.software)
+//        })
+//
+//        put("capabilities", buildJsonArray {
+//            add(Capability.makeAlexa())
+//            add(Capability.makeAlexaDoNotDisturb())
+//            add(Capability.makeNotifications())
+//            add(Capability.makeSpeaker())
+//            add(Capability.makeAlerts())
+//            add(Capability.makeSystem())
+//            add(Capability.makeSpeedRecognizer())
+//            add(Capability.makeAlexaApiGateway())
+//            add(Capability.makeSpeechSynthesizer())
+//            add(Capability.makeAudioPlayer())
+//            add(Capability.makeTemplateRuntime())
+//        })
+//    }
+//
+//    endpointInfo.add(id, data)
 //    endpointInfo.add(thingSpot.getString("endpointId")!!, thingSpot)
 }
 
@@ -252,25 +252,25 @@ object Capability {
 }
 
 private val thingSpot = buildJsonObject {
-    put("endpointId", "${DeviceInfo.Product.clientId}::${DeviceInfo.Product.id}::${DeviceInfo.Product.serialNumber}-Light-Spot")
-    put("manufacturerName", "TouchTech")
-    put("friendlyName", "Spot")
-    put("displayCategories", buildJsonArray {
-        add("LIGHT")
-    })
-    put("description", "TouchAlexa LightSpot")
-
-    put("additionalAttributes", buildJsonObject {
-        put("manufacturer", DeviceInfo.Manufacturer.name)
-        put("model", "Light-Sport-1")
-        put("serialNumber", "1")
-        put("firmwareVersion", "1.0")
-        put("softwareVersion", "20221020")
-        put("customIdentifier", "spot-01")
-    })
-
-    put("capabilities", buildJsonArray {
-        add(Capability.makeAlexa())
-        add(Capability.makeAlexaPowerController())
-    })
+//    put("endpointId", "${DeviceInfo.Product.clientId}::${DeviceInfo.Product.id}::${DeviceInfo.Product.serialNumber}-Light-Spot")
+//    put("manufacturerName", "TouchTech")
+//    put("friendlyName", "Spot")
+//    put("displayCategories", buildJsonArray {
+//        add("LIGHT")
+//    })
+//    put("description", "TouchAlexa LightSpot")
+//
+//    put("additionalAttributes", buildJsonObject {
+//        put("manufacturer", DeviceInfo.Manufacturer.name)
+//        put("model", "Light-Sport-1")
+//        put("serialNumber", "1")
+//        put("firmwareVersion", "1.0")
+//        put("softwareVersion", "20221020")
+//        put("customIdentifier", "spot-01")
+//    })
+//
+//    put("capabilities", buildJsonArray {
+//        add(Capability.makeAlexa())
+//        add(Capability.makeAlexaPowerController())
+//    })
 }

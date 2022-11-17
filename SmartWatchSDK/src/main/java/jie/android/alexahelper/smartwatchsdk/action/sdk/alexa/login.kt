@@ -28,7 +28,7 @@ fun loginAction(sdk: SmartWatchSDK, withToken: Boolean, action: ActionWrapper) {
 }
 
 private fun authorize(sdk: SmartWatchSDK, action: ActionWrapper) {
-    if (DeviceInfo.Product.id == null || DeviceInfo.Product.serialNumber == null) {
+    if (DeviceInfo.productInfo.id == null || DeviceInfo.productInfo.serialNumber == null) {
         throw throw SDKException(
             SDKConst.RESULT_CODE_MISSING_PARAMETERS,
             SDKConst.RESULT_MESSAGE_MISSING_PARAMETERS
@@ -53,9 +53,9 @@ private fun authorize(sdk: SmartWatchSDK, action: ActionWrapper) {
     val challengeCode = makeCodeChallenge(RuntimeInfo.verifierCode!!)
     val scopeData = buildJsonObject {
         putJsonObject("productInstanceAttributes") {
-            put("deviceSerialNumber", DeviceInfo.Product.serialNumber)
+            put("deviceSerialNumber", DeviceInfo.productInfo.serialNumber)
         }
-        put("productID", DeviceInfo.Product.id)
+        put("productID", DeviceInfo.productInfo.id)
     }
 
     AuthorizationManager.authorize(
@@ -127,7 +127,7 @@ private fun createDownChannel(sdk: SmartWatchSDK, action: ActionWrapper): Unit {
 
 private fun postSynchronizeStateAction(sdk: SmartWatchSDK, action: ActionWrapper) {
     val event: JsonObject = EventBuilder(AlexaConst.NS_SYSTEM, AlexaConst.NAME_SYNCHRONIZE_STATE).apply {
-        setContext(DeviceInfo.makeContext())
+        setContext(DeviceInfo.stateInfo.makeContext())
     }.create()
     sdk.httpChannel.postEvent(event) { success, reason, response ->
         if (success) {
@@ -167,11 +167,7 @@ private fun postAlexaDiscovery(sdk: SmartWatchSDK, action: ActionWrapper) {
             put("token", RuntimeInfo.accessToken)
         }
         addPayload("scope", scope)
-        addPayload("endpoints", buildJsonArray {
-            for (element in DeviceInfo.endpoints.values) {
-                add(element)
-            }
-        })
+        addPayload("endpoints", DeviceInfo.endpointInfo.makeList())
     }.create()
 
     sdk.httpChannel.postEvent(event) { success, reason, response ->

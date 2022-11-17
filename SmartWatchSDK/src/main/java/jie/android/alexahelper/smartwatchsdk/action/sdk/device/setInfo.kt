@@ -11,18 +11,18 @@ fun setInfoAction(sdk: SmartWatchSDK, action: ActionWrapper) {
     val product = payload.getJsonObject("product")!!
 //    DeviceInfo.Product.id = product.getString("id")
 //    DeviceInfo.Product.clientId = product.getString("clientId")
-    DeviceInfo.Product.serialNumber = product.getString("serialNumber")
-    DeviceInfo.Product.name = product.getString("name", false)
-    DeviceInfo.Product.friendlyName = product.getString("friendlyName", false)
-    DeviceInfo.Product.description = product.getString("description", false)
+    DeviceInfo.productInfo.serialNumber = product.getString("serialNumber")
+    DeviceInfo.productInfo.name = product.getString("name", false)
+    DeviceInfo.productInfo.friendlyName = product.getString("friendlyName", false)
+    DeviceInfo.productInfo.description = product.getString("description", false)
 
-    val manufacturer = payload.getJsonObject("manufacturer", false)!! // !!
+//    val manufacturer = payload.getJsonObject("manufacturer", false)!! // !!
 //    DeviceInfo.Manufacturer.name = manufacturer?.getString("name")
 //    DeviceInfo.Manufacturer.model = manufacturer?.getString("model")
-    DeviceInfo.Manufacturer.firmware = manufacturer?.getString("firmware")
-    DeviceInfo.Manufacturer.software = manufacturer?.getString("software")
+    DeviceInfo.productInfo.firmware = product.getString("firmware")
+    DeviceInfo.productInfo.software = product.getString("software")
 
-    DeviceInfo.initEndpointInfo()
+    DeviceInfo.endpointInfo.load()
 
     action.callback?.onResult(
         ResultWrapper(action.name, SDKConst.RESULT_CODE_SUCCESS).build().toString()

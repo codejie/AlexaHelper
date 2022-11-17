@@ -22,7 +22,7 @@ class SmartWatchSDK constructor() {
 
     fun attach(context: Context, actionListener: OnActionListener): Boolean {
 
-        if (!DeviceInfo.inited) return false
+//        if (!DeviceInfo.inited) return false
 
         requestContext = RequestContext.create(context)
         onActionListener = actionListener

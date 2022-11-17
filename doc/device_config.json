@@ -1,11 +1,9 @@
 {
   "product": {
     "id": "",
-    "clientId": ""
-  },
-  "manufacturer": {
-    "name": "",
-    "model": ""
+    "clientId": "",
+    "model": "",
+    "manufacturer": ""
   },
   "displayCategories": [
     "MUSIC_SYSTEM",

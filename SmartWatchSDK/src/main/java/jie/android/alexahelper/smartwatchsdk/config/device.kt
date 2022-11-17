@@ -6,10 +6,8 @@ internal const val configDevice: String =
   "product": {
     "id": "VWRK4_Module",
     "clientId": "amzn1.application-oa2-client.a0c1ba72a7d4443bb4436cdc9cf8fa51"
-  },
-  "manufacturer": {
-    "name": "TouchManufacturer",
     "model": "Touch-1"
+    "manufacturer": "TouchManufacturer"
   },
   "displayCategories": [
     "MUSIC_SYSTEM",

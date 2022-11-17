@@ -93,7 +93,7 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
             put("grant_type", "authorization_code")
             put("code", RuntimeInfo.authorizationCode)
             put("redirect_uri", RuntimeInfo.redirectUri)
-            put("client_id", DeviceInfo.Product.clientId)
+            put("client_id", DeviceInfo.productInfo.clientId)
             put("code_verifier", RuntimeInfo.verifierCode)
         }
 
@@ -146,7 +146,7 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
         val body: JsonObject = buildJsonObject {
             put("grant_type", "refresh_token")
             put("refresh_token", refreshToken)
-            put("client_id", DeviceInfo.Product.clientId)
+            put("client_id", DeviceInfo.productInfo.clientId)
         }
         val request: Request = Request.Builder()
             .url(avsAuthorizeUrl)
