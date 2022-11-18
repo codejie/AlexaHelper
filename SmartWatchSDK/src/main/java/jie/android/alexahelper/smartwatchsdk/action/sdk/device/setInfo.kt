@@ -28,13 +28,13 @@ fun setInfoAction(sdk: SmartWatchSDK, action: ActionWrapper) {
     if (items != null) {
         for (index in 0 until items.size) {
             val item = items[index] as JsonObject
-            val extend = DeviceInfo.productInfo.extendInfo[item.getString("id")]
+            val extend = DeviceInfo.productInfo.extendInfo[item.getString("name")]
             if (extend != null) {
                 extend.serialNumber = item.getString("serialNumber")
                 extend.friendlyName = item.getString("friendlyName")
                 extend.description = item.getString("description")
             } else {
-                Logger.w("setInfo unknown extend - ${item.getString("id")}")
+                Logger.w("setInfo unknown extend - ${item.getString("name")}")
             }
         }
     }

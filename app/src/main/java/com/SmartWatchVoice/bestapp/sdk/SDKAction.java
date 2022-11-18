@@ -26,7 +26,7 @@ public class SDKAction {
         JSONArray exts = new JSONArray();
         try {
             JSONObject spot = new JSONObject();
-            spot.put("id", "lightSpot");
+            spot.put("name", "lightSpot");
             spot.put("serialNumber", "spot-111");
             spot.put("friendlyName", "spot");
             spot.put("description", "LightSpot model 1");

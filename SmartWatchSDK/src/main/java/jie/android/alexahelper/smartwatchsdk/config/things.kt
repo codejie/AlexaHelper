@@ -3,8 +3,11 @@ package jie.android.alexahelper.smartwatchsdk.config
 internal val configThings: ArrayList<String> = arrayListOf(
     """
 {
+  "endpoint": {
+    "type": "PowerController"
+  },
   "extend": {
-    "id": "lightSpot",
+    "name": "lightSpot",
     "model": "LightSpot01",
     "manufacturer": "TouchManufacturer"    
   },
@@ -28,7 +31,7 @@ internal val configThings: ArrayList<String> = arrayListOf(
           }
         ],
         "proactivelyReported": true,
-        "retrievable": true
+        "retrievable": false
       }
     }
   ]

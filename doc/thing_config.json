@@ -1,6 +1,9 @@
 {
+  "endpoint": {
+    "type": "PowerController"
+  },
   "extend": {
-    "id": "",
+    "name": "",
     "model": "",
     "manufacturer": ""
   },

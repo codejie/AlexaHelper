@@ -23,7 +23,7 @@ class DownChannel constructor(val sdk: SmartWatchSDK) {
             try {
                 while (!source.exhausted()) {
                     val content: String = source.buffer.readString(source.buffer.size, StandardCharsets.UTF_8)
-                    Logger.d("down channel received - $content")
+//                    Logger.d("down channel received - $content")
                     val parts = parser.parseParts(content)
                     parts?.also {
 //                        for (part in it) {

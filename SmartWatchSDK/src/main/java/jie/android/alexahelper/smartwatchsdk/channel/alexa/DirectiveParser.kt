@@ -20,7 +20,7 @@ open class DirectiveParser {
         override fun toString(): String {
             var headerString = ""
             for ((k, v) in headers) {
-                headerString += "$k: $v"
+                headerString += "$k: $v\n"
             }
             return "Part ($type)\n$headerString"
         }
@@ -29,13 +29,16 @@ open class DirectiveParser {
     class DirectivePart(headers: Map<String, String>, val directive: JsonObject)
         : Part(PartType.DIRECTIVE, headers) {
         override fun toString(): String {
-            return "${super.toString()}\n${directive.toString()}"
+            return "${super.toString()}${directive.toString()}"
         }
     }
 
     class OctetBuffersPart(headers: Map<String, String>, val buffer: ByteArray)
         : Part(PartType.OCTET_BUFFERS, headers) {
+        override fun toString(): String {
+            return "${super.toString()}BufferSize=${buffer.size}"
         }
+    }
 
     protected var boundary: String? = null
     protected var endBoundary: String? = null
@@ -61,7 +64,7 @@ open class DirectiveParser {
     }
 
     protected open fun buildDirectivePart(headers: Map<String, String>, content: String): DirectivePart? {
-       Logger.v("parse directive content - \n$content")
+//       Logger.v("parse directive content - \n$content")
         try {
             val directive: JsonObject = Json.parseToJsonElement(content).jsonObject // as JsonObject
             return DirectivePart(headers, directive)

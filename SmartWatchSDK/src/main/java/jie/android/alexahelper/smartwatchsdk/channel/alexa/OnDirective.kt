@@ -11,6 +11,7 @@ import jie.android.alexahelper.smartwatchsdk.utils.Logger
 fun onDirectiveParts(sdk: SmartWatchSDK, directiveParts: List<DirectiveParser.Part>) {
     try {
         for (part in directiveParts) {
+            Logger.d("process directive part - $part")
             if (part.type == DirectiveParser.PartType.DIRECTIVE) {
                 val directive = Directive.parse((part as DirectiveParser.DirectivePart).directive)
                 when (directive?.namespace) {
