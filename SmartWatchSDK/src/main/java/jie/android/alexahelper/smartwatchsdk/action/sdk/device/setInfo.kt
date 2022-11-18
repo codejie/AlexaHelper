@@ -3,6 +3,7 @@ package jie.android.alexahelper.smartwatchsdk.action.sdk.device
 import jie.android.alexahelper.smartwatchsdk.DeviceInfo
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
+import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.serialization.json.JsonObject
 
 fun setInfoAction(sdk: SmartWatchSDK, action: ActionWrapper) {
@@ -12,7 +13,7 @@ fun setInfoAction(sdk: SmartWatchSDK, action: ActionWrapper) {
 //    DeviceInfo.Product.id = product.getString("id")
 //    DeviceInfo.Product.clientId = product.getString("clientId")
     DeviceInfo.productInfo.serialNumber = product.getString("serialNumber")
-//    DeviceInfo.productInfo.name = product.getString("name", false)
+//    DeviceInfo.productInfo.name = product.getString("name")
     DeviceInfo.productInfo.friendlyName = product.getString("friendlyName", false)
     DeviceInfo.productInfo.description = product.getString("description", false)
 
@@ -22,7 +23,21 @@ fun setInfoAction(sdk: SmartWatchSDK, action: ActionWrapper) {
     DeviceInfo.productInfo.firmware = product.getString("firmware")
     DeviceInfo.productInfo.software = product.getString("software")
 
-    DeviceInfo.endpointInfo.load()
+
+    val items = payload.getJsonArray("extends")
+    if (items != null) {
+        for (index in 0 until items.size) {
+            val item = items[index] as JsonObject
+            val extend = DeviceInfo.productInfo.extendInfo[item.getString("id")]
+            if (extend != null) {
+                extend.serialNumber = item.getString("serialNumber")
+                extend.friendlyName = item.getString("friendlyName")
+                extend.description = item.getString("description")
+            } else {
+                Logger.w("setInfo unknown extend - ${item.getString("id")}")
+            }
+        }
+    }
 
     action.callback?.onResult(
         ResultWrapper(action.name, SDKConst.RESULT_CODE_SUCCESS).build().toString()

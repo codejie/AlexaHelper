@@ -5,6 +5,7 @@ import com.SmartWatchVoice.bestapp.system.SettingInfo;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,17 +23,30 @@ public class SDKAction {
 
     public static void setDeviceInfo(OnResultCallback callback) {
         JSONObject product = new JSONObject();
+        JSONArray exts = new JSONArray();
         try {
-            product.put("id", DeviceInfo.ProductId);
-            product.put("clientId", DeviceInfo.ClientId);
+            JSONObject spot = new JSONObject();
+            spot.put("id", "lightSpot");
+            spot.put("serialNumber", "spot-111");
+            spot.put("friendlyName", "spot");
+            spot.put("description", "LightSpot model 1");
+            spot.put("firmware", "1.1");
+            spot.put("software", "20221120");
+
+            exts.put(spot);
+
+
+//            product.put("id", DeviceInfo.ProductId);
+//            product.put("clientId", DeviceInfo.ClientId);
             product.put("serialNumber", DeviceInfo.ProductSerialNumber);
-            product.put("name", "TouchAlexa");
+//            product.put("name", "TouchAlexa");
             product.put("friendlyName", "TouchAce");
             product.put("description", "Touch Self");
-            product.put("name", "TouchManufacturer");
-            product.put("model", "Touch-1");
+//            product.put("manufacturer", "TouchManufacturer");
+//            product.put("model", "Touch-1");
             product.put("firmware", "1.0");
             product.put("software", "20221020");
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -51,6 +65,7 @@ public class SDKAction {
         JSONObject payload = new JSONObject();
         try {
             payload.put("product", product);
+            payload.put("extends", exts);
 //            payload.put("manufacturer", manufacturer);
         } catch (JSONException e) {
             e.printStackTrace();

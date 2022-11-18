@@ -8,6 +8,17 @@ import jie.android.alexahelper.smartwatchsdk.protocol.sdk.getString
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.serialization.json.*
 
+internal class ExtendInfo constructor(val id: String) {
+    var serialNumber: String? = null
+//    var name: String? = null
+    var friendlyName: String? = null
+    var description: String? = null
+    var manufacturer: String? = null
+    var model: String? = null
+    var firmware: String? = null
+    var software: String? = null
+}
+
 internal class ProductInfo {
     var id: String? = null
     var clientId: String? = null
@@ -20,31 +31,14 @@ internal class ProductInfo {
     var firmware: String? = null
     var software: String? = null
 
-//    init {
-//        loadProductInfo(this)
-//    }
-}
+    val extendInfo: MutableMap<String, ExtendInfo> = mutableMapOf()
 
-internal class ExtendInfo {
-    var serialNumber: String? = null
-    var name: String? = null
-    var friendlyName: String? = null
-    var description: String? = null
-    var manufacturer: String? = null
-    var model: String? = null
-    var firmware: String? = null
-    var software: String? = null
-}
+    init {
+        loadProductInfo(this)
+        loadExtendInfo(this, extendInfo)
+    }
 
-internal class EndpointInfo {
-    private val endpoints: MutableMap<String, JsonObject> = mutableMapOf()
-
-//    init {
-//        loadEndpointInfo(this.endpoints)
-//    }
-
-    fun load() = loadEndpointInfo(this.endpoints)
-    fun makeList(): JsonArray = endpointsToArray(this.endpoints)
+    fun makeEndPoints() = productToEndpointList(this)
 }
 
 class StateInfo {
@@ -72,48 +66,8 @@ internal object DeviceInfo {
 
     var isLogin: Boolean = false
 
-//    val endpoints: MutableMap<String, JsonObject> = mutableMapOf()
     val productInfo: ProductInfo = ProductInfo()
-    val extendInfo: MutableMap<String, ExtendInfo> = mutableMapOf()
-//    val endpointInfo: EndpointInfo = EndpointInfo()
-
     val stateInfo: StateInfo = StateInfo()
-
-
-
-    init {
-        loadInfo()
-    }
-
-    private fun loadInfo(): Boolean {
-        loadProductInfo(productInfo)
-        loadExtendInfo(extendInfo)
-
-        return true
-    }
-//    object Product {
-//        var id: String? = null
-//        var clientId: String? = null
-//        var serialNumber: String? = null
-//        var name: String? = null
-//        var friendlyName: String? = null
-//        var description: String? = null
-//    }
-//
-//    object Manufacturer {
-//        var name: String? = null
-//        var model: String? = null
-//        var firmware: String? = null
-//        var software: String? = null
-//    }
-
-//    object State {
-//        var volumeState: JsonObject? = null
-//        var allAlerts: JsonArray? = null
-//    }
-
-//    fun initEndpointInfo(): Boolean = loadEndpointInfo()
-//    fun makeContext(): JsonObject = stateToContext()
 }
 
 
@@ -124,7 +78,7 @@ private fun loadProductInfo(productInfo: ProductInfo): Boolean {
         val confProduct = config.getJsonObject("product")!!
         productInfo.id = confProduct.getString("id")
         productInfo.clientId = confProduct.getString("clientId")
-
+        productInfo.name = confProduct.getString("name")
         productInfo.manufacturer = confProduct.getString("manufacturer")
         productInfo.model = confProduct.getString("model")
 
@@ -134,97 +88,89 @@ private fun loadProductInfo(productInfo: ProductInfo): Boolean {
         false
     }
 }
-//
-//private fun initInfo(): Boolean {
-//    try {
-//        val config = Json.parseToJsonElement(configDevice).jsonObject
-//
-//        val confProduct = config.getJsonObject("product")!!
-//        DeviceInfo.Product.id = confProduct.getString("id")
-//        DeviceInfo.Product.clientId = confProduct.getString("clientId")
-//
-//        val confManufacturer = config.getJsonObject("manufacturer")!!
-//        DeviceInfo.Manufacturer.name = confManufacturer.getString("name")
-//        DeviceInfo.Manufacturer.model = confManufacturer.getString("model")
-//
-//        return true
-//    } catch (e: Exception) {
-//        Logger.e("init Device Info failed - ${e.message}")
-//        return false
-//    }
-//}
 
-private fun loadEndpointInfo(endpoints: MutableMap<String, JsonObject>): Boolean {
-    try {
-        val config = Json.parseToJsonElement(configDevice).jsonObject // as JsonObject
-
-        val id = "${DeviceInfo.productInfo.clientId}::${DeviceInfo.productInfo.id}::${DeviceInfo.productInfo.serialNumber}"
-        val data = buildJsonObject {
-            put("endpointId", id)
-            put("manufacturerName", DeviceInfo.productInfo.name)
-            put("friendlyName", DeviceInfo.productInfo.friendlyName)
-            put("description", DeviceInfo.productInfo.description)
-
-            put("additionalAttributes", buildJsonObject {
-                put("manufacturer", DeviceInfo.productInfo.manufacturer)
-                put("model", DeviceInfo.productInfo.model)
-                put("serialNumber", DeviceInfo.productInfo.serialNumber)
-                put("firmwareVersion", DeviceInfo.productInfo.firmware)
-                put("softwareVersion", DeviceInfo.productInfo.software)
-            })
-
-            put("registration", buildJsonObject {
-                put("productId", DeviceInfo.productInfo.id)
-                put("deviceSerialNumber", DeviceInfo.productInfo.serialNumber)
-            })
-
-            put("displayCategories", config.getJsonArray("displayCategories")!!)
-            put("connections", config.getJsonArray("connections")!!)
-
-            put("capabilities", config.getJsonArray("capabilities")!!)
-        }
-
-        endpoints[id] = data
-
-        // load things info
-        return loadThingInfo(endpoints)
-    } catch (e: Exception) {
-        Logger.e("init Endpoint Info failed - ${e.message}")
-        return false
-    }
-}
-
-private fun loadThingInfo(endpoints: MutableMap<String, JsonObject>): Boolean {
+private fun loadExtendInfo(productInfo: ProductInfo, extends: MutableMap<String, ExtendInfo>): Boolean {
     return try {
         configThings.forEach { it ->
             val config = Json.parseToJsonElement(it).jsonObject
+            val confExtend = config.getJsonObject("extend")!!
+            val extend = ExtendInfo(confExtend.getString("id")!!)
+            extend.model = confExtend.getString("model")!!
+            extend.manufacturer = confExtend.getString("manufacturer")
 
-            val confProduct = config.getJsonObject("product")!!
-            val pNo = confProduct.getString("serialNumber")
-            val pName = confProduct.getString("name")
-            val pDesc = confProduct.getString("description")
-            val pModel = confProduct.getString("pModel")
-            val pMan = confProduct.getString("manufacturer")
-
-            val id = "${DeviceInfo.productInfo.clientId}::${DeviceInfo.productInfo.id}::${DeviceInfo.productInfo.serialNumber}-$pNo"
-            val data = buildJsonObject {
-                put("endpointId", id)
-                put("manufacturerName", pName)
-
-            }
+            extends[extend.id] = extend
         }
         true
     } catch (e: Exception) {
-        Logger.e("init Things Info failed - ${e.message}")
+        Logger.e("init Extend Info failed - ${e.message}")
         false
     }
 }
 
-private fun endpointsToArray(endpoints: MutableMap<String, JsonObject>): JsonArray {
-    return buildJsonArray {
-        endpoints.values.forEach { it ->
-            add(it)
+private fun productToEndpointList(productInfo: ProductInfo): JsonArray? {
+    return try {
+        buildJsonArray {
+            // device
+            val config = Json.parseToJsonElement(configDevice).jsonObject
+            val product = buildJsonObject {
+                val id = "${productInfo.clientId}::${productInfo.id}::${productInfo.serialNumber}"
+                put("endpointId", id)
+                put("manufacturerName", productInfo.name)
+                put("friendlyName", productInfo.friendlyName)
+                put("description", productInfo.description)
+
+                put("additionalAttributes", buildJsonObject {
+                    put("manufacturer", productInfo.manufacturer)
+                    put("model", productInfo.model)
+                    put("serialNumber", productInfo.serialNumber)
+                    put("firmwareVersion", productInfo.firmware)
+                    put("softwareVersion", productInfo.software)
+                })
+
+                put("registration", buildJsonObject {
+                    put("productId", productInfo.id)
+                    put("deviceSerialNumber", productInfo.serialNumber)
+                })
+
+                put("displayCategories", config.getJsonArray("displayCategories")!!)
+                put("connections", config.getJsonArray("connections")!!)
+                put("capabilities", config.getJsonArray("capabilities")!!)
+            }
+            this.add(product)
+
+            // extends
+            configThings.forEach { it ->
+                val confExtend = Json.parseToJsonElement(it).jsonObject
+                val tid = confExtend.getJsonObject("extend")!!.getString("id")
+                val extend = productInfo.extendInfo[tid]
+                if (extend != null) {
+                    val eid = "${productInfo.clientId}::${productInfo.id}::${productInfo.serialNumber}-${extend.id}"
+                    val data = buildJsonObject {
+                        put("endpointId", eid)
+                        put("manufacturerName", extend.id)
+                        put("friendlyName", extend.friendlyName)
+                        put("description", extend.description)
+
+                        put("additionalAttributes", buildJsonObject {
+                            put("manufacturer", extend.manufacturer)
+                            put("model", extend.model)
+                            put("serialNumber", extend.serialNumber)
+                            put("firmwareVersion", extend.firmware)
+                            put("softwareVersion", extend.software)
+                        })
+
+                        put("displayCategories", confExtend.getJsonArray("displayCategories")!!)
+                        put("capabilities", confExtend.getJsonArray("capabilities")!!)
+                    }
+                    this.add(data)
+                } else {
+                    Logger.w("Can't find extend info - $tid")
+                }
+            }
         }
+    } catch (e: Exception) {
+        Logger.w("make endpoint list - ${e.message}")
+        null
     }
 }
 

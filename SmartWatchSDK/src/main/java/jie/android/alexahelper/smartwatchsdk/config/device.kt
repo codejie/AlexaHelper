@@ -6,6 +6,7 @@ internal val configDevice: String =
   "product": {
     "id": "VWRK4_Module",
     "clientId": "amzn1.application-oa2-client.a0c1ba72a7d4443bb4436cdc9cf8fa51",
+    "name": "Touch",
     "model": "Touch-1",
     "manufacturer": "TouchManufacturer"
   },

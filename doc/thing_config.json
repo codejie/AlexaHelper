@@ -1,8 +1,6 @@
 {
-  "product": {
-    "serialNumber": "",
-    "name": "",
-    "description": "",
+  "extend": {
+    "id": "",
     "model": "",
     "manufacturer": ""
   },

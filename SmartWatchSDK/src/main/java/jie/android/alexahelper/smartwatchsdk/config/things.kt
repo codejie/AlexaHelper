@@ -3,12 +3,10 @@ package jie.android.alexahelper.smartwatchsdk.config
 internal val configThings: ArrayList<String> = arrayListOf(
     """
 {
-  "product": {
+  "extend": {
     "id": "lightSpot",
-    "name": "Spot",
-    "description": "lightSpot on Touch",
     "model": "LightSpot01",
-    "manufacturer": "TouchManufacturer"
+    "manufacturer": "TouchManufacturer"    
   },
   "displayCategories": [
     "LIGHT"
