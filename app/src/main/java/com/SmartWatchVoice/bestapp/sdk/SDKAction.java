@@ -23,17 +23,17 @@ public class SDKAction {
 
     public static void setDeviceInfo(OnResultCallback callback) {
         JSONObject product = new JSONObject();
-        JSONArray exts = new JSONArray();
+        JSONArray endpoints = new JSONArray();
         try {
             JSONObject spot = new JSONObject();
-            spot.put("name", "lightSpot");
+            spot.put("id", "lightSpot");
             spot.put("serialNumber", "spot-111");
             spot.put("friendlyName", "spot");
             spot.put("description", "LightSpot model 1");
             spot.put("firmware", "1.1");
             spot.put("software", "20221120");
 
-            exts.put(spot);
+            endpoints.put(spot);
 
 
 //            product.put("id", DeviceInfo.ProductId);
@@ -65,7 +65,7 @@ public class SDKAction {
         JSONObject payload = new JSONObject();
         try {
             payload.put("product", product);
-            payload.put("extends", exts);
+            payload.put("endpoints", endpoints);
 //            payload.put("manufacturer", manufacturer);
         } catch (JSONException e) {
             e.printStackTrace();

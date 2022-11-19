@@ -19,7 +19,7 @@ fun onSpeechRecognizerDirective(sdk: SmartWatchSDK, directive: Directive, parts:
 
 private fun onExpectSpeech(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     try {
-        val dialogId = directive.header!!.getString("dialogRequestId")
+        val dialogId = directive.header.getString("dialogRequestId")
         val timeout = directive.payload!!.getInt("timeoutInMilliseconds")
         val initiator  = directive.payload!!.getJsonObject("initiator", false)
         var initiatorType: String? = null

@@ -167,7 +167,7 @@ private fun postAlexaDiscovery(sdk: SmartWatchSDK, action: ActionWrapper) {
             put("token", RuntimeInfo.accessToken)
         }
         addPayload("scope", scope)
-        addPayload("endpoints", DeviceInfo.productInfo.makeEndPoints()!!) // .endpointInfo.makeList())
+        DeviceInfo.makeEndpointList()?.let { addPayload("endpoints", it) } // .productInfo.makeEndPoints()!!) // .endpointInfo.makeList())
     }.create()
 
     sdk.httpChannel.postEvent(event) { success, reason, response ->
