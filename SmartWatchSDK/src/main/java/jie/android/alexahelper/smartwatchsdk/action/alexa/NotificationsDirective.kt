@@ -9,10 +9,13 @@ import jie.android.alexahelper.smartwatchsdk.protocol.sdk.SDKConst
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 
 fun onNotificationsDirective(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
-    val action = ActionWrapper(SDKConst.ACTION_ALEXA_CLEAR_INDICATOR).build()
-    sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-        override fun onResult(data: String, extra: Any?) {
-            Logger.d("onNotificationsDirective result - $data")
-        }
-    })
+    val action = ActionWrapper(SDKConst.ACTION_ALEXA_CLEAR_INDICATOR)
+    sdk.toAction(action) { _ ->
+//        Logger.d("onNotificationsDirective result - ${result.toString()}")
+    }
+//    sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
+//        override fun onResult(data: String, extra: Any?) {
+//            Logger.d("onNotificationsDirective result - $data")
+//        }
+//    })
 }

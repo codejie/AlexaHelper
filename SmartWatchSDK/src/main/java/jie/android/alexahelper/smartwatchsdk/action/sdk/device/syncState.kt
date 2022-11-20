@@ -1,5 +1,6 @@
 package jie.android.alexahelper.smartwatchsdk.action.sdk.device
 
+import jie.android.alexahelper.smartwatchsdk.ActionResultCallback
 import jie.android.alexahelper.smartwatchsdk.DeviceInfo
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.StateInfo
@@ -9,10 +10,12 @@ import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 
-internal fun syncStateAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+internal fun syncStateAction(
+    sdk: SmartWatchSDK,
+    action: ActionWrapper,
+    callback: ActionResultCallback
+) {
     val alexa = action.getPayload()?.getJsonArray("alexa")
     alexa?.let {
         for (index in 0 until it.size) {
@@ -39,6 +42,9 @@ internal fun syncStateAction(sdk: SmartWatchSDK, action: ActionWrapper) {
             }
         }
     }
+
+    val result = ResultWrapper(SDKConst.ACTION_DEVICE_SYNC_STATE, SDKConst.RESULT_CODE_SUCCESS)
+    callback(result)
 }
 
 private fun onSpeakerState(state: JsonObject) {

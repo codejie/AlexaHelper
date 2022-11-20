@@ -1,5 +1,6 @@
 package jie.android.alexahelper.smartwatchsdk.protocol.alexa
 
+import jie.android.alexahelper.smartwatchsdk.Endpoint
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Utils.makeMessageId
 import kotlinx.serialization.json.*
 
@@ -19,6 +20,7 @@ open class ProtocolBuilder (protected val type: String, protected val namespace:
     private var payloadBuilder: Builder? = null
 //    private var contextBuilder: Builder? = null
     private var context: JsonElement? = null
+    private var endpoint: JsonObject? = null
 
     init {
         headerBuilder.put("namespace", namespace)
@@ -57,6 +59,10 @@ open class ProtocolBuilder (protected val type: String, protected val namespace:
         this.context = context
     }
 
+    fun setEndpoint(endpoint: JsonObject) {
+        this.endpoint = endpoint
+    }
+
     fun create(): JsonObject =
         buildJsonObject {
             put(type, buildJsonObject {
@@ -68,8 +74,10 @@ open class ProtocolBuilder (protected val type: String, protected val namespace:
             context?.let {
                 put("context", context!!)
             }
+            endpoint?.let {
+                put("endpoint", endpoint!!)
+            }
         }
-
 
     override fun toString(): String {
         return "$type { namespace = $namespace | name = $name }"

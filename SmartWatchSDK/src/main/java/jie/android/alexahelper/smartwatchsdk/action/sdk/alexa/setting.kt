@@ -1,15 +1,15 @@
 package jie.android.alexahelper.smartwatchsdk.action.sdk.alexa
 
+import jie.android.alexahelper.smartwatchsdk.ActionResultCallback
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
-import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Event
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.EventBuilder
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
-fun setDNDAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+fun setDNDAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) {
 
     val enabled: Boolean = action.getPayload()!!.getBoolean("enabled")!!
 
@@ -28,13 +28,13 @@ fun setDNDAction(sdk: SmartWatchSDK, action: ActionWrapper) {
                 put("enabled", enabled)
             }
             setPayload(payload)
-        }.build()
-
-        action.callback?.onResult(result.toString())
+        }
+        callback(result)
+//        action.callback?.onResult(result.toString())
     }
 }
 
-fun setTimeZoneAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+fun setTimeZoneAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) {
     val timezone = action.getPayload()!!.getString("timeZone")!!
     val event = EventBuilder(
         AlexaConst.NS_SYSTEM,
@@ -51,13 +51,13 @@ fun setTimeZoneAction(sdk: SmartWatchSDK, action: ActionWrapper) {
                 put("timeZone", timezone)
             }
             setPayload(payload)
-        }.build()
-
-        action.callback?.onResult(result.toString())
+        }
+        callback(result)
+//        action.callback?.onResult(result.toString())
     }
 }
 
-fun setLocalesAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+fun setLocalesAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) {
     val locales = action.getPayload()!!.getJsonArray("locales")!!
     val event = EventBuilder(
         AlexaConst.NS_SYSTEM,
@@ -74,24 +74,24 @@ fun setLocalesAction(sdk: SmartWatchSDK, action: ActionWrapper) {
                 put("locales", locales)
             }
             setPayload(payload)
-        }.build()
-
-        action.callback?.onResult(result.toString())
+        }
+        callback(result)
+//        action.callback?.onResult(result.toString())
     }
 }
 
-fun setVolumeAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+fun setVolumeAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) {
     val mode = action.getPayload()!!.getString("mode")!!
     val volume = action.getPayload()!!.getInt("volume")!!
 
     var event: JsonObject? = null
-    if (mode == "MUTE" || mode == "UNMUTE") {
-        event = EventBuilder(AlexaConst.NS_SPEAKER, AlexaConst.NAME_MUTE_CHANGED).apply {
+    event = if (mode == "MUTE" || mode == "UNMUTE") {
+        EventBuilder(AlexaConst.NS_SPEAKER, AlexaConst.NAME_MUTE_CHANGED).apply {
             addPayload("volume", volume)
             addPayload("muted", (mode == "MUTE"))
         }.create()
     } else {
-        event = EventBuilder(AlexaConst.NS_SPEAKER, AlexaConst.NAME_VOLUME_CHANGED).apply {
+        EventBuilder(AlexaConst.NS_SPEAKER, AlexaConst.NAME_VOLUME_CHANGED).apply {
             addPayload("volume", volume)
             addPayload("muted", false)
         }.create()
@@ -108,9 +108,9 @@ fun setVolumeAction(sdk: SmartWatchSDK, action: ActionWrapper) {
                     put("volume", volume)
                 }
                 setPayload(payload)
-            }.build()
-
-            action.callback?.onResult(result.toString())
+            }
+            callback(result)
+//            action.callback?.onResult(result.toString())
         }
     }
 }

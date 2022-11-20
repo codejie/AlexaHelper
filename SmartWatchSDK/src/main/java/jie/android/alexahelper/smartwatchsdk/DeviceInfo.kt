@@ -65,6 +65,19 @@ internal object DeviceInfo {
 
     fun parseDeviceSetting(payload: JsonObject): Boolean = loadDeviceInfo(this, payload)
     fun makeEndpointList(): JsonArray? = productToEndpointList(this)
+
+    fun parseEndpointId(id: String): String {
+        val index = id.lastIndexOf('-')
+        return if (index != -1) {
+            id.substring(index + 1)
+        } else {
+            id
+        }
+    }
+
+    fun makeEndpointId(id: String): String {
+        return "${productInfo.clientId}::${productInfo.id}::${productInfo.serialNumber}-$id"
+    }
 }
 
 private fun loadDeviceInfo(deviceInfo: DeviceInfo, payload: JsonObject): Boolean {

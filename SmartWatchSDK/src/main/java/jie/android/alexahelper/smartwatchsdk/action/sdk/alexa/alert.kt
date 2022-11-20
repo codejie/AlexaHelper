@@ -1,5 +1,6 @@
 package jie.android.alexahelper.smartwatchsdk.action.sdk.alexa
 
+import jie.android.alexahelper.smartwatchsdk.ActionResultCallback
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.EventBuilder
@@ -10,7 +11,11 @@ import jie.android.alexahelper.smartwatchsdk.protocol.sdk.getString
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
-internal fun alertStartAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+internal fun alertStartAction(
+    sdk: SmartWatchSDK,
+    action: ActionWrapper,
+    callback: ActionResultCallback
+) {
     val payload = action.getPayload()!!
     val token = payload.getString("token")!!
     val scheduledTime = payload.getString("scheduledTime")!!
@@ -31,13 +36,17 @@ internal fun alertStartAction(sdk: SmartWatchSDK, action: ActionWrapper) {
                 put("token", token)
             }
             setPayload(payload)
-        }.build()
-
-        action.callback?.onResult(result.toString())
+        }
+        callback(result)
+//        action.callback?.onResult(result.toString())
     }
 }
 
-internal fun alertEndAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+internal fun alertEndAction(
+    sdk: SmartWatchSDK,
+    action: ActionWrapper,
+    callback: ActionResultCallback
+) {
     val payload = action.getPayload()!!
     val token = payload.getString("token")!!
     val scheduledTime = payload.getString("scheduledTime")!!
@@ -58,8 +67,9 @@ internal fun alertEndAction(sdk: SmartWatchSDK, action: ActionWrapper) {
                 put("token", token)
             }
             setPayload(payload)
-        }.build()
+        }
 
-        action.callback?.onResult(result.toString())
+        callback(result)
+//        action.callback?.onResult(result.toString())
     }
 }

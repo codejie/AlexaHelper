@@ -7,7 +7,8 @@ import kotlinx.coroutines.*
 class SDKScheduler constructor(private val sdk: SmartWatchSDK) {
     enum class TimerType {
         DOWN_CHANNEL_PING,
-        TOKEN_REFRESH
+        TOKEN_REFRESH,
+        DOWN_CHANNEL_CREATE
     }
 
     data class Timer(val delayMillis: Long, val repeat: Boolean = false, val param: Any? = null) {

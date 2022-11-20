@@ -28,30 +28,38 @@ private fun onDeleteAlerts(sdk: SmartWatchSDK, directive: Directive, parts: List
                     put("tokens", tokens)
                 }
                 setPayload(payload)
-            }.build()
+            }
 
-            sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-                override fun onResult(data: String, extra: Any?) {
-                    try {
-                        val result = ResultWrapper.parse(data, extra);
-                        if (result.code == SDKConst.RESULT_CODE_SUCCESS) {
-                            postDeleteAlertsSucceeded(sdk, result, extra)
-                        } else {
-                            postDeleteAlertsFailed(sdk, result, extra)
-                        }
-                    } catch (e: Exception) {
-                        Logger.w("Alert result parse failed - ${e.message}")
-                    }
+            sdk.toAction(action) { result ->
+                if (result.code == SDKConst.RESULT_CODE_SUCCESS) {
+                    postDeleteAlertsSucceeded(sdk, result)
+                } else {
+                    postDeleteAlertsFailed(sdk, result)
                 }
+            }
 
-            })
+//            sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
+//                override fun onResult(data: String, extra: Any?) {
+//                    try {
+//                        val result = ResultWrapper.parse(data, extra)
+//                        if (result.code == SDKConst.RESULT_CODE_SUCCESS) {
+//                            postDeleteAlertsSucceeded(sdk, result, extra)
+//                        } else {
+//                            postDeleteAlertsFailed(sdk, result, extra)
+//                        }
+//                    } catch (e: Exception) {
+//                        Logger.w("Alert result parse failed - ${e.message}")
+//                    }
+//                }
+//
+//            })
         } catch (e: Exception) {
             Logger.w("DeleteAlert exception - ${e.message}")
         }
     }
 }
 
-private fun postDeleteAlertsFailed(sdk: SmartWatchSDK, result: ResultWrapper, extra: Any?) {
+private fun postDeleteAlertsFailed(sdk: SmartWatchSDK, result: ResultWrapper) {
     val tokens = result.getPayload()!!.getJsonArray("tokens")!!
     val event = EventBuilder(AlexaConst.NS_ALERTS, AlexaConst.NAME_DELETE_ALERTS_FAILED).apply {
         addPayload("tokens", tokens)
@@ -59,7 +67,7 @@ private fun postDeleteAlertsFailed(sdk: SmartWatchSDK, result: ResultWrapper, ex
     sdk.httpChannel.postEvent(event, null)
 }
 
-private fun postDeleteAlertsSucceeded(sdk: SmartWatchSDK, result: ResultWrapper, extra: Any?) {
+private fun postDeleteAlertsSucceeded(sdk: SmartWatchSDK, result: ResultWrapper) {
     val tokens = result.getPayload()!!.getJsonArray("tokens")!!
     val event = EventBuilder(AlexaConst.NS_ALERTS, AlexaConst.NAME_DELETE_ALERTS_SUCCEEDED).apply {
         addPayload("tokens", tokens)
@@ -79,30 +87,37 @@ private fun onDeleteAlert(sdk: SmartWatchSDK, directive: Directive, parts: List<
                     })
                 }
                 setPayload(payload)
-            }.build()
+            }
 
-            sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-                override fun onResult(data: String, extra: Any?) {
-                    try {
-                        val result = ResultWrapper.parse(data, extra);
-                        if (result.code == SDKConst.RESULT_CODE_SUCCESS) {
-                            postDeleteAlertSucceeded(sdk, result, extra)
-                        } else {
-                            postDeleteAlertFailed(sdk, result, extra)
-                        }
-                    } catch (e: Exception) {
-                        Logger.w("Alert result parse failed - ${e.message}")
-                    }
+            sdk.toAction(action) { result ->
+                if (result.code == SDKConst.RESULT_CODE_SUCCESS) {
+                    postDeleteAlertSucceeded(sdk, result)
+                } else {
+                    postDeleteAlertFailed(sdk, result)
                 }
+            }
 
-            })
+//            sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
+//                override fun onResult(data: String, extra: Any?) {
+//                    try {
+//                        val result = ResultWrapper.parse(data, extra);
+//                        if (result.code == SDKConst.RESULT_CODE_SUCCESS) {
+//                            postDeleteAlertSucceeded(sdk, result, extra)
+//                        } else {
+//                            postDeleteAlertFailed(sdk, result, extra)
+//                        }
+//                    } catch (e: Exception) {
+//                        Logger.w("Alert result parse failed - ${e.message}")
+//                    }
+//                }
+//            })
         } catch (e: Exception) {
             Logger.w("DeleteAlert exception - ${e.message}")
         }
     }
 }
 
-private fun postDeleteAlertFailed(sdk: SmartWatchSDK, result: ResultWrapper, extra: Any?) {
+private fun postDeleteAlertFailed(sdk: SmartWatchSDK, result: ResultWrapper) {
     val tokens = result.getPayload()!!.getJsonArray("tokens")!!
     val event = EventBuilder(AlexaConst.NS_ALERTS, AlexaConst.NAME_DELETE_ALERT_FAILED).apply {
         addPayload("token", tokens[0].jsonPrimitive.content)
@@ -110,7 +125,7 @@ private fun postDeleteAlertFailed(sdk: SmartWatchSDK, result: ResultWrapper, ext
     sdk.httpChannel.postEvent(event, null)
 }
 
-private fun postDeleteAlertSucceeded(sdk: SmartWatchSDK, result: ResultWrapper, extra: Any?) {
+private fun postDeleteAlertSucceeded(sdk: SmartWatchSDK, result: ResultWrapper) {
     val tokens = result.getPayload()!!.getJsonArray("tokens")!!
     val event = EventBuilder(AlexaConst.NS_ALERTS, AlexaConst.NAME_DELETE_ALERT_SUCCEEDED).apply {
         addPayload("token", tokens[0].jsonPrimitive.content)
@@ -150,22 +165,30 @@ private fun onSetAlert(sdk: SmartWatchSDK, directive: Directive, parts: List<Dir
                 }
 
                 setPayload(payload)
-            }.build()
+            }
 
-            sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-                override fun onResult(data: String, extra: Any?) {
-                    try {
-                        val result = ResultWrapper.parse(data, extra);
-                        if (result.code == SDKConst.RESULT_CODE_SUCCESS) {
-                            postSetAlertSucceeded(sdk, result, extra)
-                        } else {
-                            postSetAlertFailed(sdk, result, extra)
-                        }
-                    } catch (e: Exception) {
-                        Logger.w("Alert result parse failed - ${e.message}")
-                    }
+            sdk.toAction(action) { result ->
+                if (result.code == SDKConst.RESULT_CODE_SUCCESS) {
+                    postSetAlertSucceeded(sdk, result)
+                } else {
+                    postSetAlertFailed(sdk, result)
                 }
-            })
+            }
+
+//            sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
+//                override fun onResult(data: String, extra: Any?) {
+//                    try {
+//                        val result = ResultWrapper.parse(data, extra);
+//                        if (result.code == SDKConst.RESULT_CODE_SUCCESS) {
+//                            postSetAlertSucceeded(sdk, result, extra)
+//                        } else {
+//                            postSetAlertFailed(sdk, result, extra)
+//                        }
+//                    } catch (e: Exception) {
+//                        Logger.w("Alert result parse failed - ${e.message}")
+//                    }
+//                }
+//            })
         } catch (e: Exception) {
             Logger.w("setAlert exception - ${e.message}")
         }
@@ -174,7 +197,7 @@ private fun onSetAlert(sdk: SmartWatchSDK, directive: Directive, parts: List<Dir
     }
 }
 
-private fun postSetAlertFailed(sdk: SmartWatchSDK, result: ResultWrapper, extra: Any?) {
+private fun postSetAlertFailed(sdk: SmartWatchSDK, result: ResultWrapper) {
     val token = result.getPayload()!!.getString("token")!!
     val event = EventBuilder(AlexaConst.NS_ALERTS, AlexaConst.NAME_SET_ALERT_FAILED).apply {
         addPayload("token", token)
@@ -182,7 +205,7 @@ private fun postSetAlertFailed(sdk: SmartWatchSDK, result: ResultWrapper, extra:
     sdk.httpChannel.postEvent(event, null)
 }
 
-private fun postSetAlertSucceeded(sdk: SmartWatchSDK, result: ResultWrapper, extra: Any?) {
+private fun postSetAlertSucceeded(sdk: SmartWatchSDK, result: ResultWrapper) {
     val token = result.getPayload()!!.getString("token")!!
     val event = EventBuilder(AlexaConst.NS_ALERTS, AlexaConst.NAME_SET_ALERT_SUCCEEDED).apply {
         addPayload("token", token)

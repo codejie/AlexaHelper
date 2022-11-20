@@ -1,5 +1,6 @@
 package jie.android.alexahelper.smartwatchsdk.action.sdk.alexa
 
+import jie.android.alexahelper.smartwatchsdk.ActionResultCallback
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.ResponseStreamDirectiveParser
 import jie.android.alexahelper.smartwatchsdk.channel.sdk.ChannelData
@@ -14,7 +15,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
-fun speechStartAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+fun speechStartAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) {
     val dialogId = Utils.makeMessageId()
 
     val result = ResultWrapper(action.name, SDKConst.RESULT_CODE_SUCCESS).apply {
@@ -22,12 +23,13 @@ fun speechStartAction(sdk: SmartWatchSDK, action: ActionWrapper) {
             put("dialogId", dialogId)
         }
         setPayload(payload)
-    }.build()
+    }
 
-    action.callback?.onResult(result.toString())
+    callback(result)
+//    action.callback?.onResult(result.toString())
 }
 
-fun speechEndAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+fun speechEndAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) {
     val actionPayload = action.getPayload()
         ?: throw SDKException(SDKConst.RESULT_CODE_MISSING_FIELD, SDKConst.RESULT_MESSAGE_MISSING_FIELD)
 
@@ -38,12 +40,13 @@ fun speechEndAction(sdk: SmartWatchSDK, action: ActionWrapper) {
             put("dialogId", dialogId)
         }
         setPayload(payload)
-    }.build()
+    }
 
-    action.callback?.onResult(result.toString())
+    callback(result)
+//    action.callback?.onResult(result.toString())
 }
 
-fun speechRecognizeAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+fun speechRecognizeAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) {
     if (action.extra == null) {
         throw SDKException(SDKConst.RESULT_CODE_MISSING_FIELD, SDKConst.RESULT_MESSAGE_MISSING_EXTRA)
     }
@@ -78,26 +81,27 @@ fun speechRecognizeAction(sdk: SmartWatchSDK, action: ActionWrapper) {
                 put("dialogId", dialogId)
             }
             setPayload(payload)
-        }.build()
+        }
 
-        action.callback?.onResult(result.toString())
+        callback(result)
+//        action.callback?.onResult(result.toString())
 
-        CoroutineScope(Dispatchers.IO).launch {
-            // speak
-//            val source: BufferedSource = response!!.body!!.source()
+        if (success) {
+            CoroutineScope(Dispatchers.IO).launch {
+                // speak
+                val parser: ResponseStreamDirectiveParser = ResponseStreamDirectiveParser()
+                val parts = response?.let { parser.parseParts(it) }
 
-            val parser: ResponseStreamDirectiveParser = ResponseStreamDirectiveParser()
-            val parts = response?.let { parser.parseParts(it) }
-
-//            Logger.d("recognize response - ")
-//            for (part in parts) {
-//                Logger.d(part.toString())
-//            }
-            parts?.let { sdk.sdkChannel.send(ChannelData(ChannelData.DataType.DirectiveParts, it)) }
+                parts?.let { sdk.sdkChannel.send(ChannelData(ChannelData.DataType.DirectiveParts, it)) }
+            }
         }
     }
 }
-fun speechExpectSkippedAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+fun speechExpectSkippedAction(
+    sdk: SmartWatchSDK,
+    action: ActionWrapper,
+    callback: ActionResultCallback
+) {
     val dialog = action.getPayload(false)?.getString("dialogId")
     val event = EventBuilder(AlexaConst.NS_SPEECH_RECOGNIZER, AlexaConst.NAME_EXPECT_SPEECH_TIMEOUT).apply {
         dialog?.let {
@@ -115,12 +119,13 @@ fun speechExpectSkippedAction(sdk: SmartWatchSDK, action: ActionWrapper) {
                 put("dialogId", it)
             })
           }
-        }.build()
-        action.callback?.onResult(result.toString(), null)
+        }
+        callback(result)
+//        action.callback?.onResult(result.toString(), null)
     }
 }
 
-fun speakStartAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+fun speakStartAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) {
     action.getPayload()
         ?: throw SDKException(SDKConst.RESULT_CODE_MISSING_FIELD, SDKConst.RESULT_MESSAGE_MISSING_FIELD)
 
@@ -141,13 +146,13 @@ fun speakStartAction(sdk: SmartWatchSDK, action: ActionWrapper) {
                 put("token", token)
             }
             setPayload(payload)
-        }.build()
-
-        action.callback?.onResult(result.toString(), null)
+        }
+        callback(result)
+//        action.callback?.onResult(result.toString(), null)
     }
 }
 
-fun speakEndAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+fun speakEndAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) {
     action.getPayload()
         ?: throw SDKException(SDKConst.RESULT_CODE_MISSING_FIELD, SDKConst.RESULT_MESSAGE_MISSING_FIELD)
 
@@ -168,13 +173,18 @@ fun speakEndAction(sdk: SmartWatchSDK, action: ActionWrapper) {
                 put("token", token)
             }
             setPayload(payload)
-        }.build()
+        }
 
-        action.callback?.onResult(result.toString(), null)
+        callback(result)
+//        action.callback?.onResult(result.toString(), null)
     }
 }
 
-fun speakInterruptedAction(sdk: SmartWatchSDK, action: ActionWrapper) {
+fun speakInterruptedAction(
+    sdk: SmartWatchSDK,
+    action: ActionWrapper,
+    callback: ActionResultCallback
+) {
     action.getPayload()
         ?: throw SDKException(SDKConst.RESULT_CODE_MISSING_FIELD, SDKConst.RESULT_MESSAGE_MISSING_FIELD)
 
@@ -197,8 +207,9 @@ fun speakInterruptedAction(sdk: SmartWatchSDK, action: ActionWrapper) {
                 put("offsetInMilliseconds", offset)
             }
             setPayload(payload)
-        }.build()
+        }
 
-        action.callback?.onResult(result.toString(), null)
+        callback(result)
+//        action.callback?.onResult(result.toString(), null)
     }
 }

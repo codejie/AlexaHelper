@@ -24,6 +24,7 @@ fun onDirectiveParts(sdk: SmartWatchSDK, directiveParts: List<DirectiveParser.Pa
                     AlexaConst.NS_SYSTEM -> onSystemDirective(sdk, directive, directiveParts)
                     AlexaConst.NS_ALERTS -> onAlertsDirective(sdk, directive, directiveParts)
                     AlexaConst.NS_SPEAKER -> onSpeakerDirective(sdk, directive, directiveParts)
+                    AlexaConst.NS_ALEXA_POWER_CONTROLLER -> onAlexaPowerControllerDirective(sdk, directive, directiveParts)
                     else -> Logger.w("unsupported - ${directive.toString()}")
                 }
             }
