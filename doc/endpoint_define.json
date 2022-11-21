@@ -22,7 +22,138 @@
             }
           ],
           "proactivelyReported": true,
-          "retrievable": true
+          "retrievable": false
+        }
+      }
+    ]
+  },
+  {
+    "id": "Mode",
+    "types": ["ModeController"],
+    "displayCategories": ["DISHWASHER"],
+    "capabilities": [
+      {
+        "type": "AlexaInterface",
+        "interface": "Alexa",
+        "version": "3"
+      },
+      {
+        "type": "AlexaInterface",
+        "interface": "Alexa.ModeController",
+        "version": "3",
+        "instance": "Mode-Instance",
+        "properties": {
+          "supported": [
+            { "name": "mode" }
+          ],
+          "proactivelyReported": true,
+          "retrievable": false,
+          "nonControllable": false
+        },
+        "configuration": {
+          "ordered": true,
+          "supportedModes": [
+            {
+              "value": "mode1",
+              "modeResources": {
+                "friendlyNames": [
+                  {
+                    "@type": "text",
+                    "value": {
+                      "text": "mode1",
+                      "locale": "en-US"
+                    }
+                  },
+                  {
+                    "@type": "text",
+                    "value": {
+                      "text": "模式1",
+                      "locale": "hz-CN"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "value": "mode-2",
+              "modeResources": {
+                "friendlyNames": [
+                  {
+                    "@type": "text",
+                    "value": {
+                      "text": "mode2",
+                      "locale": "en-US"
+                    }
+                  },
+                  {
+                    "@type": "text",
+                    "value": {
+                      "text": "模式2",
+                      "locale": "hz-CN"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "capabilityResources": {
+          "friendlyNames": [
+            {
+              "@type": "asset",
+              "value": {
+                "assetId": "Alexa.Setting.mode"
+              }
+            },
+            {
+              "@type": "text",
+              "value": {
+                "text": "mode1",
+                "locale": "en-US"
+              }
+            },
+            {
+              "@type": "text",
+              "value": {
+                "text": "mode2",
+                "locale": "en-US"
+              }
+            },
+            {
+              "@type": "text",
+              "value": {
+                "text": "模式1",
+                "locale": "hz-CN"
+              }
+            }
+          ]
+        },
+        "semantics": {
+          "actionMappings": [
+            {
+              "@type": "ActionsToDirective",
+              "actions": ["open {endpoint}"],
+              "directive": {
+                "name": "openWash",
+                "payload": {}
+              }
+            }
+          ],
+          "stateMappings": [
+            {
+              "@type": "StatesToValue",
+              "states": ["is {endpoint} open"],
+              "value": "IS_OPEN"
+            },
+            {
+              "@type": "StatesToRange",
+              "states": [ "state1", "state2" ],
+              "range": {
+                "minimumValue": 0,
+                "maximumValue": 100
+              }
+            }
+          ]
         }
       }
     ]
