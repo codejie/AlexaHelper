@@ -5,7 +5,7 @@ open class SDKException constructor(val code: Int, message: String? = null): Exc
 
 object SDKConst {
 
-    // Action
+    // App Action
     const val ACTION_SDK_EXCEPTION = "sdk.exception"
     const val ACTION_SDK_TEST = "sdk.test"
 
@@ -28,9 +28,9 @@ object SDKConst {
     const val ACTION_ALEXA_SET_VOLUME = "alexa.setVolume"
     const val ACTION_ALEXA_VERIFY_GATEWAY = "alexa.verifyGateway"
 
-    const val ACTION_EP_POWER_CONTROLLER_UPDATED = "ep.powerController.updated"
+    const val ACTION_EP_POWER_CONTROLLER_SYNC_STATE = "ep.powerController.syncState"
 
-
+    // Alexa Action
     const val ACTION_ALEXA_TOKEN_UPDATED = "alexa.tokenUpdated"
     const val ACTION_ALEXA_DND_UPDATED = "alexa.doNotDisturbUpdated"
     const val ACTION_ALEXA_SPEECH_SPEAK = "alexa.speechSpeak"
@@ -45,6 +45,7 @@ object SDKConst {
     const val ACTION_ALEXA_VOLUME_UPDATED = "alexa.volumeUpdated"
     const val ACTION_ALEXA_SETTING_EXPECT = "alexa.settingExpect"
 
+    const val ACTION_EP_POWER_CONTROLLER_STATE_UPDATED = "ep.powerController.stateUpdated"
 
     // Result
     const val RESULT_CODE_SUCCESS = 0

@@ -26,21 +26,17 @@ import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.system.SettingInfo;
-import com.SmartWatchVoice.bestapp.system.channel.Helper;
 import com.SmartWatchVoice.bestapp.utils.Logger;
 import com.SmartWatchVoice.bestapp.utils.Utils;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK;
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnActionListener;
@@ -112,7 +108,10 @@ public class MainActivity extends AppCompatActivity {
                         callback.onResult(result.toString(), null);
                     }
                     break;
-
+                    case "ep.powerController.stateUpdated": {
+                        onEndpointPowerControllerUpdated(action, extra, callback);
+                    }
+                    break;
                     default: {
                         Logger.w("App unsupported action - " + name);
 
@@ -129,6 +128,26 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void onEndpointPowerControllerUpdated(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
+        JSONObject payload = action.getJSONObject("payload");
+        String state = payload.getString("value");
+
+        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_LIGHT_SPOT_STATE, state);
+
+        JSONObject p = new JSONObject();
+        p.put("token", payload.getString("token"));
+        p.put("endpointId", payload.getString("endpointId"));
+        p.put("value", state);
+
+        JSONObject result = new JSONObject();
+        result.put("type", "result");
+        result.put("name", action.getString("name"));
+        result.put("version", 1);
+        result.put("payload", p);
+
+        callback.onResult(result.toString(), null);
+    }
 
     private void onSpeechExpect(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
         JSONObject payload = action.getJSONObject("payload");
@@ -150,9 +169,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onSettingExpect(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
+        JSONArray locales = new JSONArray();
+        SettingInfo.getInstance().locales.forEach( it -> {
+            locales.put(it);
+        });
+
         JSONObject p = new JSONObject();
         p.put("timeZone", SettingInfo.getInstance().timeZone);
-        p.put("locales", SettingInfo.getInstance().locales);
+        p.put("locales", locales);
 
         JSONObject result = new JSONObject();
         result.put("type", "result");
@@ -463,6 +487,9 @@ public class MainActivity extends AppCompatActivity {
                     case HandlerConst.MSG_CHANNEL_CLOSED:
                         onDownChannelClosed();
                         break;
+                    case HandlerConst.MSG_LIGHT_SPOT_STATE:
+                        onLightSpotState();
+                        break;
                     default:;
                 }
                 return true;
@@ -474,6 +501,30 @@ public class MainActivity extends AppCompatActivity {
         directiveThread.start();
         directiveHandler = Handler.createAsync(directiveThread.getLooper(), new DirectiveCallback());
         RuntimeInfo.getInstance().directiveHandler = directiveHandler;
+    }
+
+    private void onLightSpotState() {
+        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_LIGHT_SPOT_STATE, "ON");
+        try {
+            JSONObject payload = new JSONObject();
+            payload.put("endpointId", "lightSpot");
+            payload.put("value", "ON");
+
+            JSONObject result = new JSONObject();
+            result.put("type", "result");
+            result.put("name", "ep.powerController.syncState");
+            result.put("version", 1);
+            result.put("payload", payload);
+
+            smartWatchSDK.action(result.toString(), null, new OnResultCallback() {
+                @Override
+                public void onResult(@NonNull String data, @Nullable Object extra) {
+                    Logger.d("lightSpot result - " + data);
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 //
 //    private void initRequestContext() {

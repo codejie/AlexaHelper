@@ -4,6 +4,7 @@ import jie.android.alexahelper.smartwatchsdk.ActionResultCallback
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.action.sdk.alexa.AlexaAction
 import jie.android.alexahelper.smartwatchsdk.action.sdk.device.DeviceAction
+import jie.android.alexahelper.smartwatchsdk.action.sdk.endpoint.EndpointAction
 import jie.android.alexahelper.smartwatchsdk.action.sdk.sdk.SDKAction
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 
@@ -31,6 +32,7 @@ internal fun onAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: Actio
             SDKConst.ACTION_ALEXA_ALERT_END -> AlexaAction.alertEnd(sdk, action, callback)
             SDKConst.ACTION_ALEXA_SET_VOLUME -> AlexaAction.setVolume(sdk, action, callback)
             SDKConst.ACTION_ALEXA_VERIFY_GATEWAY -> AlexaAction.verifyGateway(sdk, action, callback)
+            SDKConst.ACTION_EP_POWER_CONTROLLER_SYNC_STATE -> EndpointAction.powerControllerSet(sdk, action, callback)
             else -> throw SDKException(
                 SDKConst.RESULT_CODE_INVALID_FORMAT,
                 SDKConst.RESULT_MESSAGE_INVALID_FORMAT

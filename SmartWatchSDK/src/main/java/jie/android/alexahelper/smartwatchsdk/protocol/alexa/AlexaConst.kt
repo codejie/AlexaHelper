@@ -6,6 +6,7 @@ object AlexaConst {
     const val NAME_EVENT_PROCESSED = "EventProcessed"
     const val NAME_RESPONSE = "Response"
     const val NAME_ERROR_RESPONSE = "ErrorResponse"
+    const val NAME_CHANGE_REPORT = "ChangeReport"
 
     const val NS_NOTIFICATIONS = "Notifications"
     const val NAME_CLEAR_INDICATOR = "ClearIndicator"

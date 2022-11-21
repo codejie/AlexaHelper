@@ -190,6 +190,13 @@
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
+                <ImageButton
+                    android:id="@+id/button_speech_test"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:src="@android:drawable/ic_menu_manage" />
+
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

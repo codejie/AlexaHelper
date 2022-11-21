@@ -2,6 +2,7 @@ package jie.android.alexahelper.smartwatchsdk.action.alexa
 
 import jie.android.alexahelper.smartwatchsdk.DeviceInfo
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
+import jie.android.alexahelper.smartwatchsdk.action.makeDate
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.DirectiveParser
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Directive
@@ -11,8 +12,6 @@ import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 fun onAlexaPowerControllerDirective(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     when (directive.name) {
@@ -24,9 +23,10 @@ fun onAlexaPowerControllerDirective(sdk: SmartWatchSDK, directive: Directive, pa
 
 fun onTurnOff(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     val token = directive.header.getString("correlationToken")!!
-    val endpointId = DeviceInfo.parseEndpointId(directive.source.getJsonObject("endpoint")!!.getString("endpointId")!!)
+    val id = directive.source.getJsonObject("directive")!!.getJsonObject("endpoint")!!.getString("endpointId")!!
+    val endpointId = DeviceInfo.parseEndpointId(id)
 
-    val action = ActionWrapper(SDKConst.ACTION_EP_POWER_CONTROLLER_UPDATED).apply {
+    val action = ActionWrapper(SDKConst.ACTION_EP_POWER_CONTROLLER_STATE_UPDATED).apply {
         val payload = buildJsonObject {
             put("token", token)
             put("endpointId", endpointId)
@@ -64,9 +64,10 @@ fun onTurnOff(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectivePar
 
 private fun onTurnOn(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     val token = directive.header.getString("correlationToken")!!
-    val endpointId = DeviceInfo.parseEndpointId(directive.source.getJsonObject("endpoint")!!.getString("endpointId")!!)
+    val id = directive.source.getJsonObject("directive")!!.getJsonObject("endpoint")!!.getString("endpointId")!!
+    val endpointId = DeviceInfo.parseEndpointId(id)
 
-    val action = ActionWrapper(SDKConst.ACTION_EP_POWER_CONTROLLER_UPDATED).apply {
+    val action = ActionWrapper(SDKConst.ACTION_EP_POWER_CONTROLLER_STATE_UPDATED).apply {
         val payload = buildJsonObject {
             put("token", token)
             put("endpointId", endpointId)
@@ -103,26 +104,22 @@ private fun onTurnOn(sdk: SmartWatchSDK, directive: Directive, parts: List<Direc
 //    })
 }
 
-private fun makeDate(): String {
-    val current = LocalDateTime.now()
-    val formatter = DateTimeFormatter.ofPattern("YYYY-MM-DDThh:mm:ssZ")
-    return current.format(formatter)
-}
-
 private fun postResponse(sdk: SmartWatchSDK, token: String, endpointId:String, value:String){
     val event = EventBuilder(AlexaConst.NS_ALEXA, AlexaConst.NAME_RESPONSE).apply {
         addHeader("payloadVersion", "3")
         addHeader("correlationToken", token)
         setEndpoint(buildJsonObject {
-            put("endpointId", endpointId)
+            put("endpointId", DeviceInfo.makeEndpointId(endpointId))
         })
-        setContext(buildJsonArray {
-            add(buildJsonObject {
-                put("namespace", "Alexa.PowerController")
-                put("name", "powerState")
-                put("value", value)
-                put("timeOfSample", makeDate())
-                put("uncertaintyInMilliseconds", 0)
+        setContext(buildJsonObject {
+            put("properties", buildJsonArray {
+                add(buildJsonObject {
+                    put("namespace", "Alexa.PowerController")
+                    put("name", "powerState")
+                    put("value", value)
+                    put("timeOfSample", makeDate())
+                    put("uncertaintyInMilliseconds", 0)
+                })
             })
         })
     }.create()
@@ -136,7 +133,7 @@ private fun postErrorResponse(sdk: SmartWatchSDK, token: String, endpointId: Str
         addHeader("payloadVersion", "3")
         addHeader("correlationToken", token)
         setEndpoint(buildJsonObject {
-            put("endpointId", endpointId)
+            put("endpointId", DeviceInfo.makeEndpointId(endpointId))
         })
         addPayload("type", SDKConst.codeToAlexaEndpointErrorType(code))
         message?.let {

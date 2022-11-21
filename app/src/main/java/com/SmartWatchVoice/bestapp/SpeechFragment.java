@@ -150,7 +150,18 @@ public class SpeechFragment extends Fragment {
             }
         });
 
+        binding.buttonSpeechTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                turnOnSpot();
+            }
+        });
+
         resetView();
+    }
+
+    private void turnOnSpot() {
+        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().mainHandler, HandlerConst.MSG_LIGHT_SPOT_STATE);
     }
 
     @Override
