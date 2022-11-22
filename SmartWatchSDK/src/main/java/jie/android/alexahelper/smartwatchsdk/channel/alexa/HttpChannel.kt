@@ -192,4 +192,9 @@ class HttpChannel constructor(val sdk: SmartWatchSDK) {
             }
         })
     }
+
+    fun closeDownChannel() {
+        downChannel?.stop()
+        sdk.sdkScheduler.removeTimer(RuntimeInfo.downChannelPingTimer)
+    }
 }

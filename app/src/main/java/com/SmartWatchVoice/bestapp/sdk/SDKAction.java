@@ -35,6 +35,16 @@ public class SDKAction {
 
             endpoints.put(spot);
 
+//            JSONObject toggle = new JSONObject();
+//            toggle.put("id", "toggleSwitch");
+//            toggle.put("serialNumber", "toggle-222");
+//            toggle.put("friendlyName", "Tswitch");
+//            toggle.put("description", "Toggle modole 1");
+//            toggle.put("firmware", "1.2");
+//            toggle.put("software", "20221122");
+//
+//            endpoints.put(toggle);
+
 
 //            product.put("id", DeviceInfo.ProductId);
 //            product.put("clientId", DeviceInfo.ClientId);
@@ -50,17 +60,6 @@ public class SDKAction {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-//        JSONObject manufacturer = new JSONObject();
-//        try {
-//            manufacturer.put("name", "TouchManufacturer");
-//            manufacturer.put("model", "Touch-1");
-//            manufacturer.put("firmware", "1.0");
-//            manufacturer.put("software", "20221020");
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-
 
         JSONObject payload = new JSONObject();
         try {

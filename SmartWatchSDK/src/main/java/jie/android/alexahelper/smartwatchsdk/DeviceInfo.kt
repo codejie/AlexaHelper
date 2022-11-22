@@ -208,8 +208,10 @@ private fun productToEndpointList(deviceInfo: DeviceInfo): JsonArray? {
                         put("softwareVersion", v.software)
                     })
 
+
                     put("displayCategories", confEndpoint.getJsonArray("displayCategories")!!)
                     put("capabilities", confEndpoint.getJsonArray("capabilities")!!)
+//                    put("connections", config.getJsonArray("connections")!!)
                 }
                 this.add(data)
             }

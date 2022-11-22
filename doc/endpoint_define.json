@@ -157,5 +157,76 @@
         }
       }
     ]
+  },
+  {
+    "id": "Toggle",
+    "types": ["ToggleController"],
+    "displayCategories": ["SWITCH"],
+    "capabilities": [
+      {
+        "type": "AlexaInterface",
+        "interface": "Alexa",
+        "version": "3"
+      },
+      {
+        "type": "AlexaInterface",
+        "interface": "Alexa.ToggleController",
+        "version": "3",
+        "instance": "SWITCH-1",
+        "properties": {
+          "supported": [
+            {
+              "name": "toggleState"
+            }
+          ],
+          "proactivelyReported": true,
+          "retrievable": false,
+          "nonControllable": false
+        },
+        "capabilityResources": {
+          "friendlyNames": [
+            {
+              "@type": "text",
+              "value": {
+                "text": "switch light",
+                "locale": "en-US"
+              }
+            }
+          ]
+        },
+        "semantics": {
+          "actionMappings": [
+            {
+              "@type": "ActionToDirective",
+              "actions": ["Alexa.Action.Close"],
+              "directive": {
+                "name": "TurnOff",
+                "payload": {}
+              }
+            },
+            {
+              "@type": "ActionToDirective",
+              "actions": ["Alexa.Action.Open"],
+              "directive": {
+                "name": "TurnOn",
+                "payload": {}
+              }
+            }
+          ],
+          "stateMappings": [
+            {
+              "@type": "StatesToValue",
+              "states": ["Alexa.States.Closed"],
+              "value": "OFF"
+            },
+            {
+              "@type": "StatesToValue",
+              "states": ["Alexa.States.Open"],
+              "value": "ON"
+            }
+          ]
+        }
+      }
+    ]
   }
 ]

@@ -219,6 +219,7 @@ private fun postAlexaDiscovery(
 //            action.callback?.onResult(result.toString())
         } else {
 //            sdk.httpChannel.isLogin = false
+            sdk.httpChannel.closeDownChannel()
             DeviceInfo.isLogin = false
 
             Logger.w("postAlexaDiscovery failed - $reason")
