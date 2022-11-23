@@ -10,9 +10,9 @@ internal val configEndpoints: String =
     "manufacturer": "TouchManufacturer"
   },
   {
-    "define": "Toggle",
-    "id": "toggleSwitch",
-    "model": "ToggleSwitch01",
+    "define": "Lock",
+    "id": "lockSwitch",
+    "model": "LockSwitch01",
     "manufacturer": "TouchManufacturer"
   }
 ]

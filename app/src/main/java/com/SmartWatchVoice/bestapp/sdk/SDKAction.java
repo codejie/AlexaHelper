@@ -25,25 +25,25 @@ public class SDKAction {
         JSONObject product = new JSONObject();
         JSONArray endpoints = new JSONArray();
         try {
-            JSONObject spot = new JSONObject();
-            spot.put("id", "lightSpot");
-            spot.put("serialNumber", "spot-111");
-            spot.put("friendlyName", "spot");
-            spot.put("description", "LightSpot model 1");
-            spot.put("firmware", "1.1");
-            spot.put("software", "20221120");
-
-            endpoints.put(spot);
-
-//            JSONObject toggle = new JSONObject();
-//            toggle.put("id", "toggleSwitch");
-//            toggle.put("serialNumber", "toggle-222");
-//            toggle.put("friendlyName", "Tswitch");
-//            toggle.put("description", "Toggle modole 1");
-//            toggle.put("firmware", "1.2");
-//            toggle.put("software", "20221122");
+//            JSONObject spot = new JSONObject();
+//            spot.put("id", "lightSpot");
+//            spot.put("serialNumber", "spot-111");
+//            spot.put("friendlyName", "spot");
+//            spot.put("description", "LightSpot model 1");
+//            spot.put("firmware", "1.1");
+//            spot.put("software", "20221120");
 //
-//            endpoints.put(toggle);
+//            endpoints.put(spot);
+
+            JSONObject toggle = new JSONObject();
+            toggle.put("id", "lockSwitch");
+            toggle.put("serialNumber", "LockSwitch-222");
+            toggle.put("friendlyName", "LSwitch");
+            toggle.put("description", "Lock Controller");
+            toggle.put("firmware", "1.2");
+            toggle.put("software", "20221122");
+
+            endpoints.put(toggle);
 
 
 //            product.put("id", DeviceInfo.ProductId);

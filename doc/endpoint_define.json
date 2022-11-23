@@ -197,7 +197,7 @@
         "semantics": {
           "actionMappings": [
             {
-              "@type": "ActionToDirective",
+              "@type": "ActionsToDirective",
               "actions": ["Alexa.Action.Close"],
               "directive": {
                 "name": "TurnOff",
@@ -205,7 +205,7 @@
               }
             },
             {
-              "@type": "ActionToDirective",
+              "@type": "ActionsToDirective",
               "actions": ["Alexa.Action.Open"],
               "directive": {
                 "name": "TurnOn",

@@ -105,6 +105,8 @@ private fun loadProductInfo(productInfo: ProductInfo, payload: JsonObject) {
     productInfo.serialNumber = payloadProduct.getString("serialNumber")
     productInfo.friendlyName = payloadProduct.getString("friendlyName", false)
     productInfo.description = payloadProduct.getString("description", false)
+    productInfo.firmware = payloadProduct.getString("firmware", false)
+    productInfo.software = payloadProduct.getString("software", false)
 }
 
 private fun loadEndpointInfo(productInfo: ProductInfo, endpoints: MutableMap<String, Endpoint>, payload: JsonObject) {
@@ -128,6 +130,8 @@ private fun loadEndpointInfo(productInfo: ProductInfo, endpoints: MutableMap<Str
                     endpoint.serialNumber = item.getString("serialNumber")
                     endpoint.friendlyName = item.getString("friendlyName")
                     endpoint.description = item.getString("description")
+                    endpoint.firmware = item.getString("firmware", false)
+                    endpoint.software = item.getString("software", false)
 
                     endpoint.model = confEndpoint.getString("model")
                     endpoint.manufacturer = confEndpoint.getString("manufacturer")
@@ -174,8 +178,8 @@ private fun productToEndpointList(deviceInfo: DeviceInfo): JsonArray? {
                     put("manufacturer", productInfo.manufacturer)
                     put("model", productInfo.model)
                     put("serialNumber", productInfo.serialNumber)
-                    put("firmwareVersion", productInfo.firmware)
-                    put("softwareVersion", productInfo.software)
+                    productInfo.firmware?.let {put("firmwareVersion", productInfo.firmware)}
+                    productInfo.software?.let {put("softwareVersion", productInfo.software)}
                 })
 
                 put("registration", buildJsonObject {
@@ -204,10 +208,12 @@ private fun productToEndpointList(deviceInfo: DeviceInfo): JsonArray? {
                         put("manufacturer", v.manufacturer)
                         put("model", v.model)
                         put("serialNumber", v.serialNumber)
-                        put("firmwareVersion", v.firmware)
-                        put("softwareVersion", v.software)
+                        v.firmware?.let {put("firmwareVersion", v.firmware)}
+                        v.software?.let {put("softwareVersion", v.software)}
+                        put("customIdentifier", "customIdentifier")
                     })
 
+                    put("cookie", buildJsonObject {  })
 
                     put("displayCategories", confEndpoint.getJsonArray("displayCategories")!!)
                     put("capabilities", confEndpoint.getJsonArray("capabilities")!!)

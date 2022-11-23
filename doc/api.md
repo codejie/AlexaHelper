@@ -13,3 +13,6 @@
 ```json
   {"directive":{"header":{"namespace":"SpeechRecognizer","name":"StopCapture","messageId":"0d516b04-7999-4b9b-9d97-b756d44570b9","dialogRequestId":"ed4dc466-9fd6-4a9e-98aa-eea2c35e6a58"},"payload":{}}}
 ```
+
+### Endpoint
+- https://developer.amazon.com/en-US/docs/alexa/device-apis/generic-controllers.html
