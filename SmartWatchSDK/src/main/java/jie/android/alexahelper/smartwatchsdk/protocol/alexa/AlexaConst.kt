@@ -66,6 +66,9 @@ object AlexaConst {
     const val NAME_VOLUME_CHANGED = "VolumeChanged"
     const val NAME_MUTE_CHANGED = "MuteChanged"
 
+    const val NS_TEMPLATE_RUNTIME = "TemplateRuntime"
+    const val NAME_RENDER_TEMPLATE = "RenderTemplate"
+
     const val NS_ALEXA_POWER_CONTROLLER = "Alexa.PowerController"
     const val NAME_TURN_ON = "TurnOn"
     const val NAME_TURN_OFF = "TurnOff"

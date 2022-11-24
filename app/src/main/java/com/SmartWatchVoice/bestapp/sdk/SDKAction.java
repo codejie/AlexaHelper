@@ -25,15 +25,15 @@ public class SDKAction {
         JSONObject product = new JSONObject();
         JSONArray endpoints = new JSONArray();
         try {
-//            JSONObject spot = new JSONObject();
-//            spot.put("id", "lightSpot");
-//            spot.put("serialNumber", "spot-111");
-//            spot.put("friendlyName", "spot");
-//            spot.put("description", "LightSpot model 1");
-//            spot.put("firmware", "1.1");
-//            spot.put("software", "20221120");
-//
-//            endpoints.put(spot);
+            JSONObject spot = new JSONObject();
+            spot.put("id", "lightSpot");
+            spot.put("serialNumber", "spot-111");
+            spot.put("friendlyName", "spot");
+            spot.put("description", "LightSpot model 1");
+            spot.put("firmware", "1.1");
+            spot.put("software", "20221120");
+
+            endpoints.put(spot);
 
             JSONObject toggle = new JSONObject();
             toggle.put("id", "lockSwitch");

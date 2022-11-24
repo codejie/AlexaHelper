@@ -44,7 +44,9 @@ object SDKConst {
     const val ACTION_ALEXA_ALERT_END = "alexa.alertEnd"
     const val ACTION_ALEXA_VOLUME_UPDATED = "alexa.volumeUpdated"
     const val ACTION_ALEXA_SETTING_EXPECT = "alexa.settingExpect"
-
+    // template
+    const val ACTION_ALEXA_TEMPLATE_CARD = "alexa.template.card"
+    // endpoint
     const val ACTION_EP_POWER_CONTROLLER_STATE_UPDATED = "ep.powerController.stateUpdated"
 
     // Result
