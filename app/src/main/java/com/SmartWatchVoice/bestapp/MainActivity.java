@@ -23,6 +23,7 @@ import com.SmartWatchVoice.bestapp.databinding.ActivityMainBinding;
 import com.SmartWatchVoice.bestapp.handler.DirectiveCallback;
 import com.SmartWatchVoice.bestapp.handler.HandlerConst;
 import com.SmartWatchVoice.bestapp.sdk.SDKAction;
+import com.SmartWatchVoice.bestapp.sdk.TemplateCardActionData;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.system.SettingInfo;
@@ -112,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
                         onEndpointPowerControllerUpdated(action, extra, callback);
                     }
                     break;
+                    case "alexa.template.card": {
+                        onTemplateCard(action, extra, callback);
+                    }
+                    break;
                     default: {
                         Logger.w("App unsupported action - " + name);
 
@@ -128,6 +133,26 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void onTemplateCard(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
+        TemplateCardActionData data = new TemplateCardActionData();
+
+        JSONObject payload = action.getJSONObject("payload");
+        data.dialogId = payload.getString("dialogId");
+        data.token = payload.getString("token");
+        data.mainTitle = payload.getString("mainTitle");
+        data.subTitle = payload.getString("subTitle");
+        JSONObject icon = payload.optJSONObject("icon");
+        if (icon != null) {
+            data.iconUrl = ((JSONObject)icon.getJSONArray("sources").get(0)).getString("url");
+        }
+        data.text = payload.getString("text");
+        JSONObject image = payload.optJSONObject("image");
+        if (image != null)
+            data.imageUrl = ((JSONObject)image.getJSONArray("sources").get(0)).getString("url");
+
+        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_TEMPLATE_RENDER, data);
+    }
 
     private void onEndpointPowerControllerUpdated(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
         JSONObject payload = action.getJSONObject("payload");

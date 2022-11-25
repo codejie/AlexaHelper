@@ -1,6 +1,5 @@
 package com.SmartWatchVoice.bestapp;
 
-import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,13 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.SmartWatchVoice.bestapp.action.EventAction;
 import com.SmartWatchVoice.bestapp.action.speech_recognizer.ExpectSpeechTimeOutAction;
-import com.SmartWatchVoice.bestapp.action.speech_recognizer.RecognizeAction;
 import com.SmartWatchVoice.bestapp.alexa.api.Payload;
 import com.SmartWatchVoice.bestapp.sdk.SDKAction;
-import com.SmartWatchVoice.bestapp.system.channel.DirectiveParser;
-import com.SmartWatchVoice.bestapp.system.channel.ResponseStreamDirectiveParser;
+import com.SmartWatchVoice.bestapp.sdk.TemplateCardActionData;
 import com.SmartWatchVoice.bestapp.databinding.FragmentSpeechBinding;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.handler.HandlerConst;
@@ -33,8 +29,6 @@ import com.SmartWatchVoice.bestapp.utils.Utils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,8 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback;
-import okhttp3.Response;
-import okio.BufferedSource;
 
 public class SpeechFragment extends Fragment {
 
@@ -95,7 +87,7 @@ public class SpeechFragment extends Fragment {
                         onAudioPlay(true, (String)message.obj);
                         break;
                     case HandlerConst.MSG_TEMPLATE_RENDER:
-                        onTemplateRender((Payload)message.obj);
+                        onTemplateRender((TemplateCardActionData)message.obj);
                         break;
                     case HandlerConst.MSG_LIGHT_SPOT_STATE:
                         onLightSpotState((String)message.obj);
@@ -325,9 +317,9 @@ public class SpeechFragment extends Fragment {
         showLogInfo("wait for playing audio stream..");
     }
 
-    private void onTemplateRender(Payload payload) {
-        if (payload.type.equals("BodyTemplate2")) {
-            String imageUrl = payload.image.sources.get(0).url;
+    private void onTemplateRender(TemplateCardActionData payload) {
+        if (payload.imageUrl != null) {
+            String imageUrl = payload.imageUrl;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -350,9 +342,9 @@ public class SpeechFragment extends Fragment {
             binding.imageTemplate.setVisibility(View.GONE);
         }
 
-        binding.textTemplateTitle.setText(payload.title.mainTitle);
-        binding.textTemplateSubTitle.setText(payload.title.subTitle);
-        binding.textTemplateText.setText(payload.textField);
+        binding.textTemplateTitle.setText(payload.mainTitle);
+        binding.textTemplateSubTitle.setText(payload.subTitle);
+        binding.textTemplateText.setText(payload.text);
 
         binding.layoutTemplate.setVisibility(View.VISIBLE);
     }

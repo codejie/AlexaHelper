@@ -40,8 +40,8 @@ private fun onTemplateBody1(sdk: SmartWatchSDK, directive: Directive, parts: Lis
     val dialogId = directive.header.getString("dialogRequestId")
     val token = directive.payload!!.getString("token")
     val mainTitle = directive.payload!!.getJsonObject("title")!!.getString("mainTitle")
-    val subTitle = directive.payload!!.getJsonObject("title")!!.getString("subTitle")
-    val icon = directive.payload!!.getJsonObject("skillIcon")?.let { getImage(it) }
+    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle")
+    val icon = directive.payload!!.getJsonObject("skillIcon", false)?.let { getImage(it) }
     val text = directive.payload!!.getString("textField")
 
     val action = ActionWrapper(SDKConst.ACTION_ALEXA_TEMPLATE_CARD).apply {
@@ -49,7 +49,7 @@ private fun onTemplateBody1(sdk: SmartWatchSDK, directive: Directive, parts: Lis
             put("dialogId", dialogId)
             put("token", token)
             put("mainTitle", mainTitle)
-            put("subTitle", subTitle)
+            subTitle?.let { put("subTitle", it)}
             makeImage(icon)?.let { put("icon", it) }
             put("text", text)
         })
@@ -62,8 +62,8 @@ private fun onTemplateBody2(sdk: SmartWatchSDK, directive: Directive, parts: Lis
     val dialogId = directive.header.getString("dialogRequestId")
     val token = directive.payload!!.getString("token")
     val mainTitle = directive.payload!!.getJsonObject("title")!!.getString("mainTitle")
-    val subTitle = directive.payload!!.getJsonObject("title")!!.getString("subTitle")
-    val icon = directive.payload!!.getJsonObject("skillIcon")?.let { getImage(it) }
+    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle")
+    val icon = directive.payload!!.getJsonObject("skillIcon", false)?.let { getImage(it) }
     val text = directive.payload!!.getString("textField")
     val image = directive.payload!!.getJsonObject("image")?.let { getImage(it) }
 
@@ -72,7 +72,7 @@ private fun onTemplateBody2(sdk: SmartWatchSDK, directive: Directive, parts: Lis
             put("dialogId", dialogId)
             put("token", token)
             put("mainTitle", mainTitle)
-            put("subTitle", subTitle)
+            subTitle?.let { put("subTitle", it)}
             makeImage(icon)?.let { put("icon", it) }
             put("text", text)
             makeImage(image)?.let { put("image", it) }
@@ -86,15 +86,15 @@ private fun onTemplateList(sdk: SmartWatchSDK, directive: Directive, parts: List
     val dialogId = directive.header.getString("dialogRequestId")
     val token = directive.payload!!.getString("token")
     val mainTitle = directive.payload!!.getJsonObject("title")!!.getString("mainTitle")
-    val subTitle = directive.payload!!.getJsonObject("title")!!.getString("subTitle")
-    val icon = directive.payload!!.getJsonObject("skillIcon")?.let { getImage(it) }
+    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle")
+    val icon = directive.payload!!.getJsonObject("skillIcon", false)?.let { getImage(it) }
     var items: JsonArray? = null
     directive.payload!!.getJsonArray("listItems")?.let {
         items = buildJsonArray {
             it.forEach { item ->
                 this.add(buildJsonObject {
                     item.jsonObject.getString("leftTextField").let { put("left", it) }
-                    item.jsonObject.getString("rightTextField").let { put("left", it) }
+                    item.jsonObject.getString("rightTextField").let { put("right", it) }
                 })
             }
         }
@@ -105,7 +105,7 @@ private fun onTemplateList(sdk: SmartWatchSDK, directive: Directive, parts: List
             put("dialogId", dialogId)
             put("token", token)
             put("mainTitle", mainTitle)
-            put("subTitle", subTitle)
+            subTitle?.let { put("subTitle", it)}
             makeImage(icon)?.let { put("icon", it) }
             items?.let { put("items", it) }
         })
@@ -118,12 +118,12 @@ private fun onTemplateWeather(sdk: SmartWatchSDK, directive: Directive, parts: L
     val dialogId = directive.header.getString("dialogRequestId")
     val token = directive.payload!!.getString("token")
     val mainTitle = directive.payload!!.getJsonObject("title")!!.getString("mainTitle")
-    val subTitle = directive.payload!!.getJsonObject("title")!!.getString("subTitle")
-    val icon = directive.payload!!.getJsonObject("skillIcon")?.let { getImage(it) }
+    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle")
+    val icon = directive.payload!!.getJsonObject("skillIcon", false)?.let { getImage(it) }
     val description = directive.payload!!.getString("description")
     val currentWeather = directive.payload!!.getString("currentWeather")
     val currentIcon = directive.payload!!.getJsonObject("currentWeatherIcon")?.let { getImage(it) }
-    val currentCode = directive.payload!!.getInt("currentWeatherIconCode")
+    val currentCode = directive.payload!!.getInt("currentWeatherIconCode", false)
     val highValue = directive.payload!!.getJsonObject("highTemperature")?.getString("value")
     val highIcon = directive.payload!!.getJsonObject("highTemperature")?.getJsonObject("arrow")?.let { getImage(it) }
     val lowValue = directive.payload!!.getJsonObject("lowTemperature")?.getString("value")
@@ -133,7 +133,7 @@ private fun onTemplateWeather(sdk: SmartWatchSDK, directive: Directive, parts: L
         forecast = buildJsonArray {
             it.forEach { item ->
                 this.add(buildJsonObject {
-                    put("code", item.jsonObject.getInt("iconCode"))
+                    item.jsonObject.getInt("iconCode", false)?.let { put("code", it) }
                     item.jsonObject.getJsonObject("image")?.let { makeImage(getImage(it))?.let { it1 ->
                         put("image", it1)
                     } }
@@ -151,13 +151,13 @@ private fun onTemplateWeather(sdk: SmartWatchSDK, directive: Directive, parts: L
             put("dialogId", dialogId)
             put("token", token)
             put("mainTitle", mainTitle)
-            put("subTitle", subTitle)
+            subTitle?.let { put("subTitle", it)}
             makeImage(icon)?.let { put("icon", it) }
             put("description", description)
             put("current", buildJsonObject {
                 put("value", currentWeather)
                 makeImage(currentIcon)?.let { put("icon", it) }
-                put("code", currentCode)
+                currentCode?.let { put("code", it) }
             })
             put("temperature", buildJsonObject {
                 put("highValue", highValue)
@@ -174,7 +174,7 @@ private fun onTemplateWeather(sdk: SmartWatchSDK, directive: Directive, parts: L
 
 private fun getImage(json: JsonObject): ImageStructure? {
     json?.let { it ->
-        val ret = ImageStructure(it.getString("contentDescription"), arrayListOf())
+        val ret = ImageStructure(it.getString("contentDescription", false), arrayListOf())
         val srcArray = it.getJsonArray("sources")
         srcArray?.let {
             for (index in 0 until it.size) {
@@ -197,7 +197,7 @@ private fun getImage(json: JsonObject): ImageStructure? {
 private fun makeImage(image:ImageStructure?): JsonObject? {
     image?.let {
         return buildJsonObject {
-            put("description", it.description)
+            it.description?.let { put("description", it) }
             it.sources?.let {
                 put("sources", buildJsonArray {
                     for (item in it) {
