@@ -6,12 +6,9 @@ import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Directive
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonArray
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
+import kotlinx.serialization.json.*
 
-private data class ImageStructure constructor(val description: String?, val sources: ArrayList<ImageSource>?) {
+internal data class ImageStructure constructor(val description: String?, val sources: ArrayList<ImageSource>?) {
     data class ImageSource constructor(
         val url: String?,
         val darkUrl: String?,
@@ -20,6 +17,7 @@ private data class ImageStructure constructor(val description: String?, val sour
         val height: Int?
     )
 }
+//internal data class ListItem constructor(val left: String?, val right: String?) {}
 
 internal fun onTemplateRuntimeDirective(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     when (directive.name) {
@@ -61,15 +59,117 @@ private fun onTemplateBody1(sdk: SmartWatchSDK, directive: Directive, parts: Lis
 }
 
 private fun onTemplateBody2(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
+    val dialogId = directive.header.getString("dialogRequestId")
+    val token = directive.payload!!.getString("token")
+    val mainTitle = directive.payload!!.getJsonObject("title")!!.getString("mainTitle")
+    val subTitle = directive.payload!!.getJsonObject("title")!!.getString("subTitle")
+    val icon = directive.payload!!.getJsonObject("skillIcon")?.let { getImage(it) }
+    val text = directive.payload!!.getString("textField")
+    val image = directive.payload!!.getJsonObject("image")?.let { getImage(it) }
 
+    val action = ActionWrapper(SDKConst.ACTION_ALEXA_TEMPLATE_CARD).apply {
+        setPayload(buildJsonObject {
+            put("dialogId", dialogId)
+            put("token", token)
+            put("mainTitle", mainTitle)
+            put("subTitle", subTitle)
+            makeImage(icon)?.let { put("icon", it) }
+            put("text", text)
+            makeImage(image)?.let { put("image", it) }
+        })
+    }
+
+    sdk.toAction(action) { }
 }
 
 private fun onTemplateList(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
+    val dialogId = directive.header.getString("dialogRequestId")
+    val token = directive.payload!!.getString("token")
+    val mainTitle = directive.payload!!.getJsonObject("title")!!.getString("mainTitle")
+    val subTitle = directive.payload!!.getJsonObject("title")!!.getString("subTitle")
+    val icon = directive.payload!!.getJsonObject("skillIcon")?.let { getImage(it) }
+    var items: JsonArray? = null
+    directive.payload!!.getJsonArray("listItems")?.let {
+        items = buildJsonArray {
+            it.forEach { item ->
+                this.add(buildJsonObject {
+                    item.jsonObject.getString("leftTextField").let { put("left", it) }
+                    item.jsonObject.getString("rightTextField").let { put("left", it) }
+                })
+            }
+        }
+    }
 
+    val action = ActionWrapper(SDKConst.ACTION_ALEXA_TEMPLATE_LIST).apply {
+        setPayload(buildJsonObject {
+            put("dialogId", dialogId)
+            put("token", token)
+            put("mainTitle", mainTitle)
+            put("subTitle", subTitle)
+            makeImage(icon)?.let { put("icon", it) }
+            items?.let { put("items", it) }
+        })
+    }
+
+    sdk.toAction(action) { }
 }
 
 private fun onTemplateWeather(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
+    val dialogId = directive.header.getString("dialogRequestId")
+    val token = directive.payload!!.getString("token")
+    val mainTitle = directive.payload!!.getJsonObject("title")!!.getString("mainTitle")
+    val subTitle = directive.payload!!.getJsonObject("title")!!.getString("subTitle")
+    val icon = directive.payload!!.getJsonObject("skillIcon")?.let { getImage(it) }
+    val description = directive.payload!!.getString("description")
+    val currentWeather = directive.payload!!.getString("currentWeather")
+    val currentIcon = directive.payload!!.getJsonObject("currentWeatherIcon")?.let { getImage(it) }
+    val currentCode = directive.payload!!.getInt("currentWeatherIconCode")
+    val highValue = directive.payload!!.getJsonObject("highTemperature")?.getString("value")
+    val highIcon = directive.payload!!.getJsonObject("highTemperature")?.getJsonObject("arrow")?.let { getImage(it) }
+    val lowValue = directive.payload!!.getJsonObject("lowTemperature")?.getString("value")
+    val lowIcon = directive.payload!!.getJsonObject("lowTemperature")?.getJsonObject("arrow")?.let { getImage(it) }
+    var forecast: JsonArray? = null
+    directive.payload!!.getJsonArray("weatherForecast")?.let {
+        forecast = buildJsonArray {
+            it.forEach { item ->
+                this.add(buildJsonObject {
+                    put("code", item.jsonObject.getInt("iconCode"))
+                    item.jsonObject.getJsonObject("image")?.let { makeImage(getImage(it))?.let { it1 ->
+                        put("image", it1)
+                    } }
+                    put("day", item.jsonObject.getString("day"))
+                    put("date", item.jsonObject.getString("date"))
+                    put("highValue", item.jsonObject.getString("highTemperature"))
+                    put("lowValue", item.jsonObject.getString("lowTemperature"))
+                })
+            }
+        }
+    }
 
+    val action = ActionWrapper(SDKConst.ACTION_ALEXA_TEMPLATE_WEATHER).apply {
+        setPayload(buildJsonObject {
+            put("dialogId", dialogId)
+            put("token", token)
+            put("mainTitle", mainTitle)
+            put("subTitle", subTitle)
+            makeImage(icon)?.let { put("icon", it) }
+            put("description", description)
+            put("current", buildJsonObject {
+                put("value", currentWeather)
+                makeImage(currentIcon)?.let { put("icon", it) }
+                put("code", currentCode)
+            })
+            put("temperature", buildJsonObject {
+                put("highValue", highValue)
+                makeImage(highIcon)?.let { put("highValue", it) }
+                put("lowValue", lowValue)
+                makeImage(lowIcon)?.let { put("lowValue", it) }
+            })
+            forecast?.let { put("forecast", it) }
+        })
+    }
+
+    sdk.toAction(action) { }
 }
 
 private fun getImage(json: JsonObject): ImageStructure? {

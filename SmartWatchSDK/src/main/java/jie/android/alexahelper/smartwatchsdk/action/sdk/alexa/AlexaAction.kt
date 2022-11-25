@@ -21,7 +21,6 @@ object AlexaAction {
     fun alertEnd(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) = alertEndAction(sdk, action, callback)
     fun setVolume(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) = setVolumeAction(sdk, action, callback)
     fun verifyGateway(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) = verifyGatewayAction(sdk, action, callback)
-    fun templateCard(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) = templateCardAction(sdk, action, callback)
     // fun called by self
 //    fun tokenUpdated(sdk: SmartWatchSDK, success: Boolean, message: String?, callback: OnResultCallback) = tokenUpdatedAction(sdk, success, message, callback)
 }
