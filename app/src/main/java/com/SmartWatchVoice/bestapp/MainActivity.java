@@ -8,6 +8,7 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +25,7 @@ import com.SmartWatchVoice.bestapp.handler.DirectiveCallback;
 import com.SmartWatchVoice.bestapp.handler.HandlerConst;
 import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.sdk.TemplateCardActionData;
+import com.SmartWatchVoice.bestapp.sdk.TemplateListActionData;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.system.SettingInfo;
@@ -117,8 +119,14 @@ public class MainActivity extends AppCompatActivity {
                         onTemplateCard(action, extra, callback);
                     }
                     break;
+                    case "alexa.template.list": {
+                        onTemplateList(action, extra, callback);
+                    }
+                    break;
                     default: {
                         Logger.w("App unsupported action - " + name);
+
+                        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().mainHandler, HandlerConst.MSG_UNSUPPORTED_ACTION, name);
 
                         JSONObject result = new JSONObject();
                         result.put("type", "result");
@@ -134,6 +142,40 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void onTemplateList(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
+        TemplateListActionData data = new TemplateListActionData();
+
+        JSONObject payload = action.getJSONObject("payload");
+        data.dialogId = payload.getString("dialogId");
+        data.token = payload.getString("token");
+        data.mainTitle = payload.getString("mainTitle");
+        data.subTitle = payload.optString("subTitle");
+        JSONObject icon = payload.optJSONObject("icon");
+        if (icon != null) {
+            data.iconUrl = ((JSONObject)icon.getJSONArray("sources").get(0)).getString("url");
+        }
+        JSONArray items = payload.optJSONArray("items");
+        if (items != null) {
+            for (int i = 0; i < items.length(); ++ i) {
+                data.items.add(new TemplateListActionData.Item(
+                        ((JSONObject)items.get(i)).getString("left"),
+                        ((JSONObject)items.get(i)).getString("right")
+                ));
+            }
+        }
+
+//        SettingInfo.getInstance().templateListData = data;
+
+        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_TEMPLATE_RENDER_LIST, data);
+
+        JSONObject result = new JSONObject();
+        result.put("type", "result");
+        result.put("name", action.getString("name"));
+        result.put("version", 1);
+
+        callback.onResult(result.toString(), null);
+    }
+
     private void onTemplateCard(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
         TemplateCardActionData data = new TemplateCardActionData();
 
@@ -141,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         data.dialogId = payload.getString("dialogId");
         data.token = payload.getString("token");
         data.mainTitle = payload.getString("mainTitle");
-        data.subTitle = payload.getString("subTitle");
+        data.subTitle = payload.optString("subTitle");
         JSONObject icon = payload.optJSONObject("icon");
         if (icon != null) {
             data.iconUrl = ((JSONObject)icon.getJSONArray("sources").get(0)).getString("url");
@@ -152,6 +194,13 @@ public class MainActivity extends AppCompatActivity {
             data.imageUrl = ((JSONObject)image.getJSONArray("sources").get(0)).getString("url");
 
         Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_TEMPLATE_RENDER, data);
+
+        JSONObject result = new JSONObject();
+        result.put("type", "result");
+        result.put("name", action.getString("name"));
+        result.put("version", 1);
+
+        callback.onResult(result.toString(), null);
     }
 
     private void onEndpointPowerControllerUpdated(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
@@ -515,6 +564,8 @@ public class MainActivity extends AppCompatActivity {
                     case HandlerConst.MSG_LIGHT_SPOT_STATE:
                         onLightSpotState();
                         break;
+                    case HandlerConst.MSG_UNSUPPORTED_ACTION:
+                        onUnsupportedAction((String)message.obj);
                     default:;
                 }
                 return true;
@@ -526,6 +577,16 @@ public class MainActivity extends AppCompatActivity {
         directiveThread.start();
         directiveHandler = Handler.createAsync(directiveThread.getLooper(), new DirectiveCallback());
         RuntimeInfo.getInstance().directiveHandler = directiveHandler;
+    }
+
+    private void onUnsupportedAction(String action) {
+        runOnUiThread(new Runnable() {
+                          @Override
+                          public void run() {
+                              Toast.makeText(MainActivity.this, "Unsupported action - " + action, Toast.LENGTH_SHORT).show();
+                          }
+                      }
+        );
     }
 
     private void onLightSpotState() {

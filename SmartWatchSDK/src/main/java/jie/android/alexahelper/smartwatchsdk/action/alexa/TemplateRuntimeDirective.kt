@@ -40,7 +40,7 @@ private fun onTemplateBody1(sdk: SmartWatchSDK, directive: Directive, parts: Lis
     val dialogId = directive.header.getString("dialogRequestId")
     val token = directive.payload!!.getString("token")
     val mainTitle = directive.payload!!.getJsonObject("title")!!.getString("mainTitle")
-    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle")
+    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle", false)
     val icon = directive.payload!!.getJsonObject("skillIcon", false)?.let { getImage(it) }
     val text = directive.payload!!.getString("textField")
 
@@ -62,7 +62,7 @@ private fun onTemplateBody2(sdk: SmartWatchSDK, directive: Directive, parts: Lis
     val dialogId = directive.header.getString("dialogRequestId")
     val token = directive.payload!!.getString("token")
     val mainTitle = directive.payload!!.getJsonObject("title")!!.getString("mainTitle")
-    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle")
+    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle", false)
     val icon = directive.payload!!.getJsonObject("skillIcon", false)?.let { getImage(it) }
     val text = directive.payload!!.getString("textField")
     val image = directive.payload!!.getJsonObject("image")?.let { getImage(it) }
@@ -82,11 +82,11 @@ private fun onTemplateBody2(sdk: SmartWatchSDK, directive: Directive, parts: Lis
     sdk.toAction(action) { }
 }
 
-private fun onTemplateList(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
+fun onTemplateList(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     val dialogId = directive.header.getString("dialogRequestId")
     val token = directive.payload!!.getString("token")
     val mainTitle = directive.payload!!.getJsonObject("title")!!.getString("mainTitle")
-    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle")
+    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle", false)
     val icon = directive.payload!!.getJsonObject("skillIcon", false)?.let { getImage(it) }
     var items: JsonArray? = null
     directive.payload!!.getJsonArray("listItems")?.let {
@@ -118,7 +118,7 @@ private fun onTemplateWeather(sdk: SmartWatchSDK, directive: Directive, parts: L
     val dialogId = directive.header.getString("dialogRequestId")
     val token = directive.payload!!.getString("token")
     val mainTitle = directive.payload!!.getJsonObject("title")!!.getString("mainTitle")
-    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle")
+    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle", false)
     val icon = directive.payload!!.getJsonObject("skillIcon", false)?.let { getImage(it) }
     val description = directive.payload!!.getString("description")
     val currentWeather = directive.payload!!.getString("currentWeather")

@@ -9,7 +9,11 @@
         android:id="@+id/speechFragment"
         android:name="com.SmartWatchVoice.bestapp.SpeechFragment"
         android:label="@string/speech_fragment_label"
-        tools:layout="@layout/fragment_speech"/>
+        tools:layout="@layout/fragment_speech">
+        <action
+            android:id="@+id/action_speechFragment_to_templateListFragment"
+            app:destination="@id/templateListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.SmartWatchVoice.bestapp.LoginFragment"
@@ -68,4 +72,9 @@
             android:id="@+id/action_settingLocaleFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/templateListFragment"
+        android:name="com.SmartWatchVoice.bestapp.TemplateListFragment"
+        android:label="fragment_template_list"
+        tools:layout="@layout/fragment_template_list" />
 </navigation>

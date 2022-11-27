@@ -25,4 +25,7 @@ public class HandlerConst {
     public static final int MSG_AUDIO_PLAY_ENQUEUE = 20;
     public static final int MSG_TEMPLATE_RENDER = 21;
     public static final int MSG_LIGHT_SPOT_STATE = 22;
+
+    public static final int MSG_TEMPLATE_RENDER_LIST = 23;
+    public static final int MSG_UNSUPPORTED_ACTION = 24;
 }

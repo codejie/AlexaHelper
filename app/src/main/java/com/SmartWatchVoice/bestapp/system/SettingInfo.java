@@ -1,6 +1,7 @@
 package com.SmartWatchVoice.bestapp.system;
 
 import com.SmartWatchVoice.bestapp.alexa.api.Context;
+import com.SmartWatchVoice.bestapp.sdk.TemplateListActionData;
 import com.SmartWatchVoice.bestapp.system.setting.AlertInfo;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -18,6 +19,7 @@ import java.util.List;
 
 public class SettingInfo {
     private static SettingInfo instance = null;
+    public TemplateListActionData templateListData = null;
 
     public static SettingInfo getInstance() {
         if (instance == null) {
@@ -33,7 +35,7 @@ public class SettingInfo {
     public List<String> locales = Arrays.asList("en-US");
 
     public Integer volume = 100;
-    public Boolean muted = false;
+
 
     public static SettingInfo load () {
         File file = RuntimeInfo.getInstance().makeSettingFile();

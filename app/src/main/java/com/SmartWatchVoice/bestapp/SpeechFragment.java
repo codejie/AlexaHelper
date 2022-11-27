@@ -13,14 +13,17 @@ import android.view.animation.AnimationUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.SmartWatchVoice.bestapp.action.speech_recognizer.ExpectSpeechTimeOutAction;
 import com.SmartWatchVoice.bestapp.alexa.api.Payload;
 import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.sdk.TemplateCardActionData;
 import com.SmartWatchVoice.bestapp.databinding.FragmentSpeechBinding;
+import com.SmartWatchVoice.bestapp.sdk.TemplateListActionData;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.handler.HandlerConst;
+import com.SmartWatchVoice.bestapp.system.SettingInfo;
 import com.SmartWatchVoice.bestapp.system.player.MPEGPlayer;
 import com.SmartWatchVoice.bestapp.system.player.PCMRecorder;
 import com.SmartWatchVoice.bestapp.system.player.PCMTracker;
@@ -92,6 +95,9 @@ public class SpeechFragment extends Fragment {
                     case HandlerConst.MSG_LIGHT_SPOT_STATE:
                         onLightSpotState((String)message.obj);
                         break;
+                    case HandlerConst.MSG_TEMPLATE_RENDER_LIST:
+                        onTemplateRenderList((TemplateListActionData)message.obj);
+                        break;
                     default:;
                 }
                 return true;
@@ -102,6 +108,12 @@ public class SpeechFragment extends Fragment {
         binding = FragmentSpeechBinding.inflate(inflater, container, false);
         return binding.getRoot();
 
+    }
+
+    private void onTemplateRenderList(TemplateListActionData data) {
+        SettingInfo.getInstance().templateListData = data;
+
+        NavHostFragment.findNavController(SpeechFragment.this).navigate(R.id.action_speechFragment_to_templateListFragment);
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
