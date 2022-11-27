@@ -45,6 +45,15 @@ public class SDKAction {
 
             endpoints.put(toggle);
 
+            JSONObject washer = new JSONObject();
+            washer.put("id", "washer");
+            washer.put("serialNumber", "Washer-333");
+            washer.put("friendlyName", "Washee");
+            washer.put("description", "Mode Controller");
+            washer.put("firmware", "1.2");
+            washer.put("software", "20221127");
+
+            endpoints.put(washer);
 
 //            product.put("id", DeviceInfo.ProductId);
 //            product.put("clientId", DeviceInfo.ClientId);

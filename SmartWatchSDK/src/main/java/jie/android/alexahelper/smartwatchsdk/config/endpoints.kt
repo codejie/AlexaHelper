@@ -14,6 +14,12 @@ internal val configEndpoints: String =
     "id": "lockSwitch",
     "model": "LockSwitch01",
     "manufacturer": "TouchManufacturer"
+  },
+  {
+    "define": "Washer",
+    "id": "washer",
+    "model": "Washer01",
+    "manufacturer": "TouchManufacturer"
   }
 ]
     """.trimIndent()
