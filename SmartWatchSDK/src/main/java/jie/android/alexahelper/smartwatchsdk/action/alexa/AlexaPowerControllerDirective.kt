@@ -30,6 +30,7 @@ fun onTurnOff(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectivePar
         val payload = buildJsonObject {
             put("token", token)
             put("endpointId", endpointId)
+            put("name", "powerState")
             put("value", "OFF")
         }
         setPayload(payload)
@@ -71,6 +72,7 @@ private fun onTurnOn(sdk: SmartWatchSDK, directive: Directive, parts: List<Direc
         val payload = buildJsonObject {
             put("token", token)
             put("endpointId", endpointId)
+            put("name", "powerState")
             put("value", "ON")
         }
         setPayload(payload)
