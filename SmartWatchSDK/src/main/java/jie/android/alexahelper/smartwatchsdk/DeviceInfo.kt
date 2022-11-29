@@ -22,7 +22,12 @@ internal class ProductInfo {
     var software: String? = null
 }
 internal data class Endpoint constructor(val id: String, val define: String) {
-    var types: ArrayList<String>? = null
+    data class Property constructor(val name: String, val instance: String?, val intf: String) {}
+
+    var properties: MutableMap<String, Property>? = null
+    var type: String? = null
+
+//    var types: ArrayList<String>? = null
 
     var serialNumber: String? = null
     var friendlyName: String? = null
@@ -122,10 +127,12 @@ private fun loadEndpointInfo(productInfo: ProductInfo, endpoints: MutableMap<Str
                 val defEndpoint = indexOfEndpointDefine(define)
                 if (defEndpoint != null) {
                     val endpoint = Endpoint(id, define)
-                    endpoint.types = arrayListOf()
-                    defEndpoint.getJsonArray("types")!!.forEach { it ->
-                        endpoint.types!!.add(it.toString())
-                    }
+//                    endpoint.types = arrayListOf()
+//                    defEndpoint.getJsonArray("types")!!.forEach { it ->
+//                        endpoint.types!!.add(it.toString())
+//                    }
+                    endpoint.type = defEndpoint.getString("type")
+                    endpoint.properties = parseEndpointPropertiesSupported(defEndpoint)
 
                     endpoint.serialNumber = item.getString("serialNumber")
                     endpoint.friendlyName = item.getString("friendlyName")
@@ -138,6 +145,7 @@ private fun loadEndpointInfo(productInfo: ProductInfo, endpoints: MutableMap<Str
 
                     val endpointId =
                         "${productInfo.clientId}::${productInfo.id}::${productInfo.serialNumber}-$id"
+
                     endpoints[endpointId] = endpoint
                 } else {
                     Logger.w("can't find endpoint define - $define")
@@ -147,6 +155,24 @@ private fun loadEndpointInfo(productInfo: ProductInfo, endpoints: MutableMap<Str
             }
         }
     }
+}
+
+private fun parseEndpointPropertiesSupported(defEndpoint: JsonObject): MutableMap<String, Endpoint.Property> {
+    val ret = mutableMapOf<String, Endpoint.Property>()
+    val capabilities = defEndpoint.getJsonArray("capabilities")!!
+    for (index in 0 until capabilities.size) {
+        val item = capabilities[index].jsonObject
+        val supported = item.getJsonObject("properties")?.getJsonArray("supported")
+        supported?.let {
+            val intf = item.getString("interface")!!
+            val instance = item.getString("instance", false)
+            for (i in 0 until supported.size) {
+                val name = supported[i].jsonObject.getString("name")!!
+                ret[name] = Endpoint.Property(name, instance, intf)
+            }
+        }
+    }
+    return ret
 }
 
 fun indexOfEndpointDefine(define: String): JsonObject? {

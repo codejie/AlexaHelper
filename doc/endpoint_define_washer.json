@@ -1,6 +1,6 @@
 {
   "id": "Washer",
-  "types": ["Alexa.ModeController"],
+  "type": "Alexa.ModeController",
   "displayCategories": ["WASHER"],
   "capabilities": [
     {

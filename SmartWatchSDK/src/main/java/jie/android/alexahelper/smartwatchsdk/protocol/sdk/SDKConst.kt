@@ -34,7 +34,7 @@ object SDKConst {
     const val ACTION_ALEXA_TOKEN_UPDATED = "alexa.tokenUpdated"
     const val ACTION_ALEXA_DND_UPDATED = "alexa.doNotDisturbUpdated"
     const val ACTION_ALEXA_SPEECH_SPEAK = "alexa.speechSpeak"
-    const val ACTION_ALEXA_SPEECH_EXPECT = "alexa.speechExpect"
+    const val ACTION_ALEXA_SPEECH_EXPECTED = "alexa.speechExpected"
     const val ACTION_ALEXA_SPEECH_STOP = "alexa.speechStop"
     const val ACTION_ALEXA_TIME_ZONE_UPDATED = "alexa.timeZoneUpdated"
     const val ACTION_ALEXA_LOCALES_UPDATED = "alexa.localesUpdated"
@@ -43,7 +43,7 @@ object SDKConst {
     const val ACTION_ALEXA_ALERT_START = "alexa.alertStart"
     const val ACTION_ALEXA_ALERT_END = "alexa.alertEnd"
     const val ACTION_ALEXA_VOLUME_UPDATED = "alexa.volumeUpdated"
-    const val ACTION_ALEXA_SETTING_EXPECT = "alexa.settingExpect"
+    const val ACTION_ALEXA_SETTING_EXPECTED = "alexa.settingExpected"
     // template
     const val ACTION_ALEXA_TEMPLATE_CARD = "alexa.template.card"
     const val ACTION_ALEXA_TEMPLATE_LIST = "alexa.template.list"

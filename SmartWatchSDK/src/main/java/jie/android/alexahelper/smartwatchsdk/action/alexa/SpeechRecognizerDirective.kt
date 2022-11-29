@@ -29,7 +29,7 @@ private fun onExpectSpeech(sdk: SmartWatchSDK, directive: Directive, parts: List
             initiatorToken = initiator.getJsonObject("payload", false)?.getString("token")
         }
 
-        val action = ActionWrapper(SDKConst.ACTION_ALEXA_SPEECH_EXPECT).apply {
+        val action = ActionWrapper(SDKConst.ACTION_ALEXA_SPEECH_EXPECTED).apply {
             val payload = buildJsonObject {
                 put("dialogId", dialogId)
                 initiatorType?.let { put("initiatorType", initiatorType) }

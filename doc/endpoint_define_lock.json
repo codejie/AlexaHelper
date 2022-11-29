@@ -1,6 +1,6 @@
 {
   "id": "Lock",
-  "types": ["LockController"],
+  "type": "Alexa.LockController",
   "displayCategories": ["SAMARTLOCK"],
   "capabilities": [
     {

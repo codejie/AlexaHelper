@@ -1,7 +1,7 @@
 [
   {
     "id": "Spot",
-    "types": ["PowerController"],
+    "type": "Alexa.PowerController",
     "displayCategories": [
       "LIGHT"
     ],
@@ -29,7 +29,7 @@
   },
   {
     "id": "Mode",
-    "types": ["ModeController"],
+    "type": "Alexa.ModeController",
     "displayCategories": ["DISHWASHER"],
     "capabilities": [
       {
@@ -160,7 +160,7 @@
   },
   {
     "id": "Toggle",
-    "types": ["ToggleController"],
+    "type": "Alexa.ToggleController",
     "displayCategories": ["SWITCH"],
     "capabilities": [
       {

@@ -22,7 +22,7 @@ fun onSystemDirective(sdk: SmartWatchSDK, directive: Directive, parts: List<Dire
 }
 
 fun onReportState(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
-    val action = ActionWrapper(SDKConst.ACTION_ALEXA_SETTING_EXPECT)
+    val action = ActionWrapper(SDKConst.ACTION_ALEXA_SETTING_EXPECTED)
     sdk.toAction(action) { result ->
         val timeZone = result.getPayload()!!.getString("timeZone")!!
         val locales = result.getPayload()!!.getJsonArray("locales")!!

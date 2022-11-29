@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
                         onSpeechSpeak(action, extra, callback);
                     }
                     break;
-                    case "alexa.speechExpect": {
-                        onSpeechExpect(action, extra, callback);
+                    case "alexa.speechExpected": {
+                        onSpeechExpected(action, extra, callback);
                     }
                     break;
                     case "alexa.doNotDisturbUpdated": {
@@ -97,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
                         onAlertDeleted(action, extra, callback);
                     }
                     break;
-                    case "alexa.settingExpect": {
-                        onSettingExpect(action, extra, callback);
+                    case "alexa.settingExpected": {
+                        onSettingExpected(action, extra, callback);
                     }
                     break;
                     case "alexa.speechStop":
@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
         callback.onResult(result.toString(), null);
     }
 
-    private void onSpeechExpect(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
+    private void onSpeechExpected(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
         JSONObject payload = action.getJSONObject("payload");
         Long timeout = Long.valueOf(payload.getInt("timeout"));
         Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_EXPECT_SPEECH, timeout);
@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
         callback.onResult(result.toString(), null);
     }
 
-    private void onSettingExpect(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
+    private void onSettingExpected(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
         JSONArray locales = new JSONArray();
         SettingInfo.getInstance().locales.forEach( it -> {
             locales.put(it);
