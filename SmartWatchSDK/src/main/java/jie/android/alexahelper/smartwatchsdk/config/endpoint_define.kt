@@ -5,7 +5,7 @@ internal val defineEndpoints: String =
 [        
     {
       "id": "Spot",
-      "types": ["PowerController"],
+      "type": "PowerController",
       "displayCategories": [
         "LIGHT"
       ],
@@ -33,7 +33,7 @@ internal val defineEndpoints: String =
     },
     {
       "id": "Lock",
-      "types": ["LockController"],
+      "type": "LockController",
       "displayCategories": ["SAMARTLOCK"],
       "capabilities": [
         {
@@ -73,7 +73,7 @@ internal val defineEndpoints: String =
     },
     {
       "id": "Washer",
-      "types": ["Alexa.ModeController"],
+      "type": "Alexa.ModeController",
       "displayCategories": ["WASHER"],
       "capabilities": [
         {
