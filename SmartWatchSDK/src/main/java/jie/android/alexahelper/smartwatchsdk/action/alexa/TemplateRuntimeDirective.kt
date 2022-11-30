@@ -61,11 +61,11 @@ private fun onTemplateBody1(sdk: SmartWatchSDK, directive: Directive, parts: Lis
 private fun onTemplateBody2(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     val dialogId = directive.header.getString("dialogRequestId")
     val token = directive.payload!!.getString("token")
-    val mainTitle = directive.payload!!.getJsonObject("title")!!.getString("mainTitle")
-    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle", false)
-    val icon = directive.payload!!.getJsonObject("skillIcon", false)?.let { getImage(it) }
-    val text = directive.payload!!.getString("textField")
-    val image = directive.payload!!.getJsonObject("image")?.let { getImage(it) }
+    val mainTitle = directive.payload.getJsonObject("title")!!.getString("mainTitle")
+    val subTitle = directive.payload.getJsonObject("title", false)?.getString("subTitle", false)
+    val icon = directive.payload.getJsonObject("skillIcon", false)?.let { getImage(it) }
+    val text = directive.payload.getString("textField")
+    val image = directive.payload.getJsonObject("image")?.let { getImage(it) }
 
     val action = ActionWrapper(SDKConst.ACTION_ALEXA_TEMPLATE_CARD).apply {
         setPayload(buildJsonObject {
@@ -117,17 +117,17 @@ fun onTemplateList(sdk: SmartWatchSDK, directive: Directive, parts: List<Directi
 private fun onTemplateWeather(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     val dialogId = directive.header.getString("dialogRequestId")
     val token = directive.payload!!.getString("token")
-    val mainTitle = directive.payload!!.getJsonObject("title")!!.getString("mainTitle")
-    val subTitle = directive.payload!!.getJsonObject("title", false)?.getString("subTitle", false)
-    val icon = directive.payload!!.getJsonObject("skillIcon", false)?.let { getImage(it) }
-    val description = directive.payload!!.getString("description")
-    val currentWeather = directive.payload!!.getString("currentWeather")
-    val currentIcon = directive.payload!!.getJsonObject("currentWeatherIcon")?.let { getImage(it) }
-    val currentCode = directive.payload!!.getInt("currentWeatherIconCode", false)
-    val highValue = directive.payload!!.getJsonObject("highTemperature")?.getString("value")
-    val highIcon = directive.payload!!.getJsonObject("highTemperature")?.getJsonObject("arrow")?.let { getImage(it) }
-    val lowValue = directive.payload!!.getJsonObject("lowTemperature")?.getString("value")
-    val lowIcon = directive.payload!!.getJsonObject("lowTemperature")?.getJsonObject("arrow")?.let { getImage(it) }
+    val mainTitle = directive.payload.getJsonObject("title")!!.getString("mainTitle")
+    val subTitle = directive.payload.getJsonObject("title", false)?.getString("subTitle", false)
+    val icon = directive.payload.getJsonObject("skillIcon", false)?.let { getImage(it) }
+    val description = directive.payload.getString("description")
+    val currentWeather = directive.payload.getString("currentWeather")
+    val currentIcon = directive.payload.getJsonObject("currentWeatherIcon")?.let { getImage(it) }
+    val currentCode = directive.payload.getInt("currentWeatherIconCode", false)
+    val highValue = directive.payload.getJsonObject("highTemperature")?.getString("value")
+    val highIcon = directive.payload.getJsonObject("highTemperature")?.getJsonObject("arrow")?.let { getImage(it) }
+    val lowValue = directive.payload.getJsonObject("lowTemperature")?.getString("value")
+    val lowIcon = directive.payload.getJsonObject("lowTemperature")?.getJsonObject("arrow")?.let { getImage(it) }
     var forecast: JsonArray? = null
     directive.payload!!.getJsonArray("weatherForecast")?.let {
         forecast = buildJsonArray {

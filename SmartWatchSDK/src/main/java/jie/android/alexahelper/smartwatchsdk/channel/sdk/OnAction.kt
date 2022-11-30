@@ -32,7 +32,6 @@ internal fun onAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: Actio
             SDKConst.ACTION_ALEXA_ALERT_END -> AlexaAction.alertEnd(sdk, action, callback)
             SDKConst.ACTION_ALEXA_SET_VOLUME -> AlexaAction.setVolume(sdk, action, callback)
             SDKConst.ACTION_ALEXA_VERIFY_GATEWAY -> AlexaAction.verifyGateway(sdk, action, callback)
-//            SDKConst.ACTION_EP_POWER_CONTROLLER_SYNC_STATE -> EndpointAction.powerControllerSyncState(sdk, action, callback)
             SDKConst.ACTION_ENDPOINT_SYNC_STATE -> EndpointAction.syncState(sdk, action, callback)
 
             else -> throw SDKException(
