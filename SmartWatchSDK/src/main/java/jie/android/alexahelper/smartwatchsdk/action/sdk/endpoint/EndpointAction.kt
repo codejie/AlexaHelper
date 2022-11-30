@@ -6,4 +6,5 @@ import jie.android.alexahelper.smartwatchsdk.protocol.sdk.ActionWrapper
 
 object EndpointAction {
     fun powerControllerSyncState(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) = PowerController.syncState(sdk, action, callback)
+    fun syncState(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) = syncStateAction(sdk, action, callback)
 }

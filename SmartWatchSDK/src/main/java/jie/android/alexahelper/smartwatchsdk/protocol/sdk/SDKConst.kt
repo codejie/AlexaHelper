@@ -29,6 +29,9 @@ object SDKConst {
     const val ACTION_ALEXA_VERIFY_GATEWAY = "alexa.verifyGateway"
 
     const val ACTION_EP_POWER_CONTROLLER_SYNC_STATE = "ep.powerController.syncState"
+    const val ACTION_ENDPOINT_STATE_UPDATED = "endpoint.stateUpdated"
+    const val ACTION_ENDPOINT_SYNC_STATE = "endpoint.syncState"
+
 
     // Alexa Action
     const val ACTION_ALEXA_TOKEN_UPDATED = "alexa.tokenUpdated"
@@ -59,6 +62,8 @@ object SDKConst {
     const val RESULT_CODE_ACTION_FAILED = -4
     const val RESULT_CODE_OFFLINE = -5
     const val RESULT_CODE_NOT_SUPPORTED = -6
+    const val RESULT_CODE_ENDPOINT_UNKNOWN_STATE = -7
+    const val RESULT_CODE_ENDPOINT_NOT_FOUND = -8
 
     const val RESULT_CODE_LOGIN_FAIL = -100
 
@@ -68,6 +73,8 @@ object SDKConst {
     const val RESULT_MESSAGE_MISSING_PARAMETERS = "missing parameters"
     const val RESULT_MESSAGE_OFFLINE = "not online"
     const val RESULT_MESSAGE_NOT_SUPPORTED = "action not supported"
+    const val RESULT_MESSAGE_ENDPOINT_UNKNOWN_STATE = "unknown endpoint state"
+    const val RESULT_MESSAGE_ENDPOINT_NOT_FOUND = "endpoint not found"
 
     // Endpoint Result code
     const val RESULT_CODE_ALREADY_IN_OPERATION = -1000

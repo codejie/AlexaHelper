@@ -6,7 +6,7 @@ import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import kotlinx.serialization.json.JsonObject
 
-fun setInfoAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) {
+internal fun setInfoAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) {
     val payload: JsonObject = action.getPayload()!!
 
     val result = DeviceInfo.parseDeviceSetting(payload)

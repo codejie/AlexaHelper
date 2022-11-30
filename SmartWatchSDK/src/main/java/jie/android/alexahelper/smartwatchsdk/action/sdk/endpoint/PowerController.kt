@@ -20,7 +20,7 @@ object PowerController {
     }
 }
 
-fun postChangeReport(sdk: SmartWatchSDK, action: ActionWrapper, endpointId: String, value: String, callback: ActionResultCallback) {
+private fun postChangeReport(sdk: SmartWatchSDK, action: ActionWrapper, endpointId: String, value: String, callback: ActionResultCallback) {
     val event = EventBuilder(AlexaConst.NS_ALEXA, AlexaConst.NAME_CHANGE_REPORT).apply {
         setEndpoint(buildJsonObject {
             put("endpointId", DeviceInfo.makeEndpointId(endpointId))

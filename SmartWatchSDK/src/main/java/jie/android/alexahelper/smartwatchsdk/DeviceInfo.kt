@@ -27,8 +27,6 @@ internal data class Endpoint constructor(val id: String, val define: String) {
     var properties: MutableMap<String, Property>? = null
     var type: String? = null
 
-//    var types: ArrayList<String>? = null
-
     var serialNumber: String? = null
     var friendlyName: String? = null
     var description: String? = null
