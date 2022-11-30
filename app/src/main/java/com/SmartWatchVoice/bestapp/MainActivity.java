@@ -123,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
                         onTemplateList(action, extra, callback);
                     }
                     break;
+                    case "endpoint.stateUpdated": {
+                        onEndpointStateUpdated(action, extra, callback);
+                    }
+                    break;
                     default: {
                         Logger.w("App unsupported action - " + name);
 
@@ -141,6 +145,57 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void onEndpointStateUpdated(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
+        JSONObject payload = action.getJSONObject("payload");
+        String endpointId = payload.getString("endpointId");
+        if (endpointId.equals("lightSpot")) {
+            JSONArray items = payload.getJSONArray("items");
+            if (items != null) {
+                for (int i = 0; i < items.length(); ++ i) {
+                    String name = ((JSONObject)items.get(i)).getString("name");
+                    if (name.equals("powerState")) {
+                        String value = ((JSONObject)items.get(i)).getString("value");
+                        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_LIGHT_SPOT_STATE, value);
+                        break;
+                    }
+                }
+            }
+            // result
+            JSONObject p = new JSONObject();
+            p.put("token", payload.getString("token"));
+            p.put("endpointId", payload.getString("endpointId"));
+            p.put("items", items);
+
+            JSONObject result = new JSONObject();
+            result.put("type", "result");
+            result.put("name", action.getString("name"));
+            result.put("version", 1);
+            result.put("payload", p);
+
+            callback.onResult(result.toString(), null);
+
+        } else {
+            Logger.w("App - unknown endpointId -" + endpointId);
+        }
+//
+//        String state = payload.getString("value");
+//
+//        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_LIGHT_SPOT_STATE, state);
+//
+//        JSONObject p = new JSONObject();
+//        p.put("token", payload.getString("token"));
+//        p.put("endpointId", payload.getString("endpointId"));
+//        p.put("value", state);
+//
+//        JSONObject result = new JSONObject();
+//        result.put("type", "result");
+//        result.put("name", action.getString("name"));
+//        result.put("version", 1);
+//        result.put("payload", p);
+//
+//        callback.onResult(result.toString(), null);
+    }
 
     private void onTemplateList(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
         TemplateListActionData data = new TemplateListActionData();
@@ -591,14 +646,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void onLightSpotState() {
         Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_LIGHT_SPOT_STATE, "ON");
+
         try {
+            JSONObject powerState = new JSONObject();
+            powerState.put("name", "powerState");
+            powerState.put("value", "ON");
+
+            JSONArray changed = new JSONArray();
+            changed.put(powerState);
+
             JSONObject payload = new JSONObject();
             payload.put("endpointId", "lightSpot");
-            payload.put("value", "ON");
+            payload.put("changed", changed);
+            payload.put("unchanged", changed);
+//            payload.put("value", "ON");
 
             JSONObject result = new JSONObject();
-            result.put("type", "result");
-            result.put("name", "ep.powerController.syncState");
+            result.put("type", "action");
+            result.put("name", "endpoint.syncState");
             result.put("version", 1);
             result.put("payload", payload);
 

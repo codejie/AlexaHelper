@@ -64,7 +64,7 @@ internal object DeviceInfo {
     val productInfo: ProductInfo = ProductInfo()
     val stateInfo: StateInfo = StateInfo()
 
-    val endpoints: MutableMap<String, Endpoint> = mutableMapOf()
+    val endpoints: MutableMap<String, Endpoint> = mutableMapOf() // inner id + endpoint
 
     fun parseDeviceSetting(payload: JsonObject): Boolean = loadDeviceInfo(this, payload)
     fun makeEndpointList(): JsonArray? = productToEndpointList(this)
@@ -141,10 +141,10 @@ private fun loadEndpointInfo(productInfo: ProductInfo, endpoints: MutableMap<Str
                     endpoint.model = confEndpoint.getString("model")
                     endpoint.manufacturer = confEndpoint.getString("manufacturer")
 
-                    val endpointId =
-                        "${productInfo.clientId}::${productInfo.id}::${productInfo.serialNumber}-$id"
+//                    val endpointId =
+//                        "${productInfo.clientId}::${productInfo.id}::${productInfo.serialNumber}-$id"
 
-                    endpoints[endpointId] = endpoint
+                    endpoints[id] = endpoint
                 } else {
                     Logger.w("can't find endpoint define - $define")
                 }
@@ -160,7 +160,7 @@ private fun parseEndpointPropertiesSupported(defEndpoint: JsonObject): MutableMa
     val capabilities = defEndpoint.getJsonArray("capabilities")!!
     for (index in 0 until capabilities.size) {
         val item = capabilities[index].jsonObject
-        val supported = item.getJsonObject("properties")?.getJsonArray("supported")
+        val supported = item.getJsonObject("properties", false)?.getJsonArray("supported")
         supported?.let {
             val intf = item.getString("interface")!!
             val instance = item.getString("instance", false)
@@ -223,7 +223,7 @@ private fun productToEndpointList(deviceInfo: DeviceInfo): JsonArray? {
                 val confEndpoint = indexOfEndpointDefine(v.define)!!
 
                 val data = buildJsonObject {
-                    put("endpointId", k)
+                    put("endpointId", DeviceInfo.makeEndpointId(k))
                     put("manufacturerName", v.manufacturer)
                     put("friendlyName", v.friendlyName)
                     put("description", v.description)

@@ -3,7 +3,6 @@ package jie.android.alexahelper.smartwatchsdk.action.sdk.endpoint
 import jie.android.alexahelper.smartwatchsdk.ActionResultCallback
 import jie.android.alexahelper.smartwatchsdk.DeviceInfo
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
-import jie.android.alexahelper.smartwatchsdk.action.makeDate
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.EventBuilder
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*

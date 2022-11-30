@@ -18,17 +18,15 @@ internal fun syncStateAction(sdk: SmartWatchSDK, action: ActionWrapper, callback
     if (endpoint != null) {
         postChangeReport(sdk, action, endpoint, changed, unchanged, callback)
     } else {
-        resultCallback(action, null, SDKConst.RESULT_CODE_ENDPOINT_NOT_FOUND, SDKConst.RESULT_MESSAGE_ENDPOINT_NOT_FOUND, callback)
+        resultCallback(action, endpointId, SDKConst.RESULT_CODE_ENDPOINT_NOT_FOUND, SDKConst.RESULT_MESSAGE_ENDPOINT_NOT_FOUND, callback)
     }
 }
 
-private fun resultCallback(action: ActionWrapper, endpoint: Endpoint?, code: Int, message: String?, callback: ActionResultCallback) {
+private fun resultCallback(action: ActionWrapper, endpointId: String, code: Int, message: String?, callback: ActionResultCallback) {
     val result = ResultWrapper(action.name, code, message).apply {
-        endpoint?.let {
-            setPayload(buildJsonObject {
-                put("endpointId", endpoint.id)
-            })
-        }
+        setPayload(buildJsonObject {
+            put("endpointId", endpointId)
+        })
     }
     callback(result)
 }
@@ -43,22 +41,28 @@ private fun postChangeReport(sdk: SmartWatchSDK, action: ActionWrapper, endpoint
         })
         changed?.let {
             addPayload("properties", buildJsonArray {
-                for (index in 0 until  changed.size) {
-                    makeProperty(endpoint, changed[index].jsonObject)?.let { add(it) }
+                for (index in 0 until  it.size) {
+                    makeProperty(endpoint, it[index].jsonObject)?.let { it1 -> add(it1) }
                 }
             })
         }
-
-    }
-}
-
-private fun makeProperty(endpoint: Endpoint, item: JsonObject): JsonObject? {
-    val name = item.getString("name")
-    val property = endpoint.properties?.get(name)
-    property?.let {
-        return buildJsonObject {
-
+        unchanged?.let {
+            setContext(buildJsonObject {
+                put("properties", buildJsonArray {
+                    for (index in 0 until unchanged.size) {
+                        makeProperty(endpoint, unchanged[index].jsonObject)?.let { it1 -> add(it1) }
+                    }
+                })
+            })
         }
+    }.create()
+
+    sdk.httpChannel.postEvent(event){ success, reason, _ ->
+        val result = ResultWrapper(action.name,
+            if (success) SDKConst.RESULT_CODE_SUCCESS else SDKConst.RESULT_CODE_ACTION_FAILED,
+            reason
+        )
+        callback(result)
     }
-    return null
 }
+

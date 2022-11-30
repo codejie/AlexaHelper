@@ -31,6 +31,7 @@ object SDKConst {
     const val ACTION_EP_POWER_CONTROLLER_SYNC_STATE = "ep.powerController.syncState"
     const val ACTION_ENDPOINT_STATE_UPDATED = "endpoint.stateUpdated"
     const val ACTION_ENDPOINT_SYNC_STATE = "endpoint.syncState"
+    const val ACTION_ENDPOINT_STATE_EXPECTED = "endpoint.stateExpected"
 
 
     // Alexa Action

@@ -2,7 +2,7 @@ package jie.android.alexahelper.smartwatchsdk.action.alexa
 
 import jie.android.alexahelper.smartwatchsdk.DeviceInfo
 import jie.android.alexahelper.smartwatchsdk.SmartWatchSDK
-import jie.android.alexahelper.smartwatchsdk.action.makeDate
+import jie.android.alexahelper.smartwatchsdk.action.sdk.endpoint.makeDate
 import jie.android.alexahelper.smartwatchsdk.channel.alexa.DirectiveParser
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Directive
@@ -70,9 +70,9 @@ private fun onTurnOn(sdk: SmartWatchSDK, directive: Directive, parts: List<Direc
 
     sdk.toAction(action) { result ->
         if (result.code == SDKConst.RESULT_CODE_SUCCESS) {
-            postResponse(sdk, token, endpointId, "ON")
+            postResponse(sdk, token, id, "ON")
         } else {
-            postErrorResponse(sdk, token, endpointId, result.code, result.message)
+            postErrorResponse(sdk, token, id, result.code, result.message)
         }
     }
 }

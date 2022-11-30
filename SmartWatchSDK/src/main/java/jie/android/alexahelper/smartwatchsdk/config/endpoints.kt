@@ -8,18 +8,6 @@ internal val configEndpoints: String =
     "id": "lightSpot",
     "model": "LightSpot01",
     "manufacturer": "TouchManufacturer"
-  },
-  {
-    "define": "Lock",
-    "id": "lockSwitch",
-    "model": "LockSwitch01",
-    "manufacturer": "TouchManufacturer"
-  },
-  {
-    "define": "Washer",
-    "id": "washer",
-    "model": "Washer01",
-    "manufacturer": "TouchManufacturer"
   }
 ]
     """.trimIndent()

@@ -35,25 +35,25 @@ public class SDKAction {
 
             endpoints.put(spot);
 
-            JSONObject toggle = new JSONObject();
-            toggle.put("id", "lockSwitch");
-            toggle.put("serialNumber", "LockSwitch-222");
-            toggle.put("friendlyName", "LSwitch");
-            toggle.put("description", "Lock Controller");
-            toggle.put("firmware", "1.2");
-            toggle.put("software", "20221122");
-
-            endpoints.put(toggle);
-
-            JSONObject washer = new JSONObject();
-            washer.put("id", "washer");
-            washer.put("serialNumber", "Washer-333");
-            washer.put("friendlyName", "Washee");
-            washer.put("description", "Mode Controller");
-            washer.put("firmware", "1.2");
-            washer.put("software", "20221127");
-
-            endpoints.put(washer);
+//            JSONObject toggle = new JSONObject();
+//            toggle.put("id", "lockSwitch");
+//            toggle.put("serialNumber", "LockSwitch-222");
+//            toggle.put("friendlyName", "LSwitch");
+//            toggle.put("description", "Lock Controller");
+//            toggle.put("firmware", "1.2");
+//            toggle.put("software", "20221122");
+//
+//            endpoints.put(toggle);
+//
+//            JSONObject washer = new JSONObject();
+//            washer.put("id", "washer");
+//            washer.put("serialNumber", "Washer-333");
+//            washer.put("friendlyName", "Washee");
+//            washer.put("description", "Mode Controller");
+//            washer.put("firmware", "1.2");
+//            washer.put("software", "20221127");
+//
+//            endpoints.put(washer);
 
 //            product.put("id", DeviceInfo.ProductId);
 //            product.put("clientId", DeviceInfo.ClientId);
