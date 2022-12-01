@@ -1,5 +1,6 @@
 package jie.android.alexahelper.smartwatchsdk.action.sdk.endpoint
 
+import jie.android.alexahelper.smartwatchsdk.DeviceInfo
 import jie.android.alexahelper.smartwatchsdk.Endpoint
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.getInt
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.getString
@@ -15,9 +16,10 @@ internal fun makeDate(): String {
     return current.format(formatter)
 }
 
-internal fun makeProperty(endpoint: Endpoint, item: JsonObject): JsonObject? {
-    val name = item.getString("name")
-    val property = endpoint.properties?.get(name)
+internal fun makeProperty(endpointId: String, item: JsonObject): JsonObject? {
+    val instance = item.getString("instance", false)
+    val name = item.getString("name")!!
+    val property = DeviceInfo.getEndpointProperty(endpointId, instance, name)
     property?.let {
         return buildJsonObject {
             put("namespace", property.intf)

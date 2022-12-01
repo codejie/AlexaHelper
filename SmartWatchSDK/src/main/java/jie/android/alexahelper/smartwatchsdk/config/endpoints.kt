@@ -8,6 +8,12 @@ internal val configEndpoints: String =
     "id": "lightSpot",
     "model": "LightSpot01",
     "manufacturer": "TouchManufacturer"
-  }
+  },
+    {
+      "define": "ColorMode",
+      "id": "lightMode",
+      "model": "LightMode02",
+      "manufacturer": "TouchManufacturer"
+    }
 ]
     """.trimIndent()

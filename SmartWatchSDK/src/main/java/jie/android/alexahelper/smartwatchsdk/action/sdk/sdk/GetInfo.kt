@@ -14,7 +14,7 @@ import kotlinx.serialization.json.put
 internal fun getInfoAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) {
     val result = ResultWrapper(SDKConst.ACTION_SDK_GET_INFO, SDKConst.RESULT_CODE_SUCCESS).apply {
         setPayload(buildJsonObject {
-            put("version", "${SDKInfo.Version}(${(if (BuildConfig.IS_DEBUG) "debug" else "release")})")
+            put("version", "${SDKInfo.Version} (${(if (BuildConfig.IS_DEBUG) "debug" else "release")})")
             put("manufacturer", SDKInfo.Manufacturer)
             put("release", makeDate())
         })

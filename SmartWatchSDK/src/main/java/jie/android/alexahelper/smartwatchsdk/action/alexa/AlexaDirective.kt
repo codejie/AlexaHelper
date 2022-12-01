@@ -7,10 +7,7 @@ import jie.android.alexahelper.smartwatchsdk.channel.alexa.DirectiveParser
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.AlexaConst
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.Directive
 import jie.android.alexahelper.smartwatchsdk.protocol.alexa.EventBuilder
-import jie.android.alexahelper.smartwatchsdk.protocol.sdk.ActionWrapper
-import jie.android.alexahelper.smartwatchsdk.protocol.sdk.SDKConst
-import jie.android.alexahelper.smartwatchsdk.protocol.sdk.getJsonArray
-import jie.android.alexahelper.smartwatchsdk.protocol.sdk.getString
+import jie.android.alexahelper.smartwatchsdk.protocol.sdk.*
 import jie.android.alexahelper.smartwatchsdk.utils.Logger
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
@@ -31,19 +28,21 @@ private fun onEventProcessed(sdk: SmartWatchSDK, directive: Directive, parts: Li
 
 private fun onReportState(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
     val token = directive.header!!.getString("correlationToken")!!
-    val endpointId = directive.payload!!.getString("endpointId")!!
+    val endpointId = directive.source.getJsonObject("directive")!!.getJsonObject("endpoint")!!.getString("endpointId")!!
+//    val instance = directive.header.getString("instance", false)
+
     val id = DeviceInfo.parseEndpointId(endpointId)
 
-    val endpoint = DeviceInfo.endpoints[id]
-    if (endpoint == null) {
-        Logger.w("Can't find endpoint - $endpointId")
-        return
-    }
+//    val endpoint = DeviceInfo.endpoints[id]
+//    if (endpoint == null) {
+//        Logger.w("Can't find endpoint - $endpointId")
+//        return
+//    }
 
     val action = ActionWrapper(SDKConst.ACTION_ENDPOINT_STATE_EXPECTED).apply {
         setPayload(buildJsonObject {
             put("token", token)
-            put("endpointId", DeviceInfo.parseEndpointId(endpointId!!))
+            put("endpointId", id)
         })
     }
 
@@ -58,7 +57,7 @@ private fun onReportState(sdk: SmartWatchSDK, directive: Directive, parts: List<
                 setContext(buildJsonObject {
                     put("properties", buildJsonArray {
                         for (index in 0 until it.size) {
-                            makeProperty(endpoint, it[index].jsonObject)?.let { it1 -> add(it1) }
+                            makeProperty(id, it[index].jsonObject)?.let { it1 -> add(it1) }
                         }
                     })
                 })

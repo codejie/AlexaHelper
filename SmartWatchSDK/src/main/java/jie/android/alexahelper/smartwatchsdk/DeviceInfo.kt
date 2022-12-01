@@ -24,7 +24,9 @@ internal class ProductInfo {
 internal data class Endpoint constructor(val id: String, val define: String) {
     data class Property constructor(val name: String, val instance: String?, val intf: String) {}
 
-    var properties: MutableMap<String, Property>? = null
+//    var properties: MutableMap<String, Property>? = null // instance.name
+
+    var properties: ArrayList<Property>? = null
     var type: String? = null
 
     var serialNumber: String? = null
@@ -80,6 +82,15 @@ internal object DeviceInfo {
 
     fun makeEndpointId(id: String): String {
         return "${productInfo.clientId}::${productInfo.id}::${productInfo.serialNumber}-$id"
+    }
+
+    fun getEndpointProperty(id: String, instance: String?, name: String): Endpoint.Property? {
+        val endpoint = endpoints[id]
+        return if (endpoint != null) {
+            endpoint.properties?.find { it -> (it.instance == instance && it.name == name) }
+        } else {
+            null
+        }
     }
 }
 
@@ -155,8 +166,8 @@ private fun loadEndpointInfo(productInfo: ProductInfo, endpoints: MutableMap<Str
     }
 }
 
-private fun parseEndpointPropertiesSupported(defEndpoint: JsonObject): MutableMap<String, Endpoint.Property> {
-    val ret = mutableMapOf<String, Endpoint.Property>()
+private fun parseEndpointPropertiesSupported(defEndpoint: JsonObject): ArrayList<Endpoint.Property> {
+    val ret = arrayListOf<Endpoint.Property>()
     val capabilities = defEndpoint.getJsonArray("capabilities")!!
     for (index in 0 until capabilities.size) {
         val item = capabilities[index].jsonObject
@@ -166,7 +177,8 @@ private fun parseEndpointPropertiesSupported(defEndpoint: JsonObject): MutableMa
             val instance = item.getString("instance", false)
             for (i in 0 until supported.size) {
                 val name = supported[i].jsonObject.getString("name")!!
-                ret[name] = Endpoint.Property(name, instance, intf)
+                ret.add(Endpoint.Property(name, instance, intf))
+//                ret[index] = Endpoint.Property(name, instance, intf)
             }
         }
     }

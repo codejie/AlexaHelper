@@ -34,6 +34,8 @@ public class AboutFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         binding.textSerial.setText("Device Serial Number: " + DeviceInfo.ProductSerialNumber);
+
+        getSDKInfo();
     }
 
     private void getSDKInfo() {

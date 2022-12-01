@@ -48,6 +48,16 @@ public class SDKAction {
 
             endpoints.put(spot);
 
+            JSONObject mode = new JSONObject();
+            mode.put("id", "lightMode");
+            mode.put("serialNumber", "LightMode-333");
+            mode.put("friendlyName", "lightColor");
+            mode.put("description", "Light Mode Controller");
+            mode.put("firmware", "1.0");
+            mode.put("software", "20221201");
+
+            endpoints.put(mode);
+
 //            JSONObject toggle = new JSONObject();
 //            toggle.put("id", "lockSwitch");
 //            toggle.put("serialNumber", "LockSwitch-222");
