@@ -12,8 +12,8 @@ internal fun onAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: Actio
 
     try {
         when (action.name) {
-    //               SDKConst.ACTION_ALEXA_SPEECH_RECOGNIZE -> AlexaAction.speechRecognize(sdk, action)
             SDKConst.ACTION_SDK_TEST -> SDKAction.test(sdk, action, callback)
+            SDKConst.ACTION_SDK_GET_INFO -> SDKAction.getInfo(sdk, action, callback)
             SDKConst.ACTION_DEVICE_SET_INFO -> DeviceAction.setInfo(sdk, action, callback)
             SDKConst.ACTION_DEVICE_SYNC_STATE -> DeviceAction.syncState(sdk, action, callback)
             SDKConst.ACTION_ALEXA_LOGIN -> AlexaAction.login(sdk, action, callback) // onActionLogin(action)

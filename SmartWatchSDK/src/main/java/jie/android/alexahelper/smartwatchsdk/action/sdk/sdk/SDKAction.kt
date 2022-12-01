@@ -6,4 +6,5 @@ import jie.android.alexahelper.smartwatchsdk.protocol.sdk.ActionWrapper
 
 object SDKAction {
     fun test(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) = testAction(sdk, action, callback)
+    fun getInfo(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResultCallback) = getInfoAction(sdk, action, callback)
 }

@@ -6,6 +6,7 @@ open class SDKException constructor(val code: Int, message: String? = null): Exc
 object SDKConst {
 
     // App Action
+    const val ACTION_SDK_GET_INFO = "sdk.getInfo"
     const val ACTION_SDK_EXCEPTION = "sdk.exception"
     const val ACTION_SDK_TEST = "sdk.test"
 

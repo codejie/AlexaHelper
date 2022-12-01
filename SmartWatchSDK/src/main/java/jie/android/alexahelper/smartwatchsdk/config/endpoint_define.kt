@@ -26,7 +26,7 @@ internal val defineEndpoints: String =
               }
             ],
             "proactivelyReported": true,
-            "retrievable": true
+            "retrievable": false
           }
         }
       ]

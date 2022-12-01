@@ -21,6 +21,19 @@ import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback;
 public class SDKAction {
     public static SmartWatchSDK sdk = null;
 
+    public static void getSDKInfo(OnResultCallback callback) {
+        JSONObject info = new JSONObject();
+        try {
+            info.put("type", "action");
+            info.put("name", "sdk.getInfo");
+            info.put("version", 1);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        sdk.action(info.toString(), null, callback);
+    }
+
     public static void setDeviceInfo(OnResultCallback callback) {
         JSONObject product = new JSONObject();
         JSONArray endpoints = new JSONArray();
