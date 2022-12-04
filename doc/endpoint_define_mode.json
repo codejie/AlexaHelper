@@ -1,7 +1,7 @@
 {
   "id": "ColorMode",
   "type": "Alexa.ModeController",
-  "displayCategories":["SWITCH"],
+  "displayCategories":["OTHER"],
   "capabilities": [
     {
       "type": "AlexaInterface",
@@ -43,29 +43,10 @@
             "modeResources": {
               "friendlyNames": [
                 {
-                  "@type": "asset",
-                  "value": {
-                    "assetId": "Alexa.Setting.Mode"
-                  }
-                },
-                {
                   "@type": "text",
                   "value": {
                     "text": "Blue",
                     "locale": "en-US"
-                  }
-                }
-              ]
-            }
-          },
-          {
-            "value": "Mode.Yellow",
-            "modeResources": {
-              "friendlyNames": [
-                {
-                  "@type": "asset",
-                  "value": {
-                    "assetId": "Alexa.Setting.Mode"
                   }
                 },
                 {
@@ -77,42 +58,6 @@
                 }
               ]
             }
-          }
-        ]
-      },
-      "semantics": {
-        "actionMappings": [
-          {
-            "@type": "ActionsToDirective",
-            "actions": ["Alexa.Actions.Open"],
-            "directive": {
-              "name": "SetMode",
-              "payload": {
-                "mode": "Mode.Blue"
-              }
-            }
-          },
-          {
-            "@type": "ActionsToDirective",
-            "actions": ["Alexa.Actions.Close"],
-            "directive": {
-              "name": "SetMode",
-              "payload": {
-                "mode": "Mode.Yellow"
-              }
-            }
-          }
-        ],
-        "stateMappings": [
-          {
-            "@type": "StatesToValue",
-            "states": ["Alexa.States.Open"],
-            "value": "Mode.Blue"
-          },
-          {
-            "@type": "StatesToValue",
-            "states": ["Alexa.States.Close"],
-            "value": "Mode.Yellow"
           }
         ]
       }

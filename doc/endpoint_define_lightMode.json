@@ -1,0 +1,126 @@
+{
+  "id": "LightMode",
+  "type": "Alexa.ModeController",
+  "displayCategories":["OTHER"],
+  "capabilities": [
+    {
+      "type": "AlexaInterface",
+      "interface": "Alexa.ModeController",
+      "instance": "LightMode.Mode",
+      "version": "3",
+      "properties": {
+        "supported": [
+          {
+            "name": "mode"
+          }
+        ],
+        "retrievable": true,
+        "proactivelyReported": true,
+        "nonControllable": false
+      },
+      "capabilityResources": {
+        "friendlyNames": [
+          {
+            "@type": "asset",
+            "value": {
+              "assetId": "Alexa.Setting.Mode"
+            }
+          },
+          {
+            "@type": "text",
+            "value": {
+              "text": "light mode",
+              "locale": "en-US"
+            }
+          }
+        ]
+      },
+      "configuration": {
+        "ordered": false,
+        "supportedModes": [
+          {
+            "value": "Mode.Blue",
+            "modeResources": {
+              "friendlyNames": [
+                {
+                  "@type": "asset",
+                  "value": {
+                    "assetId": "Alexa.Value.Open"
+                  }
+                },
+                {
+                  "@type": "text",
+                  "value": {
+                    "text": "Open",
+                    "locale": "en-US"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "value": "Mode.Yellow",
+            "modeResources": {
+              "friendlyNames": [
+                {
+                  "@type": "asset",
+                  "value": {
+                    "assetId": "Alexa.Value.Close"
+                  }
+                },
+                {
+                  "@type": "text",
+                  "value": {
+                    "text": "Closed",
+                    "locale": "en-US"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "semantics": {
+        "actionMappings": [
+          {
+            "@type": "ActionsToDirective",
+            "actions": ["Alexa.Actions.Close"],
+            "directive": {
+              "name": "SetMode",
+              "payload": {
+                "mode": "Mode.Yellow"
+              }
+            }
+          },
+          {
+            "@type": "ActionsToDirective",
+            "actions": ["Alexa.Actions.Open"],
+            "directive": {
+              "name": "SetMode",
+              "payload": {
+                "mode": "Mode.Blue"
+              }
+            }
+          }
+        ],
+        "stateMappings": [
+          {
+            "@type": "StatesToValue",
+            "states": ["Alexa.States.Closed"],
+            "value": "Mode.Yellow"
+          },
+          {
+            "@type": "StatesToValue",
+            "states": ["Alexa.States.Open"],
+            "value": "Mode.Blue"
+          }
+        ]
+      }
+    },
+    {
+      "type": "AlexaInterface",
+      "interface": "Alexa",
+      "version": "3"
+    }
+  ]
+}

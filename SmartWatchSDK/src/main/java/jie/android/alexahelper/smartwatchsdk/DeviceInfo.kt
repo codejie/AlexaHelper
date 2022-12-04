@@ -136,10 +136,7 @@ private fun loadEndpointInfo(productInfo: ProductInfo, endpoints: MutableMap<Str
                 val defEndpoint = indexOfEndpointDefine(define)
                 if (defEndpoint != null) {
                     val endpoint = Endpoint(id, define)
-//                    endpoint.types = arrayListOf()
-//                    defEndpoint.getJsonArray("types")!!.forEach { it ->
-//                        endpoint.types!!.add(it.toString())
-//                    }
+
                     endpoint.type = defEndpoint.getString("type")
                     endpoint.properties = parseEndpointPropertiesSupported(defEndpoint)
 

@@ -38,25 +38,35 @@ public class SDKAction {
         JSONObject product = new JSONObject();
         JSONArray endpoints = new JSONArray();
         try {
-            JSONObject spot = new JSONObject();
-            spot.put("id", "lightSpot");
-            spot.put("serialNumber", "spot-111");
-            spot.put("friendlyName", "spot");
-            spot.put("description", "LightSpot model 1");
-            spot.put("firmware", "1.1");
-            spot.put("software", "20221120");
-
-            endpoints.put(spot);
+//            JSONObject spot = new JSONObject();
+//            spot.put("id", "lightSpot");
+//            spot.put("serialNumber", "spot-111");
+//            spot.put("friendlyName", "spot");
+//            spot.put("description", "LightSpot model 1");
+//            spot.put("firmware", "1.1");
+//            spot.put("software", "20221120");
+//
+//            endpoints.put(spot);
 
             JSONObject mode = new JSONObject();
-            mode.put("id", "lightMode");
-            mode.put("serialNumber", "LightMode-333");
-            mode.put("friendlyName", "lightColor");
-            mode.put("description", "Light Mode Controller");
+            mode.put("id", "garageDoor");
+            mode.put("serialNumber", "GarageDoor-333");
+            mode.put("friendlyName", "GarageDoor");
+            mode.put("description", "GarageDoor Controller");
             mode.put("firmware", "1.0");
             mode.put("software", "20221201");
 
             endpoints.put(mode);
+
+            JSONObject lightMode = new JSONObject();
+            lightMode.put("id", "lightMode");
+            lightMode.put("serialNumber", "LightMode-333");
+            lightMode.put("friendlyName", "LightMode");
+            lightMode.put("description", "Light Mode Controller");
+            lightMode.put("firmware", "1.0");
+            lightMode.put("software", "20221201");
+
+            endpoints.put(lightMode);
 
 //            JSONObject toggle = new JSONObject();
 //            toggle.put("id", "lockSwitch");

@@ -10,9 +10,15 @@ internal val configEndpoints: String =
     "manufacturer": "TouchManufacturer"
   },
     {
-      "define": "ColorMode",
+      "define": "LightMode",
       "id": "lightMode",
       "model": "LightMode02",
+      "manufacturer": "TouchManufacturer"
+    },
+    {
+      "define": "GarageDoor",
+      "id": "garageDoor",
+      "model": "GarageExample",
       "manufacturer": "TouchManufacturer"
     }
 ]

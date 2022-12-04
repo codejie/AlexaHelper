@@ -32,14 +32,132 @@ internal val defineEndpoints: String =
       ]
     },
     {
-      "id": "ColorMode",
+      "id": "GarageDoor",
       "type": "Alexa.ModeController",
-      "displayCategories":["SWITCH"],
+      "displayCategories":["GARAGE_DOOR"],
+      "capabilities": [
+        {
+            "type": "AlexaInterface",
+            "interface": "Alexa.ModeController",
+            "instance": "GarageDoor.Position",
+            "version": "3",
+            "properties": {
+                "supported": [
+                    {
+                        "name": "mode"
+                    }
+                ],
+                "retrievable": true,
+                "proactivelyReported": true
+            },
+            "capabilityResources": {
+            "friendlyNames": [
+                {
+                    "@type": "asset",
+                    "value": {
+                        "assetId": "Alexa.Setting.Mode"
+                    }
+                }
+            ]
+            },
+            "configuration": {
+            "ordered": false,
+            "supportedModes": [
+                {
+                "value": "Position.Up",
+                "modeResources": {
+                    "friendlyNames": [
+                    {
+                        "@type": "asset",
+                        "value": {
+                        "assetId": "Alexa.Value.Open"
+                        }
+                    },
+                    {
+                        "@type": "text",
+                        "value": {
+                            "text": "Open",
+                            "locale": "en-US"
+                        }
+                    }
+                    ]
+                }
+                },
+                {
+                "value": "Position.Down",
+                "modeResources": {
+                    "friendlyNames": [
+                    {
+                        "@type": "asset",
+                        "value": {
+                        "assetId": "Alexa.Value.Close"
+                        }
+                    },
+                    {
+                        "@type": "text",
+                        "value": {
+                            "text": "Closed",
+                            "locale": "en-US"
+                        }
+                    }
+                    ]
+                }
+                }
+            ]
+            },
+            "semantics": {
+            "actionMappings": [
+                {
+                    "@type": "ActionsToDirective",
+                    "actions": ["Alexa.Actions.Close", "Alexa.Actions.Lower"],
+                    "directive": {
+                        "name": "SetMode",
+                        "payload": {
+                            "mode": "Position.Down"
+                        }
+                    }
+                },
+                {
+                    "@type": "ActionsToDirective",
+                    "actions": ["Alexa.Actions.Open", "Alexa.Actions.Raise"],
+                    "directive": {
+                        "name": "SetMode",
+                        "payload": {
+                            "mode": "Position.Up"
+                        }
+                    }
+                }
+            ],
+            "stateMappings": [
+                {
+                    "@type": "StatesToValue",
+                    "states": ["Alexa.States.Closed"],
+                    "value": "Position.Down"
+                },
+                {
+                    "@type": "StatesToValue",
+                    "states": ["Alexa.States.Open"],
+                    "value": "Position.Up"
+                }  
+            ]
+            }
+        },
+        {
+          "type": "AlexaInterface",
+          "interface": "Alexa",
+          "version": "3"
+        }
+      ]
+    },
+    {
+      "id": "LightMode",
+      "type": "Alexa.ModeController",
+      "displayCategories":["OTHER"],
       "capabilities": [
         {
           "type": "AlexaInterface",
           "interface": "Alexa.ModeController",
-          "instance": "Color",
+          "instance": "LightMode.Color",
           "version": "3",
           "properties": {
             "supported": [
@@ -56,35 +174,35 @@ internal val defineEndpoints: String =
               {
                 "@type": "asset",
                 "value": {
-                  "assetId": "Alexa.Setting.Mode"
+                  "assetId": "Alexa.Setting.Color"
                 }
               },
-              {
-                "@type": "text",
-                "value": {
-                  "text": "spot color",
-                  "locale": "en-US"
+                {
+                  "@type": "text",
+                  "value": {
+                    "text": "light color",
+                    "locale": "en-US"
+                  }
                 }
-              }
             ]
           },
           "configuration": {
             "ordered": false,
             "supportedModes": [
               {
-                "value": "Mode.Blue",
+                "value": "Color.Blue",
                 "modeResources": {
                   "friendlyNames": [
                     {
                       "@type": "asset",
                       "value": {
-                        "assetId": "Alexa.Setting.Mode"
+                        "assetId": "Alexa.Value.Open"
                       }
                     },
                     {
                       "@type": "text",
                       "value": {
-                        "text": "Blue",
+                        "text": "Open",
                         "locale": "en-US"
                       }
                     }
@@ -92,19 +210,19 @@ internal val defineEndpoints: String =
                 }
               },
               {
-                "value": "Mode.Yellow",
+                "value": "Color.Yellow",
                 "modeResources": {
                   "friendlyNames": [
                     {
                       "@type": "asset",
                       "value": {
-                        "assetId": "Alexa.Setting.Mode"
+                        "assetId": "Alexa.Value.Close"
                       }
                     },
                     {
                       "@type": "text",
                       "value": {
-                        "text": "Yellow",
+                        "text": "Closed",
                         "locale": "en-US"
                       }
                     }
@@ -117,21 +235,21 @@ internal val defineEndpoints: String =
             "actionMappings": [
               {
                 "@type": "ActionsToDirective",
-                "actions": ["Alexa.Actions.Open"],
+                "actions": ["Alexa.Actions.Close"],
                 "directive": {
                   "name": "SetMode",
                   "payload": {
-                    "mode": "Mode.Blue"
+                    "mode": "Color.Yellow"
                   }
                 }
               },
               {
                 "@type": "ActionsToDirective",
-                "actions": ["Alexa.Actions.Close"],
+                "actions": ["Alexa.Actions.Open"],
                 "directive": {
                   "name": "SetMode",
                   "payload": {
-                    "mode": "Mode.Yellow"
+                    "mode": "Color.Blue"
                   }
                 }
               }
@@ -139,29 +257,15 @@ internal val defineEndpoints: String =
             "stateMappings": [
               {
                 "@type": "StatesToValue",
-                "states": ["Alexa.States.Open"],
-                "value": "Mode.Blue"
+                "states": ["Alexa.States.Closed"],
+                "value": "Color.Yellow"
               },
               {
                 "@type": "StatesToValue",
-                "states": ["Alexa.States.Close"],
-                "value": "Mode.Yellow"
+                "states": ["Alexa.States.Open"],
+                "value": "Color.Blue"
               }
             ]
-          }
-        },
-        {
-          "type": "AlexaInterface",
-          "interface": "Alexa.EndpointHealth",
-          "version": "3",
-          "properties": {
-            "supported": [
-              {
-                "name": "connectivity"
-              }
-            ],
-            "proactivelyReported": true,
-            "retrievable": true
           }
         },
         {

@@ -73,4 +73,8 @@ object AlexaConst {
     const val NAME_TURN_ON = "TurnOn"
     const val NAME_TURN_OFF = "TurnOff"
 
+    const val NS_ALEXA_MODE_CONTROLLER = "Alexa.ModeController"
+    const val NAME_SET_MODE = "SetMode"
+    const val NAME_ADJUST_MODE = "AdjustMode"
+
 }
