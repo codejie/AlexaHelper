@@ -28,4 +28,5 @@ public class HandlerConst {
 
     public static final int MSG_TEMPLATE_RENDER_LIST = 23;
     public static final int MSG_UNSUPPORTED_ACTION = 24;
+    public static final int MSG_TEMPLATE_RENDER_WEATHER = 25;
 }

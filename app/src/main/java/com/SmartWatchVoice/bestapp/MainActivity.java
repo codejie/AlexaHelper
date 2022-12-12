@@ -26,6 +26,7 @@ import com.SmartWatchVoice.bestapp.handler.HandlerConst;
 import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.sdk.TemplateCardActionData;
 import com.SmartWatchVoice.bestapp.sdk.TemplateListActionData;
+import com.SmartWatchVoice.bestapp.sdk.TemplateWeatherActionData;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.system.SettingInfo;
@@ -127,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
                         onEndpointStateUpdated(action, extra, callback);
                     }
                     break;
+                    case "alexa.template.weather":{
+                        onTemplateWeather(action, extra, callback);
+                    }
+                    break;
                     default: {
                         Logger.w("App unsupported action - " + name);
 
@@ -145,6 +150,59 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private final String getIconUrl(JSONObject icon) throws JSONException {
+        if (icon == null)
+            return "";
+        return ((JSONObject)icon.getJSONArray("sources").get(0)).getString("url");
+    }
+
+    private void onTemplateWeather(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
+        TemplateWeatherActionData data = new TemplateWeatherActionData();
+
+        JSONObject payload = action.getJSONObject("payload");
+        data.dialogId = payload.getString("dialogId");
+        data.token = payload.getString("token");
+        data.mainTitle = payload.getString("mainTitle");
+        data.subTitle = payload.optString("subTitle");
+        JSONObject icon = payload.optJSONObject("icon");
+        if (icon != null) {
+            data.iconUrl = getIconUrl(icon); // ((JSONObject)icon.getJSONArray("sources").get(0)).getString("url");
+        }
+        data.description = payload.optString("description");
+
+        JSONObject current = payload.getJSONObject("current");
+        data.value = current.getString("value");
+        data.iconUrl = getIconUrl(current.optJSONObject("icon"));
+        data.code = current.optString("code");
+
+        JSONObject temperature = payload.getJSONObject("temperature");
+        data.high = temperature.getString("highValue");
+        data.highUrl = getIconUrl(temperature.optJSONObject("highIcon"));
+        data.low = temperature.getString("lowValue");
+        data.lowUrl = getIconUrl(temperature.optJSONObject("lowIcon"));
+
+        JSONArray forecast = payload.getJSONArray("forecast");
+        for (int i = 0; i < forecast.length(); ++ i){
+            JSONObject item = (JSONObject) forecast.get(i);
+            TemplateWeatherActionData.Item f =  new TemplateWeatherActionData.Item();
+            f.iconUrl = getIconUrl(item.optJSONObject("icon"));
+            f.code = item.optString("code");
+            f.day = item.getString("day");
+            f.date = item.getString("date");
+            f.high = item.getString("highValue");
+            f.low = item.getString("lowValue");
+            data.items.add(f);
+        }
+        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_TEMPLATE_RENDER_WEATHER, data);
+
+        JSONObject result = new JSONObject();
+        result.put("type", "result");
+        result.put("name", action.getString("name"));
+        result.put("version", 1);
+
+        callback.onResult(result.toString(), null);
+    }
 
     private void onEndpointStateUpdated(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
         JSONObject payload = action.getJSONObject("payload");

@@ -135,7 +135,7 @@ private fun onTemplateWeather(sdk: SmartWatchSDK, directive: Directive, parts: L
                 this.add(buildJsonObject {
                     item.jsonObject.getInt("iconCode", false)?.let { put("code", it) }
                     item.jsonObject.getJsonObject("image")?.let { makeImage(getImage(it))?.let { it1 ->
-                        put("image", it1)
+                        put("icon", it1)
                     } }
                     put("day", item.jsonObject.getString("day"))
                     put("date", item.jsonObject.getString("date"))
@@ -161,9 +161,9 @@ private fun onTemplateWeather(sdk: SmartWatchSDK, directive: Directive, parts: L
             })
             put("temperature", buildJsonObject {
                 put("highValue", highValue)
-                makeImage(highIcon)?.let { put("highValue", it) }
+                makeImage(highIcon)?.let { put("highIcon", it) }
                 put("lowValue", lowValue)
-                makeImage(lowIcon)?.let { put("lowValue", it) }
+                makeImage(lowIcon)?.let { put("lowIcon", it) }
             })
             forecast?.let { put("forecast", it) }
         })

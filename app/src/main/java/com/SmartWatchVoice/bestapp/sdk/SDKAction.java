@@ -38,15 +38,15 @@ public class SDKAction {
         JSONObject product = new JSONObject();
         JSONArray endpoints = new JSONArray();
         try {
-//            JSONObject spot = new JSONObject();
-//            spot.put("id", "lightSpot");
-//            spot.put("serialNumber", "spot-111");
-//            spot.put("friendlyName", "spot");
-//            spot.put("description", "LightSpot model 1");
-//            spot.put("firmware", "1.1");
-//            spot.put("software", "20221120");
-//
-//            endpoints.put(spot);
+            JSONObject spot = new JSONObject();
+            spot.put("id", "lightSpot");
+            spot.put("serialNumber", "spot-111");
+            spot.put("friendlyName", "spot");
+            spot.put("description", "LightSpot model 1");
+            spot.put("firmware", "1.1");
+            spot.put("software", "20221120");
+
+            endpoints.put(spot);
 
             JSONObject mode = new JSONObject();
             mode.put("id", "garageDoor");
@@ -67,6 +67,16 @@ public class SDKAction {
             lightMode.put("software", "20221201");
 
             endpoints.put(lightMode);
+
+            JSONObject lightInput = new JSONObject();
+            lightInput.put("id", "lightInput");
+            lightInput.put("serialNumber", "lightInput-333");
+            lightInput.put("friendlyName", "LightInput");
+            lightInput.put("description", "Light Input Controller");
+            lightInput.put("firmware", "1.0");
+            lightInput.put("software", "20221206");
+
+            endpoints.put(lightInput);
 
 //            JSONObject toggle = new JSONObject();
 //            toggle.put("id", "lockSwitch");

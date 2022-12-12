@@ -1,0 +1,24 @@
+{
+  "id": "LightInput",
+  "type": "Alexa.InputController",
+  "displayCategories": ["OTHER"],
+  "capabilities": [
+    {
+      "interface": "Alexa.InputController",
+      "type": "AlexaInterface",
+      "version": "3.0",
+      "configurations": {
+        "inputs": [
+          {
+            "name": "HDMI1",
+            "friendlyNames": ["h1"]
+          },
+          {
+            "name": "HDMI2",
+            "friendlyNames": ["h2"]
+          }
+        ]
+      }
+    }
+  ]
+}

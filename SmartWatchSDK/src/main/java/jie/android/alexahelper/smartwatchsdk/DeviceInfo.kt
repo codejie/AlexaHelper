@@ -252,6 +252,7 @@ private fun productToEndpointList(deviceInfo: DeviceInfo): JsonArray? {
                     put("capabilities", confEndpoint.getJsonArray("capabilities")!!)
 //                    put("connections", config.getJsonArray("connections")!!)
                 }
+                Logger.v("add endpoint - $k")
                 this.add(data)
             }
         }

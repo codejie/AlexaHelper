@@ -21,6 +21,7 @@ import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.sdk.TemplateCardActionData;
 import com.SmartWatchVoice.bestapp.databinding.FragmentSpeechBinding;
 import com.SmartWatchVoice.bestapp.sdk.TemplateListActionData;
+import com.SmartWatchVoice.bestapp.sdk.TemplateWeatherActionData;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.handler.HandlerConst;
 import com.SmartWatchVoice.bestapp.system.SettingInfo;
@@ -98,6 +99,10 @@ public class SpeechFragment extends Fragment {
                     case HandlerConst.MSG_TEMPLATE_RENDER_LIST:
                         onTemplateRenderList((TemplateListActionData)message.obj);
                         break;
+                    case HandlerConst.MSG_TEMPLATE_RENDER_WEATHER:
+                        onTemplateRenderWeather((TemplateWeatherActionData)message.obj);
+                        break;
+
                     default:;
                 }
                 return true;
@@ -108,6 +113,12 @@ public class SpeechFragment extends Fragment {
         binding = FragmentSpeechBinding.inflate(inflater, container, false);
         return binding.getRoot();
 
+    }
+
+    private void onTemplateRenderWeather(TemplateWeatherActionData data) {
+        SettingInfo.getInstance().templateWeatherActionData = data;
+
+        NavHostFragment.findNavController(SpeechFragment.this).navigate(R.id.action_speechFragment_to_templateWeatherFragment);
     }
 
     private void onTemplateRenderList(TemplateListActionData data) {

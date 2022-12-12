@@ -20,6 +20,12 @@ internal val configEndpoints: String =
       "id": "garageDoor",
       "model": "GarageExample",
       "manufacturer": "TouchManufacturer"
+    },
+    {
+      "define": "LightInput",
+      "id": "lightInput",
+      "model": "InputMode2",
+      "manufacturer": "TouchManufacturer"   
     }
 ]
     """.trimIndent()

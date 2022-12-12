@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_speechFragment_to_templateListFragment"
             app:destination="@id/templateListFragment" />
+        <action
+            android:id="@+id/action_speechFragment_to_templateWeatherFragment"
+            app:destination="@id/templateWeatherFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -77,4 +80,9 @@
         android:name="com.SmartWatchVoice.bestapp.TemplateListFragment"
         android:label="fragment_template_list"
         tools:layout="@layout/fragment_template_list" />
+    <fragment
+        android:id="@+id/templateWeatherFragment"
+        android:name="com.SmartWatchVoice.bestapp.TemplateWeatherFragment"
+        android:label="fragment_template_weather"
+        tools:layout="@layout/fragment_template_weather" />
 </navigation>
