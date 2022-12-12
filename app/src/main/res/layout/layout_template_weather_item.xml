@@ -11,13 +11,13 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/text_template_weather_day"
+            android:id="@+id/text_template_weather_item_day"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView" />
 
         <TextView
-            android:id="@+id/text_template_weather_date"
+            android:id="@+id/text_template_weather_item_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView" />
@@ -25,27 +25,27 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/image_template_weather_icon"
+        android:id="@+id/image_template_weather_item_icon"
         android:layout_width="89dp"
         android:layout_height="71dp"
         app:srcCompat="@drawable/alexa_mark" />
 
     <TextView
-        android:id="@+id/text_template_weather_code"
+        android:id="@+id/text_template_weather_item_code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="TextView" />
 
     <TextView
-        android:id="@+id/text_template_weather_low"
+        android:id="@+id/text_template_weather_item_low"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="TextView" />
 
     <TextView
-        android:id="@+id/text_template_weather_high"
+        android:id="@+id/text_template_weather_item_high"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
