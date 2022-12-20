@@ -132,6 +132,10 @@ public class MainActivity extends AppCompatActivity {
                         onTemplateWeather(action, extra, callback);
                     }
                     break;
+                    case "endpoint.stateExpected": {
+                        onEndpointStateExpected(action, extra, callback);
+                    }
+                    break;
                     default: {
                         Logger.w("App unsupported action - " + name);
 
@@ -150,6 +154,42 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void onEndpointStateExpected(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
+        JSONObject payload = action.getJSONObject("payload");
+        String endpointId = payload.getString("endpointId");
+        if (endpointId.equals("lightSpot")) {
+            JSONObject result = new JSONObject();
+            result.put("type", "result");
+            result.put("name", action.getString("name"));
+            result.put("version", 1);
+
+            JSONObject item = new JSONObject();
+            item.put("instance", "lightSpot");
+            item.put("name", "powerState");
+            item.put("value", "ON");
+
+            JSONArray items = new JSONArray();
+            items.put(item);
+
+            JSONObject p = new JSONObject();
+            p.put("token", payload.getString("token"));
+            p.put("endpointId", endpointId);
+            p.put("items", items);
+
+            result.put("payload", p);
+
+            callback.onResult(result.toString(), null);
+        } else {
+            JSONObject result = new JSONObject();
+            result.put("type", "result");
+            result.put("name", action.getString("name"));
+            result.put("version", 1);
+            result.put("code", -1);
+
+            callback.onResult(result.toString(), null);
+        }
+    }
 
     private final String getIconUrl(JSONObject icon) throws JSONException {
         if (icon == null)
