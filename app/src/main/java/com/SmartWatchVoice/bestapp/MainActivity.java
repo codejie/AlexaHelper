@@ -19,15 +19,13 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.SmartWatchVoice.bestapp.alexa.api.Payload;
 import com.SmartWatchVoice.bestapp.databinding.ActivityMainBinding;
-import com.SmartWatchVoice.bestapp.handler.DirectiveCallback;
-import com.SmartWatchVoice.bestapp.handler.HandlerConst;
 import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.sdk.TemplateCardActionData;
 import com.SmartWatchVoice.bestapp.sdk.TemplateListActionData;
 import com.SmartWatchVoice.bestapp.sdk.TemplateWeatherActionData;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;
+import com.SmartWatchVoice.bestapp.system.HandlerConst;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.system.SettingInfo;
 import com.SmartWatchVoice.bestapp.utils.Logger;
@@ -50,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
-
-//    private RequestContext requestContext = null;
 
     private Handler handler = null;
     private HandlerThread directiveThread = null;
@@ -112,10 +108,10 @@ public class MainActivity extends AppCompatActivity {
                         callback.onResult(result.toString(), null);
                     }
                     break;
-                    case "ep.powerController.stateUpdated": {
-                        onEndpointPowerControllerUpdated(action, extra, callback);
-                    }
-                    break;
+//                    case "ep.powerController.stateUpdated": {
+//                        onEndpointPowerControllerUpdated(action, extra, callback);
+//                    }
+//                    break;
                     case "alexa.template.card": {
                         onTemplateCard(action, extra, callback);
                     }
@@ -165,9 +161,9 @@ public class MainActivity extends AppCompatActivity {
             result.put("version", 1);
 
             JSONObject item = new JSONObject();
-            item.put("instance", "lightSpot");
+//            item.put("instance", "lightSpot");
             item.put("name", "powerState");
-            item.put("value", "ON");
+            item.put("value", SettingInfo.getInstance().lightSpotValue);
 
             JSONArray items = new JSONArray();
             items.put(item);
@@ -254,6 +250,7 @@ public class MainActivity extends AppCompatActivity {
                     String name = ((JSONObject)items.get(i)).getString("name");
                     if (name.equals("powerState")) {
                         String value = ((JSONObject)items.get(i)).getString("value");
+                        SettingInfo.getInstance().lightSpotValue = value;
                         Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_LIGHT_SPOT_STATE, value);
                         break;
                     }
@@ -276,23 +273,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Logger.w("App - unknown endpointId -" + endpointId);
         }
-//
-//        String state = payload.getString("value");
-//
-//        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_LIGHT_SPOT_STATE, state);
-//
-//        JSONObject p = new JSONObject();
-//        p.put("token", payload.getString("token"));
-//        p.put("endpointId", payload.getString("endpointId"));
-//        p.put("value", state);
-//
-//        JSONObject result = new JSONObject();
-//        result.put("type", "result");
-//        result.put("name", action.getString("name"));
-//        result.put("version", 1);
-//        result.put("payload", p);
-//
-//        callback.onResult(result.toString(), null);
     }
 
     private void onTemplateList(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
@@ -316,8 +296,6 @@ public class MainActivity extends AppCompatActivity {
                 ));
             }
         }
-
-//        SettingInfo.getInstance().templateListData = data;
 
         Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_TEMPLATE_RENDER_LIST, data);
 
@@ -355,26 +333,26 @@ public class MainActivity extends AppCompatActivity {
 
         callback.onResult(result.toString(), null);
     }
-
-    private void onEndpointPowerControllerUpdated(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
-        JSONObject payload = action.getJSONObject("payload");
-        String state = payload.getString("value");
-
-        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_LIGHT_SPOT_STATE, state);
-
-        JSONObject p = new JSONObject();
-        p.put("token", payload.getString("token"));
-        p.put("endpointId", payload.getString("endpointId"));
-        p.put("value", state);
-
-        JSONObject result = new JSONObject();
-        result.put("type", "result");
-        result.put("name", action.getString("name"));
-        result.put("version", 1);
-        result.put("payload", p);
-
-        callback.onResult(result.toString(), null);
-    }
+//
+//    private void onEndpointPowerControllerUpdated(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
+//        JSONObject payload = action.getJSONObject("payload");
+//        String state = payload.getString("value");
+//
+//        Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_LIGHT_SPOT_STATE, state);
+//
+//        JSONObject p = new JSONObject();
+//        p.put("token", payload.getString("token"));
+//        p.put("endpointId", payload.getString("endpointId"));
+//        p.put("value", state);
+//
+//        JSONObject result = new JSONObject();
+//        result.put("type", "result");
+//        result.put("name", action.getString("name"));
+//        result.put("version", 1);
+//        result.put("payload", p);
+//
+//        callback.onResult(result.toString(), null);
+//    }
 
     private void onSpeechExpected(JSONObject action, Object extra, OnResultCallback callback) throws JSONException {
         JSONObject payload = action.getJSONObject("payload");
@@ -433,10 +411,7 @@ public class MainActivity extends AppCompatActivity {
             if (caption != null) {
                 String content = caption.getString("content");
                 if (content != null) {
-                    Payload.Caption webvtt = new Payload.Caption();
-                    webvtt.content = content;
-                    webvtt.type = caption.getString("type");
-                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_WEB_VTT, webvtt);
+                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().speechFragmentHandler, HandlerConst.MSG_WEB_VTT, content);
                 }
             }
         }
@@ -591,21 +566,6 @@ public class MainActivity extends AppCompatActivity {
         RuntimeInfo.getInstance().start(this);
 
         initHandlers();
-//        initRequestContext();
-
-//        SDKAction.setDeviceInfo(new OnResultCallback() {
-//            @Override
-//            public void onResult(@NonNull String data, @Nullable Object extra) {
-//                Logger.d("setInfo result - " + data);
-//                SDKAction.syncState(new OnResultCallback() {
-//                    @Override
-//                    public void onResult(@NonNull String data, @Nullable Object extra) {
-//                        Logger.d("syncState result - " + data);
-//                    }
-//                });
-//            }
-//        });
-
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -634,16 +594,12 @@ public class MainActivity extends AppCompatActivity {
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
             return NavigationUI.onNavDestinationSelected(item, navController)
                     || super.onOptionsItemSelected(item);
-        } else
-        if (id == R.id.action_test) {
-            actionTest();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     private void actionTest() {
-//        pingDownChannel();
         RuntimeInfo.getInstance().loginFragmentHandler.sendEmptyMessage(HandlerConst.MSG_LOGIN_SUCCESS);
     }
 
@@ -657,8 +613,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        requestContext.onResume();
-//        Device.Companion.getInstance().onResume();
         smartWatchSDK.resume(this);
     }
 
@@ -669,10 +623,7 @@ public class MainActivity extends AppCompatActivity {
 
         smartWatchSDK.detach(this);
 
-
-//        SettingInfo.getInstance().flush();
         RuntimeInfo.getInstance().stop();
-//
 
         super.onDestroy();
     }
@@ -697,23 +648,23 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                         break;
-                    case HandlerConst.MSG_LOGIN_SUCCESS:
-                    case HandlerConst.MSG_REFRESH_TOKEN_SUCCESS:
-                        scheduleTokenRefresh();
-                        break;
-                    case HandlerConst.MSG_CHANNEL_CREATED:
-                    case HandlerConst.MSG_PING_CHANNEL_SUCCESS:
-                        scheduleChannelPing();
-                        break;
-                    case HandlerConst.MSG_REFRESH_TOKEN:
-                        refreshAuthorizationToken();
-                        break;
-                    case HandlerConst.MSG_PING_CHANNEL:
-                        pingDownChannel();
-                        break;
-                    case HandlerConst.MSG_CHANNEL_CLOSED:
-                        onDownChannelClosed();
-                        break;
+//                    case HandlerConst.MSG_LOGIN_SUCCESS:
+//                    case HandlerConst.MSG_REFRESH_TOKEN_SUCCESS:
+//                        scheduleTokenRefresh();
+//                        break;
+//                    case HandlerConst.MSG_CHANNEL_CREATED:
+//                    case HandlerConst.MSG_PING_CHANNEL_SUCCESS:
+//                        scheduleChannelPing();
+//                        break;
+//                    case HandlerConst.MSG_REFRESH_TOKEN:
+//                        refreshAuthorizationToken();
+//                        break;
+//                    case HandlerConst.MSG_PING_CHANNEL:
+//                        pingDownChannel();
+//                        break;
+//                    case HandlerConst.MSG_CHANNEL_CLOSED:
+//                        onDownChannelClosed();
+//                        break;
                     case HandlerConst.MSG_LIGHT_SPOT_STATE:
                         onLightSpotState();
                         break;
@@ -726,10 +677,10 @@ public class MainActivity extends AppCompatActivity {
         });
         RuntimeInfo.getInstance().mainHandler = handler;
 
-        directiveThread = new HandlerThread("DirectiveHandlerThread");
-        directiveThread.start();
-        directiveHandler = Handler.createAsync(directiveThread.getLooper(), new DirectiveCallback());
-        RuntimeInfo.getInstance().directiveHandler = directiveHandler;
+//        directiveThread = new HandlerThread("DirectiveHandlerThread");
+//        directiveThread.start();
+//        directiveHandler = Handler.createAsync(directiveThread.getLooper(), new DirectiveCallback());
+//        RuntimeInfo.getInstance().directiveHandler = directiveHandler;
     }
 
     private void onUnsupportedAction(String action) {
@@ -775,68 +726,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-//
-//    private void initRequestContext() {
-//        requestContext = RequestContext.create(this.getApplicationContext());
-//        requestContext.registerListener(new AuthorizeListener() {
-//            @Override
-//            public void onSuccess(AuthorizeResult authorizeResult) {
-////                HttpChannel.getInstance().onAuthorizeSuccess(authorizeResult);
-//                onAuthorizeSuccess(authorizeResult);
-//            }
-//
-//            @Override
-//            public void onError(AuthError authError) {
-//                Logger.e("Authorization error - " + authError.getMessage());
-//            }
-//
-//            @Override
-//            public void onCancel(AuthCancellation authCancellation) {
-//                Logger.w("Authorization canceled.");
-//            }
-//        });
-//    }
-//
-//    private void onAuthorizeSuccess(AuthorizeResult authorizeResult) {
-//        final String authCode = authorizeResult.getAuthorizationCode();
-//        final String redirectUri = authorizeResult.getRedirectURI();
-//
-//        String authClientId = authorizeResult.getClientId();
-//
-////        fetchAuthToken(authCode, redirectUri);
-//
-//        RuntimeInfo.getInstance().updateAuthInfo(authCode, redirectUri);
-//        RuntimeInfo.getInstance().authInfo.authClientId = authClientId;
-//
-//        fetchAuthorizationToken();
-//    }
-//
-//    public void authorize() {
-////        RuntimeInfo.AuthorizationInfo authInfo = RuntimeInfo.getInstance().authInfo;
-////        if (authInfo == null || authInfo.refreshToken == null) {
-////        String VerifierCode = UUID.randomUUID().toString();
-//        RuntimeInfo.getInstance().updateAuthInfoVerifierCode(UUID.randomUUID().toString());
-//        final String CODE_CHALLENGE = Helper.makeCodeChallenge(RuntimeInfo.getInstance().authInfo.verifierCode); //VerifierCode); // DeviceInfo.VerifierCode);
-//
-//        final JsonObject attrs = new JsonObject();
-//        attrs.addProperty("deviceSerialNumber", DeviceInfo.ProductSerialNumber);
-//
-//        final JsonObject scopeData = new JsonObject();
-//        scopeData.add("productInstanceAttributes", attrs);
-//        scopeData.addProperty("productID", DeviceInfo.ProductId);
-//
-//        try {
-//            AuthorizationManager.authorize(new AuthorizeRequest.Builder(requestContext)
-//                    .addScopes(ScopeFactory.scopeNamed("alexa:voice_service:pre_auth"),
-//                            ScopeFactory.scopeNamed("alexa:all", new JSONObject(scopeData.toString())))
-//                    .forGrantType(AuthorizeRequest.GrantType.AUTHORIZATION_CODE)
-//                    .withProofKeyParameters(CODE_CHALLENGE, "S256")
-//                    .build());
-//        } catch (JSONException e) {
-//            Logger.w("fetch token fail - " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//    }
 
     public void fetchProductAccessToken() {
 
@@ -859,47 +748,7 @@ public class MainActivity extends AppCompatActivity {
                     RuntimeInfo.getInstance().updateAuthInfo(token);
 
                     Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_SUCCESS);
-                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().mainHandler, HandlerConst.MSG_LOGIN_SUCCESS);
-
-                } catch (JSONException e) {
-                    Logger.w("login result parse failed - " + e.getMessage());
-                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_FAIL);
-                }
-            }
-        });
-    }
-
-    private void fetchAuthorizationToken() {
-        JSONObject payload = new JSONObject();
-        JSONObject json = new JSONObject();
-
-        try {
-            payload.put("verifierCode", RuntimeInfo.getInstance().authInfo.verifierCode);
-            payload.put("authorizationCode", RuntimeInfo.getInstance().authInfo.code);
-            payload.put("redirectUri", RuntimeInfo.getInstance().authInfo.redirectUri);
-            payload.put("authorizationClientId", RuntimeInfo.getInstance().authInfo.authClientId);
-
-            json.put("type", "action");
-            json.put("name", "alexa.login");
-            json.put("version", 1);
-
-            json.put("payload", payload);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        smartWatchSDK.action(json.toString(), null, new OnResultCallback() {
-            @Override
-            public void onResult(@NonNull String data, @Nullable Object extra) {
-                Logger.d("login - " + data);
-                try {
-                    JSONObject result = new JSONObject(data);
-                    JSONObject payload = result.getJSONObject("payload");
-                    String token = payload.getString("refreshToken");
-                    RuntimeInfo.getInstance().updateAuthInfo(token);
-
-                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_SUCCESS);
-                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().mainHandler, HandlerConst.MSG_LOGIN_SUCCESS);
+//                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().mainHandler, HandlerConst.MSG_LOGIN_SUCCESS);
 
                 } catch (JSONException e) {
                     Logger.w("login result parse failed - " + e.getMessage());
@@ -933,7 +782,7 @@ public class MainActivity extends AppCompatActivity {
                     RuntimeInfo.getInstance().updateAuthInfo(result.getJSONObject("payload").getString("refreshToken"));
 
                     Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_SUCCESS);
-                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().mainHandler, HandlerConst.MSG_LOGIN_SUCCESS);
+//                    Utils.sendToHandlerMessage(RuntimeInfo.getInstance().mainHandler, HandlerConst.MSG_LOGIN_SUCCESS);
                 } catch (JSONException e) {
                     Logger.d("login with Token result parse failed - " + e.getMessage());
                     Utils.sendToHandlerMessage(RuntimeInfo.getInstance().loginFragmentHandler, HandlerConst.MSG_LOGIN_FAIL);
@@ -942,31 +791,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void scheduleTokenRefresh() {
-        Message msg = Message.obtain();
-        msg.what = HandlerConst.MSG_REFRESH_TOKEN;
-        RuntimeInfo.getInstance().mainHandler.sendMessageDelayed(msg, 55 * 60 * 1000);
-    }
+//    private void scheduleTokenRefresh() {
+//        Message msg = Message.obtain();
+//        msg.what = HandlerConst.MSG_REFRESH_TOKEN;
+//        RuntimeInfo.getInstance().mainHandler.sendMessageDelayed(msg, 55 * 60 * 1000);
+//    }
+//
+//    private void scheduleChannelPing() {
+//        Message msg = Message.obtain();
+//        msg.what = HandlerConst.MSG_PING_CHANNEL;
+//
+//        RuntimeInfo.getInstance().mainHandler.sendMessageDelayed(msg, 280 * 1000);
+//        Logger.v("schedule channel ping");
+//    }
 
-    private void scheduleChannelPing() {
-        Message msg = Message.obtain();
-        msg.what = HandlerConst.MSG_PING_CHANNEL;
+//    private void refreshAuthorizationToken() {
+////        HttpChannel.getInstance().refreshAccessToken();
+//    }
+//
+//    private void pingDownChannel() {
+////        HttpChannel.getInstance().ping();
+//    }
 
-        RuntimeInfo.getInstance().mainHandler.sendMessageDelayed(msg, 280 * 1000);
-        Logger.v("schedule channel ping");
-    }
-
-    private void refreshAuthorizationToken() {
-//        HttpChannel.getInstance().refreshAccessToken();
-    }
-
-    private void pingDownChannel() {
-//        HttpChannel.getInstance().ping();
-    }
-
-    private void onDownChannelClosed() {
-        RuntimeInfo.getInstance().mainHandler.removeMessages(HandlerConst.MSG_PING_CHANNEL);
-//        HttpChannel.getInstance().recreateDownChannel();
-    }
+//    private void onDownChannelClosed() {
+//        RuntimeInfo.getInstance().mainHandler.removeMessages(HandlerConst.MSG_PING_CHANNEL);
+////        HttpChannel.getInstance().recreateDownChannel();
+//    }
 
 }

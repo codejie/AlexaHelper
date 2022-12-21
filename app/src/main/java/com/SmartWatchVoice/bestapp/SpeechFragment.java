@@ -15,15 +15,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.SmartWatchVoice.bestapp.action.speech_recognizer.ExpectSpeechTimeOutAction;
-import com.SmartWatchVoice.bestapp.alexa.api.Payload;
 import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.sdk.TemplateCardActionData;
 import com.SmartWatchVoice.bestapp.databinding.FragmentSpeechBinding;
 import com.SmartWatchVoice.bestapp.sdk.TemplateListActionData;
 import com.SmartWatchVoice.bestapp.sdk.TemplateWeatherActionData;
+import com.SmartWatchVoice.bestapp.system.HandlerConst;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
-import com.SmartWatchVoice.bestapp.handler.HandlerConst;
 import com.SmartWatchVoice.bestapp.system.SettingInfo;
 import com.SmartWatchVoice.bestapp.system.player.MPEGPlayer;
 import com.SmartWatchVoice.bestapp.system.player.PCMRecorder;
@@ -76,7 +74,7 @@ public class SpeechFragment extends Fragment {
                         resetView();
                         break;
                     case HandlerConst.MSG_WEB_VTT:
-                        onWebVTT((Payload.Caption)message.obj);
+                        onWebVTT((String)message.obj);
                         break;
                     case HandlerConst.MSG_AUDIO_FILE:
                         onAudioFile((String)message.obj);
@@ -234,32 +232,7 @@ public class SpeechFragment extends Fragment {
                 Logger.d("speechRecognize result - " + data);
             }
         });
-//
-//
-//        new RecognizeAction()
-//                .create()
-//                .addAttachment("audio", file, "application/octet-stream")
-//                .post(new EventAction.OnChannelResponse() {
-//                    @Override
-//                    public void OnResponse(@NonNull Response response) {
-//                        ResponseStreamDirectiveParser directiveParser = new ResponseStreamDirectiveParser();
-//                        BufferedSource source = response.body().source();
-//
-//                        try {
-//                            List<DirectiveParser.Part> parts = directiveParser.parseParts(source);
-//                            if (parts.size() > 0) {
-////                                Message.obtain(RuntimeInfo.getInstance().directiveHandler, HandlerConst.MSG_STREAM_DIRECTIVE_PARTS, parts).sendToTarget();
-//                                Utils.sendToHandlerMessage(RuntimeInfo.getInstance().directiveHandler, HandlerConst.MSG_STREAM_DIRECTIVE_PARTS, parts);
-//                            }
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                        response.close();
-//                    }
-//                });
 
-//        binding.buttonSpeechPcmPlay.setVisibility(View.VISIBLE);
     }
 
     private void resetView() {
@@ -285,13 +258,12 @@ public class SpeechFragment extends Fragment {
         mp3Filenames.clear();
     }
 
-    private void onWebVTT(Payload.Caption caption) {
-        String vtt = caption.content;
+    private void onWebVTT(String caption) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (binding != null)
-                    binding.textSpeech.setText(vtt);
+                    binding.textSpeech.setText(caption);
             }
         });
     }
@@ -318,7 +290,7 @@ public class SpeechFragment extends Fragment {
     }
 
     private void onExpectSpeechTimeout() {
-        new ExpectSpeechTimeOutAction().create().post();
+//        new ExpectSpeechTimeOutAction().create().post();
 
         binding.imageExpectSpeech.clearAnimation();
         binding.imageExpectSpeech.setVisibility(View.INVISIBLE);

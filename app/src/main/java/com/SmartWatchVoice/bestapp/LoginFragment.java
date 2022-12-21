@@ -12,8 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.SmartWatchVoice.bestapp.databinding.FragmentLoginBinding;
-import com.SmartWatchVoice.bestapp.handler.HandlerConst;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;
+import com.SmartWatchVoice.bestapp.system.HandlerConst;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.utils.Utils;
 
@@ -49,13 +49,6 @@ public class LoginFragment extends Fragment {
             }
         });
         RuntimeInfo.getInstance().loginFragmentHandler = handler;
-
-//        Device device = Device.Companion.getInstance();
-//        device.attach(this.getContext());
-//        device.setProductInfo(new jie.android.alexahelper.device.ProductInfo(
-//            DeviceInfo.ClientId, DeviceInfo.ProductId, DeviceInfo.ProductSerialNumber
-//        ));
-
 
         binding = FragmentLoginBinding.inflate(inflater, container, false);
         return binding.getRoot();

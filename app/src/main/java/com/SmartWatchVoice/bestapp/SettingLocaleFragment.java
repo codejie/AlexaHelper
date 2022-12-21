@@ -15,9 +15,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.SmartWatchVoice.bestapp.action.EventAction;
-import com.SmartWatchVoice.bestapp.action.system.LocalesChangedAction;
-import com.SmartWatchVoice.bestapp.action.system.TimeZoneChangedAction;
 import com.SmartWatchVoice.bestapp.databinding.FragmentSettingLocaleBinding;
 import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;

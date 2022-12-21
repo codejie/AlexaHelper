@@ -1,12 +1,9 @@
 package com.SmartWatchVoice.bestapp.system;
 
-import com.SmartWatchVoice.bestapp.alexa.api.Context;
 import com.SmartWatchVoice.bestapp.sdk.TemplateListActionData;
 import com.SmartWatchVoice.bestapp.sdk.TemplateWeatherActionData;
 import com.SmartWatchVoice.bestapp.system.setting.AlertInfo;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +19,7 @@ public class SettingInfo {
     private static SettingInfo instance = null;
     public TemplateListActionData templateListData = null;
     public TemplateWeatherActionData templateWeatherActionData = null;
+    public String lightSpotValue = "OFF";
 
     public static SettingInfo getInstance() {
         if (instance == null) {

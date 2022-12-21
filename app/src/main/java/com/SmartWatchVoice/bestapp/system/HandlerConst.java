@@ -1,4 +1,4 @@
-package com.SmartWatchVoice.bestapp.handler;
+package com.SmartWatchVoice.bestapp.system;
 
 public class HandlerConst {
     public static final int MSG_LOG = 1;

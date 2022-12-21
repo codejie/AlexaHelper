@@ -16,8 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.SmartWatchVoice.bestapp.action.EventAction;
-import com.SmartWatchVoice.bestapp.action.system.TimeZoneChangedAction;
 import com.SmartWatchVoice.bestapp.databinding.FragmentSettingTimeZoneBinding;
 import com.SmartWatchVoice.bestapp.sdk.SDKAction;
 import com.SmartWatchVoice.bestapp.system.DeviceInfo;

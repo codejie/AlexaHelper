@@ -87,7 +87,10 @@ internal object DeviceInfo {
     fun getEndpointProperty(id: String, instance: String?, name: String): Endpoint.Property? {
         val endpoint = endpoints[id]
         return if (endpoint != null) {
-            endpoint.properties?.find { it -> (it.instance == instance && it.name == name) }
+            if (instance != null)
+                endpoint.properties?.find { it -> (it.instance == instance && it.name == name) }
+            else
+                endpoint.properties?.find { it -> (it.name == name) }
         } else {
             null
         }

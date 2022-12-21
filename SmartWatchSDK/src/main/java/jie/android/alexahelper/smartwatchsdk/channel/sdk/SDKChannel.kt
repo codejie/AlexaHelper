@@ -50,9 +50,13 @@ class SDKChannel constructor(private val sdk: SmartWatchSDK) {
     }
 
     fun stop() {
-        if (!(channel.isClosedForSend && channel.isClosedForReceive))
-            channel.close()
-        job?.cancel()
+        try {
+            job?.cancel()
+            if (!(channel.isClosedForSend && channel.isClosedForReceive))
+                channel.close()
+        } catch (e: Exception) {
+            Logger.w("channel exception - ${e.message}")
+        }
     }
 
     private fun onNotification(sdk: SmartWatchSDK, message: SDKNotification.Message) {

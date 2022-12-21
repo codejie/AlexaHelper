@@ -14,11 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
-import com.SmartWatchVoice.bestapp.action.EventAction;
-import com.SmartWatchVoice.bestapp.action.alexa_do_not_disturb.DoNotDisturbChangedAction;
 import com.SmartWatchVoice.bestapp.databinding.FragmentHomeBinding;
-import com.SmartWatchVoice.bestapp.handler.HandlerConst;
 import com.SmartWatchVoice.bestapp.sdk.SDKAction;
+import com.SmartWatchVoice.bestapp.system.HandlerConst;
 import com.SmartWatchVoice.bestapp.system.RuntimeInfo;
 import com.SmartWatchVoice.bestapp.system.SettingInfo;
 import com.SmartWatchVoice.bestapp.utils.Logger;
@@ -26,7 +24,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import jie.android.alexahelper.smartwatchsdk.protocol.sdk.OnResultCallback;
-import okhttp3.Response;
 
 public class HomeFragment extends Fragment {
 

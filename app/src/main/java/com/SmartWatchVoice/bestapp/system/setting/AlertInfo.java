@@ -1,8 +1,5 @@
 package com.SmartWatchVoice.bestapp.system.setting;
 
-import com.SmartWatchVoice.bestapp.alexa.api.Context;
-import com.SmartWatchVoice.bestapp.alexa.api.Directive;
-import com.SmartWatchVoice.bestapp.alexa.api.Payload;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,30 +76,30 @@ public class AlertInfo implements SettingItem {
 //        });
 //        return ret;
 //    }
-
-    public void setAlert(final Payload payload) {
-        alerts.removeIf(item -> item.token.equals(payload.token));
-
-        Alert alert = new Alert();
-        alert.token = payload.token;
-        alert.type = payload.type;
-        alert.state = State.ENABLED;
-        alert.scheduledTime = payload.scheduledTime;
-        alert.assetIds = new ArrayList<String>();
-        if (payload.assets != null) {
-            payload.assets.forEach(item -> {
-                alert.assetIds.add(item.assetId);
-            });
-        }
-        alert.playOrder = payload.assetPlayOrder;
-        alert.backgroundAssetId = payload.backgroundAlertAsset;
-        alert.loopCount = payload.loopCount;
-        alert.loopPauseInMilliSeconds = payload.loopPauseInMilliSeconds;
-        alert.label = payload.label;
-        alert.originalTime = payload.originalTime;
-
-        alerts.add(alert);
-    }
+//
+//    public void setAlert(final Payload payload) {
+//        alerts.removeIf(item -> item.token.equals(payload.token));
+//
+//        Alert alert = new Alert();
+//        alert.token = payload.token;
+//        alert.type = payload.type;
+//        alert.state = State.ENABLED;
+//        alert.scheduledTime = payload.scheduledTime;
+//        alert.assetIds = new ArrayList<String>();
+//        if (payload.assets != null) {
+//            payload.assets.forEach(item -> {
+//                alert.assetIds.add(item.assetId);
+//            });
+//        }
+//        alert.playOrder = payload.assetPlayOrder;
+//        alert.backgroundAssetId = payload.backgroundAlertAsset;
+//        alert.loopCount = payload.loopCount;
+//        alert.loopPauseInMilliSeconds = payload.loopPauseInMilliSeconds;
+//        alert.label = payload.label;
+//        alert.originalTime = payload.originalTime;
+//
+//        alerts.add(alert);
+//    }
 
     public void setAlert(String token, String type, String scheduledTime, Long loopCount, Long loopPause,
                          String label) {
