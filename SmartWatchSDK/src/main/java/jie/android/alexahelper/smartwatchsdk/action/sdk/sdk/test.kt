@@ -10,12 +10,7 @@ fun testAction(sdk: SmartWatchSDK, action: ActionWrapper, callback: ActionResult
     sdk.toAction(action) { _ ->
 
     }
-//    sdk.onActionListener.onAction(action.data.toString(), action.extra, object: OnResultCallback {
-//        override fun onResult(data: String, extra: Any?) {
-//            Logger.d("get action result - $data")
-//        }
-//    })
+
     val result = ResultWrapper(action.name, SDKConst.RESULT_CODE_SUCCESS)
     callback(result)
-//    action.callback?.onResult(action.data.toString(), action.extra)
 }

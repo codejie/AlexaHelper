@@ -229,16 +229,3 @@ private fun postAlexaDiscovery(
     }
 }
 
-//fun tokenUpdatedAction(sdk: SmartWatchSDK, success: Boolean, message: String?, callback: OnResultCallback) {
-//    val action = ActionWrapper(SDKConst.ACTION_ALEXA_TOKEN_UPDATED).apply {
-//        val payload = buildJsonObject {
-//            put("accessToken", RuntimeInfo.accessToken)
-//            put("refreshToken", RuntimeInfo.refreshToken)
-//        }
-//        setPayload(payload)
-//    }
-//
-//    sdk.toAction(action) { _ ->
-//
-//    }
-//}

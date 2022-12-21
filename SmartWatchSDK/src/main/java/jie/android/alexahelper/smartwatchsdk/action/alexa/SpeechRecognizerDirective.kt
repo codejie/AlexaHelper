@@ -43,11 +43,6 @@ private fun onExpectSpeech(sdk: SmartWatchSDK, directive: Directive, parts: List
         sdk.toAction(action) { _ ->
         }
 
-//        sdk.onActionListener.onAction(action.toString(), null, object: OnResultCallback {
-//            override fun onResult(data: String, extra: Any?) {
-//                Logger.d("$action.name result - $data")
-//            }
-//        })
     } catch (e: Exception) {
         Logger.w("onExpectSpeech exception - ${e.message}")
     }
@@ -67,11 +62,6 @@ private fun onStopCapture(sdk: SmartWatchSDK, directive: Directive, parts: List<
 
         }
 
-//        sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-//            override fun onResult(data: String, extra: Any?) {
-//                Logger.d("$action.name result - $data")
-//            }
-//        })
     } catch (e: Exception) {
         Logger.w("onStopCapture exception - ${e.message}")
     }

@@ -49,19 +49,6 @@ private fun onSpeak(sdk: SmartWatchSDK, directive: Directive, parts: List<Direct
 
         }
 
-//        if (part != null) {
-//            sdk.onActionListener.onAction(
-//                action.toString(),
-//                (part as DirectiveParser.OctetBuffersPart).buffer,
-//                object :
-//                    OnResultCallback {
-//                    override fun onResult(data: String, extra: Any?) {
-//                        Logger.d("$action.name result - $data")
-//                    }
-//                })
-//        } else {
-//            Logger.w("Can't find audio data - ${audio[1]}")
-//        }
     } catch (e: Exception) {
         Logger.w("onSpeak exception - ${e.message}")
     }

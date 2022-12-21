@@ -17,7 +17,7 @@ internal typealias ActionResultCallback = (result: ResultWrapper) -> Unit
 
 class SmartWatchSDK constructor() {
     internal lateinit var requestContext: RequestContext
-    internal lateinit var onActionListener: OnActionListener;
+    private lateinit var onActionListener: OnActionListener;
 
     internal val httpChannel: HttpChannel = HttpChannel(this)
 
@@ -98,11 +98,6 @@ class SmartWatchSDK constructor() {
                 }
                 this.toAction(action) { _ ->
                 }
-//                AlexaAction.tokenUpdated(this, success, reason, object : OnResultCallback {
-//                    override fun onResult(data: String, extra: Any?) {
-//                        Logger.v("token updated result - $data")
-//                    }
-//                })
             }
         }
     }

@@ -32,17 +32,6 @@ private fun onSetDoNotDisturb(sdk: SmartWatchSDK, directive: Directive, parts: L
             reportDoNotDisturb(sdk, enabled)
         }
 
-//        sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-//            override fun onResult(data: String, extra: Any?) {
-//                try {
-//                    val result = ResultWrapper.parse(data, extra)
-//                    val enabled = result.getPayload()!!.getBoolean("enabled")!!
-//                    reportDoNotDisturb(sdk, enabled)
-//                } catch (e: Exception) {
-//                    Logger.w("${SDKConst.ACTION_ALEXA_DND_UPDATED} Result exception - ${e.message}")
-//                }
-//            }
-//        })
     } else {
         Logger.w("$directive missing filed - enabled")
     }

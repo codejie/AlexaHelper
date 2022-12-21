@@ -33,15 +33,6 @@ private fun onSetMute(sdk: SmartWatchSDK, directive: Directive, parts: List<Dire
         val volume = result.getPayload()!!.getInt("volume")!!
         muteChanged(sdk, muted, volume)
     }
-
-//    sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-//        override fun onResult(data: String, extra: Any?) {
-//            val result = ResultWrapper.parse(data, extra)
-//            val volume = result.getPayload()!!.getInt("volume")!!
-//
-//            muteChanged(sdk, muted, volume)
-//        }
-//    })
 }
 
 private fun muteChanged(sdk: SmartWatchSDK, muted: Boolean, volume: Int) {
@@ -69,14 +60,6 @@ private fun onAdjustVolume(sdk: SmartWatchSDK, directive: Directive, parts: List
         volumeChanged(sdk, volume)
     }
 
-//    sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-//        override fun onResult(data: String, extra: Any?) {
-//            val result = ResultWrapper.parse(data, extra)
-//            val volume = result.getPayload()!!.getInt("volume")!!
-//
-//            volumeChanged(sdk, volume)
-//        }
-//    })
 }
 
 private fun onSetVolume(sdk: SmartWatchSDK, directive: Directive, parts: List<DirectiveParser.Part>) {
@@ -95,14 +78,6 @@ private fun onSetVolume(sdk: SmartWatchSDK, directive: Directive, parts: List<Di
         volumeChanged(sdk, volume)
     }
 
-//    sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-//        override fun onResult(data: String, extra: Any?) {
-//            val result = ResultWrapper.parse(data, extra)
-//            val volume = result.getPayload()!!.getInt("volume")!!
-//
-//            volumeChanged(sdk, volume)
-//        }
-//    })
 }
 
 private fun volumeChanged(sdk: SmartWatchSDK, volume: Int) {

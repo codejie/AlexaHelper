@@ -37,22 +37,6 @@ private fun onDeleteAlerts(sdk: SmartWatchSDK, directive: Directive, parts: List
                     postDeleteAlertsFailed(sdk, result)
                 }
             }
-
-//            sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-//                override fun onResult(data: String, extra: Any?) {
-//                    try {
-//                        val result = ResultWrapper.parse(data, extra)
-//                        if (result.code == SDKConst.RESULT_CODE_SUCCESS) {
-//                            postDeleteAlertsSucceeded(sdk, result, extra)
-//                        } else {
-//                            postDeleteAlertsFailed(sdk, result, extra)
-//                        }
-//                    } catch (e: Exception) {
-//                        Logger.w("Alert result parse failed - ${e.message}")
-//                    }
-//                }
-//
-//            })
         } catch (e: Exception) {
             Logger.w("DeleteAlert exception - ${e.message}")
         }
@@ -97,20 +81,6 @@ private fun onDeleteAlert(sdk: SmartWatchSDK, directive: Directive, parts: List<
                 }
             }
 
-//            sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-//                override fun onResult(data: String, extra: Any?) {
-//                    try {
-//                        val result = ResultWrapper.parse(data, extra);
-//                        if (result.code == SDKConst.RESULT_CODE_SUCCESS) {
-//                            postDeleteAlertSucceeded(sdk, result, extra)
-//                        } else {
-//                            postDeleteAlertFailed(sdk, result, extra)
-//                        }
-//                    } catch (e: Exception) {
-//                        Logger.w("Alert result parse failed - ${e.message}")
-//                    }
-//                }
-//            })
         } catch (e: Exception) {
             Logger.w("DeleteAlert exception - ${e.message}")
         }
@@ -175,20 +145,6 @@ private fun onSetAlert(sdk: SmartWatchSDK, directive: Directive, parts: List<Dir
                 }
             }
 
-//            sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-//                override fun onResult(data: String, extra: Any?) {
-//                    try {
-//                        val result = ResultWrapper.parse(data, extra);
-//                        if (result.code == SDKConst.RESULT_CODE_SUCCESS) {
-//                            postSetAlertSucceeded(sdk, result, extra)
-//                        } else {
-//                            postSetAlertFailed(sdk, result, extra)
-//                        }
-//                    } catch (e: Exception) {
-//                        Logger.w("Alert result parse failed - ${e.message}")
-//                    }
-//                }
-//            })
         } catch (e: Exception) {
             Logger.w("setAlert exception - ${e.message}")
         }

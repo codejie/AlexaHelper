@@ -29,15 +29,7 @@ private fun onReportState(sdk: SmartWatchSDK, directive: Directive, parts: List<
 
         stateReport(sdk, timeZone, locales)
     }
-//    sdk.onActionListener.onAction(action.toString(), null, object: OnResultCallback {
-//        override fun onResult(data: String, extra: Any?) {
-//            val result = ResultWrapper.parse(data, extra)
-//            val timeZone = result.getPayload()!!.getString("timeZone")!!
-//            val locales = result.getPayload()!!.getJsonArray("locales")!!
-//
-//            stateReport(sdk, timeZone, locales)
-//        }
-//    })
+
 }
 
 private fun stateReport(sdk: SmartWatchSDK, timeZone: String, locales: JsonArray) {
@@ -84,17 +76,7 @@ private fun onSetLocales(sdk: SmartWatchSDK, directive: Directive, parts: List<D
             val ret = result.getPayload()!!.getJsonArray("locales")!!
             localesReport(sdk, ret)
         }
-//        sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-//            override fun onResult(data: String, extra: Any?) {
-//                try {
-//                    val result = ResultWrapper.parse(data, extra)
-//                    val ret = result.getPayload()!!.getJsonArray("locales")!!
-//                    localesReport(sdk, ret)
-//                } catch (e: Exception) {
-//                    Logger.w("${SDKConst.ACTION_ALEXA_LOCALES_UPDATED} Result exception - ${e.message}")
-//                }
-//            }
-//        })
+
     } else {
         Logger.w("$directive missing filed - locales")
     }
@@ -123,18 +105,6 @@ private fun onSetTimeZone(sdk: SmartWatchSDK, directive: Directive, parts: List<
             val timeZone = result.getPayload()!!.getString("timeZone")!!
             timeZoneReport(sdk, timeZone)
         }
-
-//        sdk.onActionListener.onAction(action.toString(), null, object : OnResultCallback {
-//            override fun onResult(data: String, extra: Any?) {
-//                try {
-//                    val result = ResultWrapper.parse(data, extra)
-//                    val timeZone = result.getPayload()!!.getString("timeZone")!!
-//                    timeZoneReport(sdk, timeZone)
-//                } catch (e: Exception) {
-//                    Logger.w("${SDKConst.ACTION_ALEXA_TIME_ZONE_UPDATED} Result exception - ${e.message}")
-//                }
-//            }
-//        })
 
     } else {
         Logger.w("$directive missing filed - timeZone")
